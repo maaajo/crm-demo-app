@@ -1,13 +1,5 @@
 import { useState } from "react";
-import {
-  InputGroup,
-  Input,
-  InputRightElement,
-  InputLeftElement,
-  Button,
-  Icon,
-} from "@chakra-ui/react";
-import { KeyRound } from "lucide-react";
+import { InputGroup, Input, InputRightElement, Button } from "@chakra-ui/react";
 
 const PasswordInput = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -17,9 +9,6 @@ const PasswordInput = () => {
 
   return (
     <InputGroup size={"md"}>
-      <InputLeftElement pointerEvents={"none"}>
-        <Icon as={KeyRound} color={"gray.500"} />
-      </InputLeftElement>
       <Input
         pr={passwordWidth}
         type={showPassword ? "text" : "password"}

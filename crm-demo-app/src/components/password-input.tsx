@@ -24,6 +24,7 @@ const PasswordInput = () => {
         pr={passwordWidth}
         type={showPassword ? "text" : "password"}
         placeholder="Enter Password"
+        variant={"black"}
       />
       <InputRightElement width={passwordWidth}>
         <Button h="1.75rem" size={"sm"} onClick={handleButtonClick}>

@@ -7,7 +7,11 @@ const EmailInput = () => {
       <InputLeftElement pointerEvents={"none"}>
         <Icon as={AtSign} color={"gray.500"} />
       </InputLeftElement>
-      <Input type={"email"} placeholder="Enter Password" />
+      <Input
+        type={"email"}
+        placeholder="Enter Email Address"
+        variant={"black"}
+      />
     </InputGroup>
   );
 };

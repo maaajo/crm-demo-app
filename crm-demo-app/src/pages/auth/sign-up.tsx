@@ -12,6 +12,7 @@ import {
 } from "@chakra-ui/react";
 import EmailInput from "@/components/email-input";
 import PasswordInput from "@/components/password-input";
+import { Google, Github } from "grommet-icons";
 
 const SignUp = () => {
   return (
@@ -31,11 +32,14 @@ const SignUp = () => {
           <PasswordInput />
         </FormControl>
         <Button
-          variant={"outline"}
-          colorScheme={"blackAlpha"}
-          color={"blackAlpha.900"}
+          variant={"solid"}
           width={"full"}
           type={"submit"}
+          bgColor={"black"}
+          color={"white"}
+          _hover={{
+            bgColor: "blackAlpha.800",
+          }}
         >
           Create Account
         </Button>
@@ -48,6 +52,7 @@ const SignUp = () => {
       </Box>
       <VStack width={"md"} spacing={4}>
         <Button
+          leftIcon={<Google color={"brand"} />}
           width={"full"}
           variant={"outline"}
           colorScheme={"blackAlpha"}
@@ -56,6 +61,7 @@ const SignUp = () => {
           Create account with Google
         </Button>
         <Button
+          leftIcon={<Github color={"brand"} />}
           width={"full"}
           variant={"outline"}
           colorScheme={"blackAlpha"}

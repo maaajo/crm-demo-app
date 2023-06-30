@@ -4,11 +4,15 @@ import { ChakraProvider } from "@chakra-ui/react";
 import { Inter } from "next/font/google";
 import { extendTheme } from "@chakra-ui/react";
 import Layout from "./layout";
+import { InputTheme } from "@/theme/inputTheme";
 
 const theme = extendTheme({
   fonts: {
     heading: "var(--font-inter)",
     body: "var(--font-inter)",
+  },
+  components: {
+    Input: InputTheme,
   },
 });
 

@@ -5,6 +5,9 @@ import { Inter } from "next/font/google";
 import { extendTheme } from "@chakra-ui/react";
 import Layout from "./layout";
 import { InputTheme } from "@/theme/inputTheme";
+import { createPagesBrowserClient } from "@supabase/auth-helpers-nextjs";
+import { SessionContextProvider, Session } from "@supabase/auth-helpers-react";
+import { useState } from "react";
 
 const theme = extendTheme({
   fonts: {
@@ -18,7 +21,12 @@ const theme = extendTheme({
 
 const inter = Inter({ subsets: ["latin"] });
 
-export default function App({ Component, pageProps }: AppProps) {
+export default function App({
+  Component,
+  pageProps,
+}: AppProps<{ initialSession: Session }>) {
+  const [supabaseClient] = useState(() => createPagesBrowserClient());
+
   return (
     <>
       <style jsx global>
@@ -28,11 +36,16 @@ export default function App({ Component, pageProps }: AppProps) {
           }
         `}
       </style>
-      <ChakraProvider theme={theme}>
-        <Layout>
-          <Component {...pageProps} />
-        </Layout>
-      </ChakraProvider>
+      <SessionContextProvider
+        supabaseClient={supabaseClient}
+        initialSession={pageProps.initialSession}
+      >
+        <ChakraProvider theme={theme}>
+          <Layout>
+            <Component {...pageProps} />
+          </Layout>
+        </ChakraProvider>
+      </SessionContextProvider>
     </>
   );
 }

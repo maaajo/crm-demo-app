@@ -1,35 +1,52 @@
 import {
-  Flex,
   Box,
   FormControl,
   FormLabel,
-  Input,
   VStack,
   Button,
   AbsoluteCenter,
   Divider,
-  HStack,
+  chakra,
 } from "@chakra-ui/react";
 import EmailInput from "@/components/email-input";
 import PasswordInput from "@/components/password-input";
 import { Google, Github } from "grommet-icons";
+import { FormEvent } from "react";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 
 const SignUp = () => {
+  const supabase = createClientComponentClient();
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const formData = new FormData(e.target as HTMLFormElement);
+
+    const { data, error } = await supabase.auth.signUp({
+      email: formData.get("email")!.toString(),
+      password: formData.get("password")!.toString(),
+    });
+
+    console.log(data, error);
+  };
+
   return (
-    <Flex
+    <chakra.form
       width={"full"}
+      display={"flex"}
       justifyContent={"center"}
       alignItems={"center"}
-      direction={"column"}
+      flexDirection={"column"}
+      onSubmit={handleSubmit}
     >
       <VStack spacing={"4"} width={"md"}>
         <FormControl>
           <FormLabel fontWeight={"bold"}>Email Address</FormLabel>
-          <EmailInput />
+          <EmailInput name="email" />
         </FormControl>
         <FormControl>
           <FormLabel fontWeight={"bold"}>Password</FormLabel>
-          <PasswordInput />
+          <PasswordInput name="password" />
         </FormControl>
         <Button
           variant={"solid"}
@@ -58,7 +75,7 @@ const SignUp = () => {
           colorScheme={"blackAlpha"}
           color={"blackAlpha.900"}
         >
-          Create account with Google
+          Sign in with Google
         </Button>
         <Button
           leftIcon={<Github color={"brand"} />}
@@ -67,10 +84,10 @@ const SignUp = () => {
           colorScheme={"blackAlpha"}
           color={"blackAlpha.900"}
         >
-          Create account with Github
+          Sign in with Github
         </Button>
       </VStack>
-    </Flex>
+    </chakra.form>
   );
 };
 

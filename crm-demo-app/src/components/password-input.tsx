@@ -6,10 +6,11 @@ import {
   InputLeftElement,
   Button,
   Icon,
+  InputProps,
 } from "@chakra-ui/react";
 import { KeyRound } from "lucide-react";
 
-const PasswordInput = () => {
+const PasswordInput = ({ ...props }: InputProps) => {
   const [showPassword, setShowPassword] = useState(false);
   const handleButtonClick = () => setShowPassword((prevValue) => !prevValue);
 
@@ -25,6 +26,7 @@ const PasswordInput = () => {
         type={showPassword ? "text" : "password"}
         placeholder="Enter Password"
         variant={"black"}
+        {...props}
       />
       <InputRightElement width={passwordWidth}>
         <Button h="1.75rem" size={"sm"} onClick={handleButtonClick}>

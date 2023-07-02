@@ -1,7 +1,13 @@
-import { InputGroup, Input, InputLeftElement, Icon } from "@chakra-ui/react";
+import {
+  InputGroup,
+  Input,
+  InputLeftElement,
+  Icon,
+  InputProps,
+} from "@chakra-ui/react";
 import { AtSign } from "lucide-react";
 
-const EmailInput = () => {
+const EmailInput = ({ ...props }: InputProps) => {
   return (
     <InputGroup size={"md"}>
       <InputLeftElement pointerEvents={"none"}>
@@ -11,6 +17,7 @@ const EmailInput = () => {
         type={"email"}
         placeholder="Enter Email Address"
         variant={"black"}
+        {...props}
       />
     </InputGroup>
   );

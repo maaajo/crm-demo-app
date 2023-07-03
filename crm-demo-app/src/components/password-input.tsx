@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, LegacyRef } from "react";
 import {
   InputGroup,
   Input,
@@ -10,7 +10,11 @@ import {
 } from "@chakra-ui/react";
 import { KeyRound } from "lucide-react";
 
-const PasswordInput = ({ ...props }: InputProps) => {
+interface IPasswordInputProps extends InputProps {
+  passwordRef?: LegacyRef<HTMLInputElement>;
+}
+
+const PasswordInput = ({ passwordRef, ...props }: IPasswordInputProps) => {
   const [showPassword, setShowPassword] = useState(false);
   const handleButtonClick = () => setShowPassword((prevValue) => !prevValue);
 
@@ -26,6 +30,7 @@ const PasswordInput = ({ ...props }: InputProps) => {
         type={showPassword ? "text" : "password"}
         placeholder="Enter Password"
         variant={"black"}
+        ref={passwordRef}
         {...props}
       />
       <InputRightElement width={passwordWidth}>

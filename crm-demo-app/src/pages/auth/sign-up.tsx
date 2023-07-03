@@ -7,27 +7,33 @@ import {
   AbsoluteCenter,
   Divider,
   chakra,
+  Input,
 } from "@chakra-ui/react";
 import EmailInput from "@/components/email-input";
 import PasswordInput from "@/components/password-input";
 import { Google, Github } from "grommet-icons";
-import { FormEvent } from "react";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { useForm, SubmitHandler } from "react-hook-form";
+
+type FormData = {
+  email: string;
+  password: string;
+};
 
 const SignUp = () => {
   const supabase = createClientComponentClient();
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormData>();
 
-    const formData = new FormData(e.target as HTMLFormElement);
+  const { ref: formEmailRef, ...emailRest } = register("email");
+  const { ref: formPasswordRef, ...passwordRest } = register("password");
 
-    const { data, error } = await supabase.auth.signUp({
-      email: formData.get("email")!.toString(),
-      password: formData.get("password")!.toString(),
-    });
-
-    console.log(data, error);
+  const onSubmit: SubmitHandler<FormData> = async (formData) => {
+    console.log(formData);
   };
 
   return (
@@ -37,16 +43,28 @@ const SignUp = () => {
       justifyContent={"center"}
       alignItems={"center"}
       flexDirection={"column"}
-      onSubmit={handleSubmit}
+      onSubmit={handleSubmit(onSubmit)}
     >
       <VStack spacing={"4"} width={"md"}>
         <FormControl>
           <FormLabel fontWeight={"bold"}>Email Address</FormLabel>
-          <EmailInput name="email" />
+          <EmailInput
+            {...emailRest}
+            name={"email"}
+            emailRef={(e) => {
+              formEmailRef(e);
+            }}
+          />
         </FormControl>
         <FormControl>
           <FormLabel fontWeight={"bold"}>Password</FormLabel>
-          <PasswordInput name="password" />
+          <PasswordInput
+            {...passwordRest}
+            name={"password"}
+            passwordRef={(e) => {
+              formPasswordRef(e);
+            }}
+          />
         </FormControl>
         <Button
           variant={"solid"}

@@ -6,8 +6,13 @@ import {
   InputProps,
 } from "@chakra-ui/react";
 import { AtSign } from "lucide-react";
+import { LegacyRef } from "react";
 
-const EmailInput = ({ ...props }: InputProps) => {
+interface IEmailInputProps extends InputProps {
+  emailRef?: LegacyRef<HTMLInputElement>;
+}
+
+const EmailInput = ({ emailRef, ...props }: IEmailInputProps) => {
   return (
     <InputGroup size={"md"}>
       <InputLeftElement pointerEvents={"none"}>
@@ -17,6 +22,7 @@ const EmailInput = ({ ...props }: InputProps) => {
         type={"email"}
         placeholder="Enter Email Address"
         variant={"black"}
+        ref={emailRef}
         {...props}
       />
     </InputGroup>

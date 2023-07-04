@@ -8,17 +8,28 @@ import {
   Divider,
   chakra,
   Input,
+  FormErrorMessage,
 } from "@chakra-ui/react";
 import EmailInput from "@/components/email-input";
 import PasswordInput from "@/components/password-input";
 import { Google, Github } from "grommet-icons";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useForm, SubmitHandler } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import validator from "validator";
 
-type FormData = {
-  email: string;
-  password: string;
-};
+const signUpSchema = z.object({
+  email: z
+    .string()
+    .min(1, { message: "This field has to be filled" })
+    .email({ message: "This is not a valid email" }),
+  password: z.string().refine(validator.isStrongPassword, {
+    message: "Password not strong enough",
+  }),
+});
+
+type SignUpSchema = z.infer<typeof signUpSchema>;
 
 const SignUp = () => {
   const supabase = createClientComponentClient();
@@ -27,13 +38,15 @@ const SignUp = () => {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<FormData>();
+  } = useForm<SignUpSchema>({
+    resolver: zodResolver(signUpSchema),
+  });
 
   const { ref: formEmailRef, ...emailRest } = register("email");
   const { ref: formPasswordRef, ...passwordRest } = register("password");
 
-  const onSubmit: SubmitHandler<FormData> = async (formData) => {
-    console.log(formData);
+  const onSubmit: SubmitHandler<SignUpSchema> = (data) => {
+    console.log(errors);
   };
 
   return (
@@ -46,7 +59,7 @@ const SignUp = () => {
       onSubmit={handleSubmit(onSubmit)}
     >
       <VStack spacing={"4"} width={"md"}>
-        <FormControl>
+        <FormControl isInvalid={Boolean(errors.email)}>
           <FormLabel fontWeight={"bold"}>Email Address</FormLabel>
           <EmailInput
             {...emailRest}
@@ -55,8 +68,13 @@ const SignUp = () => {
               formEmailRef(e);
             }}
           />
+          {errors.email && (
+            <FormErrorMessage>
+              {errors.email.message!.toString()}
+            </FormErrorMessage>
+          )}
         </FormControl>
-        <FormControl>
+        <FormControl isInvalid={Boolean(errors.password)}>
           <FormLabel fontWeight={"bold"}>Password</FormLabel>
           <PasswordInput
             {...passwordRest}
@@ -65,6 +83,11 @@ const SignUp = () => {
               formPasswordRef(e);
             }}
           />
+          {errors.password && (
+            <FormErrorMessage>
+              {errors.password.message!.toString()}
+            </FormErrorMessage>
+          )}
         </FormControl>
         <Button
           variant={"solid"}

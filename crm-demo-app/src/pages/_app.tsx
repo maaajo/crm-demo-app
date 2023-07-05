@@ -5,7 +5,7 @@ import { Inter } from "next/font/google";
 import { extendTheme } from "@chakra-ui/react";
 import Layout from "./layout";
 import { InputTheme } from "@/theme/inputTheme";
-import { createPagesBrowserClient } from "@supabase/auth-helpers-nextjs";
+import { createBrowserSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { SessionContextProvider, Session } from "@supabase/auth-helpers-react";
 import { useState } from "react";
 
@@ -25,7 +25,7 @@ export default function App({
   Component,
   pageProps,
 }: AppProps<{ initialSession: Session }>) {
-  const [supabaseClient] = useState(() => createPagesBrowserClient());
+  const [supabaseClient] = useState(() => createBrowserSupabaseClient());
 
   return (
     <>

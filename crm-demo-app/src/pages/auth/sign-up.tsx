@@ -13,7 +13,7 @@ import {
 import EmailInput from "@/components/email-input";
 import PasswordInput from "@/components/password-input";
 import { Google, Github } from "grommet-icons";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -22,17 +22,21 @@ import validator from "validator";
 const signUpSchema = z.object({
   email: z
     .string()
-    .min(1, { message: "This field has to be filled" })
+    .min(1, { message: "Email field has to be filled" })
     .email({ message: "This is not a valid email" }),
-  password: z.string().refine(validator.isStrongPassword, {
-    message: "Password not strong enough",
-  }),
+  password: z
+    .string()
+    .min(1, { message: "Password field has to be filled" })
+    .refine(validator.isStrongPassword, {
+      message:
+        "Password has to be at least 8 chars long and contain: 1 uppercase, 1 symbol and 1 number",
+    }),
 });
 
 type SignUpSchema = z.infer<typeof signUpSchema>;
 
 const SignUp = () => {
-  const supabase = createClientComponentClient();
+  const supabase = useSupabaseClient();
 
   const {
     register,
@@ -45,8 +49,14 @@ const SignUp = () => {
   const { ref: formEmailRef, ...emailRest } = register("email");
   const { ref: formPasswordRef, ...passwordRest } = register("password");
 
-  const onSubmit: SubmitHandler<SignUpSchema> = (data) => {
-    console.log(errors);
+  const onSubmit: SubmitHandler<SignUpSchema> = async (signUpData) => {
+    console.log(signUpData);
+    const { data, error } = await supabase.auth.signUp({
+      email: signUpData.email,
+      password: signUpData.password,
+    });
+
+    console.log(data, error);
   };
 
   return (

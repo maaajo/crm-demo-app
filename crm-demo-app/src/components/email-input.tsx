@@ -22,6 +22,7 @@ const EmailInput = ({ emailRef, ...props }: IEmailInputProps) => {
         type={"email"}
         placeholder="Enter Email Address"
         variant={"black"}
+        errorBorderColor={"red.300"}
         ref={emailRef}
         {...props}
       />

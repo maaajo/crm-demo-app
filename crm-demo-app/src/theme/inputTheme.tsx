@@ -10,6 +10,9 @@ export const InputTheme: ComponentStyleConfig = {
         _focusVisible: {
           borderColor: "blackAlpha.900",
         },
+        _invalid: {
+          borderColor: "red.400",
+        },
       },
     },
   },

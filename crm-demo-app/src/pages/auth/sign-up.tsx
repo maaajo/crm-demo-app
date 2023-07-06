@@ -7,17 +7,20 @@ import {
   AbsoluteCenter,
   Divider,
   chakra,
-  Input,
   FormErrorMessage,
 } from "@chakra-ui/react";
 import EmailInput from "@/components/email-input";
 import PasswordInput from "@/components/password-input";
 import { Google, Github } from "grommet-icons";
-import { useSupabaseClient } from "@supabase/auth-helpers-react";
+import {
+  useSupabaseClient,
+  useSessionContext,
+} from "@supabase/auth-helpers-react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import validator from "validator";
+import { useRouter } from "next/router";
 
 const signUpSchema = z.object({
   email: z
@@ -37,6 +40,8 @@ type SignUpSchema = z.infer<typeof signUpSchema>;
 
 const SignUp = () => {
   const supabase = useSupabaseClient();
+  const router = useRouter();
+  const { isLoading, session, error } = useSessionContext();
 
   const {
     register,
@@ -56,90 +61,101 @@ const SignUp = () => {
       password: signUpData.password,
     });
 
-    console.log(data, error);
+    if (data) {
+      router.push("/");
+    }
   };
 
-  return (
-    <chakra.form
-      width={"full"}
-      display={"flex"}
-      justifyContent={"center"}
-      alignItems={"center"}
-      flexDirection={"column"}
-      onSubmit={handleSubmit(onSubmit)}
-    >
-      <VStack spacing={"4"} width={"md"}>
-        <FormControl isInvalid={Boolean(errors.email)}>
-          <FormLabel fontWeight={"bold"}>Email Address</FormLabel>
-          <EmailInput
-            {...emailRest}
-            name={"email"}
-            emailRef={(e) => {
-              formEmailRef(e);
+  if (isLoading) {
+    return <p>Loading</p>;
+  }
+
+  if (session) {
+    console.log("Session:", session);
+    router.push("/");
+  } else {
+    return (
+      <chakra.form
+        width={"full"}
+        display={"flex"}
+        justifyContent={"center"}
+        alignItems={"center"}
+        flexDirection={"column"}
+        onSubmit={handleSubmit(onSubmit)}
+      >
+        <VStack spacing={"4"} width={"md"}>
+          <FormControl isInvalid={Boolean(errors.email)}>
+            <FormLabel fontWeight={"bold"}>Email Address</FormLabel>
+            <EmailInput
+              {...emailRest}
+              name={"email"}
+              emailRef={(e) => {
+                formEmailRef(e);
+              }}
+            />
+            {errors.email && (
+              <FormErrorMessage>
+                {errors.email.message!.toString()}
+              </FormErrorMessage>
+            )}
+          </FormControl>
+          <FormControl isInvalid={Boolean(errors.password)}>
+            <FormLabel fontWeight={"bold"}>Password</FormLabel>
+            <PasswordInput
+              {...passwordRest}
+              name={"password"}
+              passwordRef={(e) => {
+                formPasswordRef(e);
+              }}
+            />
+            {errors.password && (
+              <FormErrorMessage>
+                {errors.password.message!.toString()}
+              </FormErrorMessage>
+            )}
+          </FormControl>
+          <Button
+            variant={"solid"}
+            width={"full"}
+            type={"submit"}
+            bgColor={"black"}
+            color={"white"}
+            _hover={{
+              bgColor: "blackAlpha.800",
             }}
-          />
-          {errors.email && (
-            <FormErrorMessage>
-              {errors.email.message!.toString()}
-            </FormErrorMessage>
-          )}
-        </FormControl>
-        <FormControl isInvalid={Boolean(errors.password)}>
-          <FormLabel fontWeight={"bold"}>Password</FormLabel>
-          <PasswordInput
-            {...passwordRest}
-            name={"password"}
-            passwordRef={(e) => {
-              formPasswordRef(e);
-            }}
-          />
-          {errors.password && (
-            <FormErrorMessage>
-              {errors.password.message!.toString()}
-            </FormErrorMessage>
-          )}
-        </FormControl>
-        <Button
-          variant={"solid"}
-          width={"full"}
-          type={"submit"}
-          bgColor={"black"}
-          color={"white"}
-          _hover={{
-            bgColor: "blackAlpha.800",
-          }}
-        >
-          Create Account
-        </Button>
-      </VStack>
-      <Box position={"relative"} py={8} w={"md"}>
-        <Divider borderColor={"blackAlpha.700"} variant={"solid"} />
-        <AbsoluteCenter fontWeight={"bold"} bg="white" px="6">
-          Or
-        </AbsoluteCenter>
-      </Box>
-      <VStack width={"md"} spacing={4}>
-        <Button
-          leftIcon={<Google color={"brand"} />}
-          width={"full"}
-          variant={"outline"}
-          colorScheme={"blackAlpha"}
-          color={"blackAlpha.900"}
-        >
-          Sign in with Google
-        </Button>
-        <Button
-          leftIcon={<Github color={"brand"} />}
-          width={"full"}
-          variant={"outline"}
-          colorScheme={"blackAlpha"}
-          color={"blackAlpha.900"}
-        >
-          Sign in with Github
-        </Button>
-      </VStack>
-    </chakra.form>
-  );
+          >
+            Create Account
+          </Button>
+        </VStack>
+        <Box position={"relative"} py={8} w={"md"}>
+          <Divider borderColor={"blackAlpha.700"} variant={"solid"} />
+          <AbsoluteCenter fontWeight={"bold"} bg="white" px="6">
+            Or
+          </AbsoluteCenter>
+        </Box>
+        <VStack width={"md"} spacing={4}>
+          <Button
+            leftIcon={<Google color={"brand"} />}
+            width={"full"}
+            variant={"outline"}
+            colorScheme={"blackAlpha"}
+            color={"blackAlpha.900"}
+          >
+            Sign in with Google
+          </Button>
+          <Button
+            leftIcon={<Github color={"brand"} />}
+            width={"full"}
+            variant={"outline"}
+            colorScheme={"blackAlpha"}
+            color={"blackAlpha.900"}
+          >
+            Sign in with Github
+          </Button>
+        </VStack>
+      </chakra.form>
+    );
+  }
 };
 
 export default SignUp;

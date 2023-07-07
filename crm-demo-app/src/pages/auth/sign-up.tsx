@@ -8,6 +8,7 @@ import {
   Divider,
   chakra,
   FormErrorMessage,
+  useToast,
 } from "@chakra-ui/react";
 import EmailInput from "@/components/email-input";
 import PasswordInput from "@/components/password-input";
@@ -39,6 +40,7 @@ const signUpSchema = z.object({
 type SignUpSchema = z.infer<typeof signUpSchema>;
 
 const SignUp = () => {
+  const toast = useToast();
   const supabase = useSupabaseClient();
   const router = useRouter();
   const { isLoading, session, error } = useSessionContext();
@@ -59,10 +61,22 @@ const SignUp = () => {
     const { data, error } = await supabase.auth.signUp({
       email: signUpData.email,
       password: signUpData.password,
+      options: {},
     });
 
-    if (data) {
+    if (data.session) {
       router.push("/");
+    }
+
+    if (error) {
+      toast({
+        title: "Ooops, something went wrong!",
+        description: error.message,
+        status: "error",
+        isClosable: true,
+        position: "top",
+        duration: 10000,
+      });
     }
   };
 

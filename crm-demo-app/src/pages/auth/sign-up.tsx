@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
   Box,
   FormControl,
@@ -39,10 +38,15 @@ const signUpSchema = z.object({
     }),
 });
 
+const config = {
+  signUp: {
+    loadingMessage: "Signing up...",
+  },
+};
+
 type SignUpSchema = z.infer<typeof signUpSchema>;
 
 const SignUp: NextPage = () => {
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const toast = useToast();
   const supabase = useSupabaseClient();
   const router = useRouter();
@@ -50,7 +54,7 @@ const SignUp: NextPage = () => {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<SignUpSchema>({
     resolver: zodResolver(signUpSchema),
   });
@@ -59,7 +63,6 @@ const SignUp: NextPage = () => {
   const { ref: formPasswordRef, ...passwordRest } = register("password");
 
   const onSubmit: SubmitHandler<SignUpSchema> = async (signUpData) => {
-    setIsSubmitting(true);
     const { data, error } = await supabase.auth.signUp({
       email: signUpData.email,
       password: signUpData.password,
@@ -67,7 +70,6 @@ const SignUp: NextPage = () => {
     });
 
     if (data.session) {
-      setIsSubmitting(false);
       router.reload();
     }
 
@@ -81,18 +83,40 @@ const SignUp: NextPage = () => {
         duration: 10000,
       });
     }
-
-    setIsSubmitting(false);
   };
 
   const onGithubLogin = async () => {
-    setIsSubmitting(true);
-
-    const { data, error } = await supabase.auth.signInWithOAuth({
+    const { data: _, error } = await supabase.auth.signInWithOAuth({
       provider: "github",
     });
 
-    setIsSubmitting(false);
+    if (error?.message) {
+      toast({
+        title: "Failed to sign in with Github",
+        description: error.message,
+        status: "error",
+        isClosable: true,
+        position: "top",
+        duration: 10000,
+      });
+    }
+  };
+
+  const onGoogleLogin = async () => {
+    const { data: _, error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+    });
+
+    if (error?.message) {
+      toast({
+        title: "Failed to sign in with Google",
+        description: error.message,
+        status: "error",
+        isClosable: true,
+        position: "top",
+        duration: 10000,
+      });
+    }
   };
 
   return (
@@ -147,7 +171,7 @@ const SignUp: NextPage = () => {
               bgColor: "blackAlpha.800",
             }}
             isLoading={isSubmitting}
-            loadingText={"Signing up..."}
+            loadingText={config.signUp.loadingMessage}
             onClick={handleSubmit(onSubmit)}
           >
             Create Account
@@ -169,7 +193,9 @@ const SignUp: NextPage = () => {
             colorScheme={"blackAlpha"}
             color={"blackAlpha.900"}
             isLoading={isSubmitting}
+            loadingText={config.signUp.loadingMessage}
             type={"button"}
+            onClick={onGoogleLogin}
           >
             Sign in with Google
           </Button>
@@ -180,6 +206,7 @@ const SignUp: NextPage = () => {
             colorScheme={"blackAlpha"}
             color={"blackAlpha.900"}
             isLoading={isSubmitting}
+            loadingText={config.signUp.loadingMessage}
             type={"button"}
             onClick={onGithubLogin}
           >

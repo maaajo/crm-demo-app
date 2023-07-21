@@ -10,6 +10,7 @@ import {
   FormErrorMessage,
   useToast,
   Text,
+  Heading,
 } from "@chakra-ui/react";
 import EmailInput from "@/components/email-input";
 import PasswordInput from "@/components/password-input";
@@ -24,7 +25,7 @@ import { useRouter } from "next/router";
 import { NextPage, GetServerSideProps } from "next";
 import { Link } from "@chakra-ui/next-js";
 
-const signUpSchema = z.object({
+const zodAuthSchema = z.object({
   email: z
     .string()
     .min(1, { message: "Email field has to be filled" })
@@ -44,7 +45,31 @@ const config = {
   },
 };
 
-type SignUpSchema = z.infer<typeof signUpSchema>;
+//login header: Welcome back!
+//supporting text: Log in to your account
+
+type TAuthHeaderProps = {
+  headingText: string;
+  supportingText?: string;
+};
+
+const GenerateAuthHeader = ({
+  headingText,
+  supportingText,
+}: TAuthHeaderProps) => {
+  return (
+    <VStack spacing={"1"} my={"8"}>
+      <Heading as={"h3"} letterSpacing={"tight"} fontWeight={"bold"}>
+        {headingText}
+      </Heading>
+      <Text color={"blackAlpha.600"} fontSize={"md"}>
+        {supportingText}
+      </Text>
+    </VStack>
+  );
+};
+
+type AuthSchema = z.infer<typeof zodAuthSchema>;
 
 const SignUp: NextPage = () => {
   const toast = useToast();
@@ -55,14 +80,14 @@ const SignUp: NextPage = () => {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<SignUpSchema>({
-    resolver: zodResolver(signUpSchema),
+  } = useForm<AuthSchema>({
+    resolver: zodResolver(zodAuthSchema),
   });
 
   const { ref: formEmailRef, ...emailRest } = register("email");
   const { ref: formPasswordRef, ...passwordRest } = register("password");
 
-  const onSubmit: SubmitHandler<SignUpSchema> = async (signUpData) => {
+  const onSubmit: SubmitHandler<AuthSchema> = async (signUpData) => {
     const { data, error } = await supabase.auth.signUp({
       email: signUpData.email,
       password: signUpData.password,
@@ -127,6 +152,10 @@ const SignUp: NextPage = () => {
       alignItems={"center"}
       flexDirection={"column"}
     >
+      <GenerateAuthHeader
+        headingText="Create new account"
+        supportingText="Sign upo and unlock full access"
+      />
       <chakra.form>
         <VStack spacing={"4"} width={"md"}>
           <FormControl isInvalid={Boolean(errors.email)}>

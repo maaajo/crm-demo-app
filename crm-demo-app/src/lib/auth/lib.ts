@@ -1,15 +1,7 @@
-import Auth from "@/components/auth";
-import { verifyUser } from "@/lib/auth/lib";
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
-import { GetServerSideProps, NextPage } from "next";
+import { GetServerSidePropsContext } from "next";
 
-const SignIn: NextPage = () => {
-  return <Auth type="login" />;
-};
-
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  return await verifyUser(ctx);
-
+export const verifyUser = async (ctx: GetServerSidePropsContext) => {
   const supabase = createServerSupabaseClient(ctx);
   const {
     data: { session },
@@ -28,5 +20,3 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     props: {},
   };
 };
-
-export default SignIn;

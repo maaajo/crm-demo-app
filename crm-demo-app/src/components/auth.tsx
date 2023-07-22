@@ -16,15 +16,27 @@ import EmailInput from "@/components/email-input";
 import PasswordInput from "@/components/password-input";
 import { Google, Github } from "grommet-icons";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import validator from "validator";
 import { useRouter } from "next/router";
-import { NextPage, GetServerSideProps } from "next";
 import { Link } from "@chakra-ui/next-js";
-import Auth from "@/components/auth";
+
+const AuthTypes = {
+  Login: "login",
+  Register: "register",
+} as const;
+
+type TAuthKeys = {
+  type: (typeof AuthTypes)[keyof typeof AuthTypes];
+};
+
+const config = {
+  signUp: {
+    loadingMessage: "Loading...",
+  },
+};
 
 const zodAuthSchema = z.object({
   email: z
@@ -39,15 +51,6 @@ const zodAuthSchema = z.object({
         "Password has to be at least 8 chars long and contain: 1 uppercase, 1 symbol and 1 number",
     }),
 });
-
-const config = {
-  signUp: {
-    loadingMessage: "Signing up...",
-  },
-};
-
-//login header: Welcome back!
-//supporting text: Log in to your account
 
 type TAuthHeaderProps = {
   headingText: string;
@@ -72,9 +75,7 @@ const GenerateAuthHeader = ({
 
 type AuthSchema = z.infer<typeof zodAuthSchema>;
 
-const SignUp: NextPage = () => {
-  return <Auth type="register" />;
-
+const Auth = ({ type }: TAuthKeys) => {
   const toast = useToast();
   const supabase = useSupabaseClient();
   const router = useRouter();
@@ -91,11 +92,19 @@ const SignUp: NextPage = () => {
   const { ref: formPasswordRef, ...passwordRest } = register("password");
 
   const onSubmit: SubmitHandler<AuthSchema> = async (signUpData) => {
+    const authFunction =
+      type === AuthTypes.Login
+        ? supabase.auth.signInWithPassword
+        : supabase.auth.signUp;
+
     const { data, error } = await supabase.auth.signUp({
       email: signUpData.email,
       password: signUpData.password,
       options: {},
     });
+
+    if (type === AuthTypes.Login) {
+    }
 
     if (data.session) {
       router.reload();
@@ -155,10 +164,18 @@ const SignUp: NextPage = () => {
       alignItems={"center"}
       flexDirection={"column"}
     >
-      <GenerateAuthHeader
-        headingText="Create new account"
-        supportingText="Sign up to unlock full access"
-      />
+      {type === AuthTypes.Login ? (
+        <GenerateAuthHeader
+          headingText="Welcome back!"
+          supportingText="Log in to your account"
+        />
+      ) : (
+        <GenerateAuthHeader
+          headingText="Create new account"
+          supportingText="Sign up to unlock full access"
+        />
+      )}
+
       <chakra.form>
         <VStack spacing={"4"} width={"md"}>
           <FormControl isInvalid={Boolean(errors.email)}>
@@ -206,13 +223,13 @@ const SignUp: NextPage = () => {
             loadingText={config.signUp.loadingMessage}
             onClick={handleSubmit(onSubmit)}
           >
-            Create Account
+            {type === AuthTypes.Login ? "Login" : "Create Account"}
           </Button>
         </VStack>
         <Box position={"relative"} py={8} w={"md"}>
           <Divider borderColor={"blackAlpha.700"} variant={"solid"} />
-          <AbsoluteCenter fontWeight={"bold"} bg="white" px="6">
-            Or
+          <AbsoluteCenter fontWeight={"normal"} bg="white" px="6">
+            Or continue with
           </AbsoluteCenter>
         </Box>
       </chakra.form>
@@ -256,26 +273,4 @@ const SignUp: NextPage = () => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const supabase = createServerSupabaseClient(ctx);
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
-
-  if (session) {
-    await supabase.auth.signOut();
-
-    return {
-      redirect: {
-        destination: "/",
-        permanent: false,
-      },
-    };
-  }
-
-  return {
-    props: {},
-  };
-};
-
-export default SignUp;
+export default Auth;

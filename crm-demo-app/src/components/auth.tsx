@@ -22,6 +22,10 @@ import * as z from "zod";
 import validator from "validator";
 import { useRouter } from "next/router";
 import { Link } from "@chakra-ui/next-js";
+import {
+  SignInWithPasswordCredentials,
+  SignUpWithPasswordCredentials,
+} from "@supabase/supabase-js";
 
 const AuthTypes = {
   Login: "login",
@@ -92,19 +96,18 @@ const Auth = ({ type }: TAuthKeys) => {
   const { ref: formPasswordRef, ...passwordRest } = register("password");
 
   const onSubmit: SubmitHandler<AuthSchema> = async (signUpData) => {
-    const authFunction =
-      type === AuthTypes.Login
-        ? supabase.auth.signInWithPassword
-        : supabase.auth.signUp;
-
-    const { data, error } = await supabase.auth.signUp({
-      email: signUpData.email,
+    const supabaseCredentials:
+      | SignUpWithPasswordCredentials
+      | SignInWithPasswordCredentials = {
       password: signUpData.password,
+      email: signUpData.email,
       options: {},
-    });
+    };
 
-    if (type === AuthTypes.Login) {
-    }
+    const { data, error } =
+      type === AuthTypes.Login
+        ? await supabase.auth.signInWithPassword(supabaseCredentials)
+        : await supabase.auth.signUp(supabaseCredentials);
 
     if (data.session) {
       router.reload();
@@ -263,9 +266,16 @@ const Auth = ({ type }: TAuthKeys) => {
           </Button>
         </VStack>
         <Text color={"blackAlpha.800"} mt={"6"}>
-          Already have an account?{" "}
-          <Link color={"blue.600"} href={"/auth/sign-in"}>
-            Sign in here
+          {type === AuthTypes.Login
+            ? "Don't have an account? "
+            : "Already have an account? "}
+          <Link
+            color={"blue.600"}
+            href={type === AuthTypes.Login ? "/auth/sign-up" : "/auth/sign-in"}
+          >
+            {type === AuthTypes.Login
+              ? "Create new account here"
+              : "Sign in here"}
           </Link>
         </Text>
       </>

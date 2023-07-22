@@ -1,9 +1,9 @@
-import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
-import { NextPage, GetServerSideProps } from "next";
 import Auth from "@/components/auth";
+import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
+import { GetServerSideProps, NextPage } from "next";
 
-const SignUp: NextPage = () => {
-  return <Auth type="register" />;
+const SignIn: NextPage = () => {
+  return <Auth type="login" />;
 };
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
@@ -26,4 +26,4 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   };
 };
 
-export default SignUp;
+export default SignIn;

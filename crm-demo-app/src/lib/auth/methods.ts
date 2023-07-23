@@ -1,7 +1,9 @@
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { GetServerSidePropsContext } from "next";
 
-export const verifyUser = async (ctx: GetServerSidePropsContext) => {
+export const redirectToHomeOnSignedIn = async (
+  ctx: GetServerSidePropsContext
+) => {
   const supabase = createServerSupabaseClient(ctx);
   const {
     data: { session },

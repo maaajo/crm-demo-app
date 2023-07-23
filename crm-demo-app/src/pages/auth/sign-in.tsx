@@ -1,6 +1,5 @@
 import Auth from "@/components/auth";
-import { verifyUser } from "@/lib/auth/lib";
-import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
+import { redirectToHomeOnSignedIn } from "@/lib/auth/methods";
 import { GetServerSideProps, NextPage } from "next";
 
 const SignIn: NextPage = () => {
@@ -8,25 +7,7 @@ const SignIn: NextPage = () => {
 };
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  return await verifyUser(ctx);
-
-  const supabase = createServerSupabaseClient(ctx);
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
-
-  if (session) {
-    return {
-      redirect: {
-        destination: "/",
-        permanent: false,
-      },
-    };
-  }
-
-  return {
-    props: {},
-  };
+  return await redirectToHomeOnSignedIn(ctx);
 };
 
 export default SignIn;

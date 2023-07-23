@@ -56,24 +56,34 @@ const zodAuthSchema = z.object({
     }),
 });
 
-type TAuthHeaderProps = {
-  headingText: string;
-  supportingText?: string;
-};
-
-const GenerateAuthHeader = ({
-  headingText,
-  supportingText,
-}: TAuthHeaderProps) => {
+const AuthHeader = ({ type }: TAuthKeys) => {
   return (
     <VStack spacing={"1"} my={"8"}>
       <Heading as={"h3"} letterSpacing={"tight"} fontWeight={"bold"}>
-        {headingText}
+        {type === AuthTypes.Login ? "Welcome back!" : "Create new account"}
       </Heading>
       <Text color={"blackAlpha.600"} fontSize={"md"}>
-        {supportingText}
+        {type === AuthTypes.Login
+          ? "Log in to your account"
+          : "Sign up to unlock full access"}
       </Text>
     </VStack>
+  );
+};
+
+const AuthLink = ({ type }: TAuthKeys) => {
+  return (
+    <Text color={"blackAlpha.800"} mt={"6"}>
+      {type === AuthTypes.Login
+        ? "Don't have an account? "
+        : "Already have an account? "}
+      <Link
+        color={"blue.600"}
+        href={type === AuthTypes.Login ? "/auth/sign-up" : "/auth/sign-in"}
+      >
+        {type === AuthTypes.Login ? "Create new account here" : "Sign in here"}
+      </Link>
+    </Text>
   );
 };
 
@@ -167,20 +177,9 @@ const Auth = ({ type }: TAuthKeys) => {
       alignItems={"center"}
       flexDirection={"column"}
     >
-      {type === AuthTypes.Login ? (
-        <GenerateAuthHeader
-          headingText="Welcome back!"
-          supportingText="Log in to your account"
-        />
-      ) : (
-        <GenerateAuthHeader
-          headingText="Create new account"
-          supportingText="Sign up to unlock full access"
-        />
-      )}
-
+      <AuthHeader type={type} />
       <chakra.form>
-        <VStack spacing={"4"} width={"md"}>
+        <VStack spacing={"4"} width={"md"} alignItems={"flex-end"}>
           <FormControl isInvalid={Boolean(errors.email)}>
             <FormLabel fontWeight={"bold"}>Email Address</FormLabel>
             <EmailInput
@@ -213,6 +212,16 @@ const Auth = ({ type }: TAuthKeys) => {
               </FormErrorMessage>
             )}
           </FormControl>
+          {type === AuthTypes.Login ? (
+            <Link
+              color={"blue.600"}
+              href={"/auth/change-password"}
+              marginTop={"-2"}
+              fontSize={"sm"}
+            >
+              Forgot password?
+            </Link>
+          ) : null}
           <Button
             variant={"solid"}
             width={"full"}
@@ -265,19 +274,7 @@ const Auth = ({ type }: TAuthKeys) => {
             Sign in with Github
           </Button>
         </VStack>
-        <Text color={"blackAlpha.800"} mt={"6"}>
-          {type === AuthTypes.Login
-            ? "Don't have an account? "
-            : "Already have an account? "}
-          <Link
-            color={"blue.600"}
-            href={type === AuthTypes.Login ? "/auth/sign-up" : "/auth/sign-in"}
-          >
-            {type === AuthTypes.Login
-              ? "Create new account here"
-              : "Sign in here"}
-          </Link>
-        </Text>
+        <AuthLink type={type} />
       </>
     </Box>
   );

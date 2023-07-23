@@ -10,7 +10,6 @@ import {
   FormErrorMessage,
   useToast,
   Text,
-  Heading,
 } from "@chakra-ui/react";
 import EmailInput from "@/components/email-input";
 import PasswordInput from "@/components/password-input";
@@ -26,15 +25,8 @@ import {
   SignInWithPasswordCredentials,
   SignUpWithPasswordCredentials,
 } from "@supabase/supabase-js";
-
-const AuthTypes = {
-  Login: "login",
-  Register: "register",
-} as const;
-
-type TAuthKeys = {
-  type: (typeof AuthTypes)[keyof typeof AuthTypes];
-};
+import { TAuthKeys, AuthTypes } from "@/lib/types/auth-types";
+import AuthHeader from "./auth-header";
 
 const config = {
   signUp: {
@@ -55,21 +47,6 @@ const zodAuthSchema = z.object({
         "Password has to be at least 8 chars long and contain: 1 uppercase, 1 symbol and 1 number",
     }),
 });
-
-const AuthHeader = ({ type }: TAuthKeys) => {
-  return (
-    <VStack spacing={"1"} my={"8"}>
-      <Heading as={"h3"} letterSpacing={"tight"} fontWeight={"bold"}>
-        {type === AuthTypes.Login ? "Welcome back!" : "Create new account"}
-      </Heading>
-      <Text color={"blackAlpha.600"} fontSize={"md"}>
-        {type === AuthTypes.Login
-          ? "Log in to your account"
-          : "Sign up to unlock full access"}
-      </Text>
-    </VStack>
-  );
-};
 
 const AuthLink = ({ type }: TAuthKeys) => {
   return (
@@ -215,7 +192,7 @@ const Auth = ({ type }: TAuthKeys) => {
           {type === AuthTypes.Login ? (
             <Link
               color={"blue.600"}
-              href={"/auth/change-password"}
+              href={"/auth/forgot-password"}
               marginTop={"-2"}
               fontSize={"sm"}
             >

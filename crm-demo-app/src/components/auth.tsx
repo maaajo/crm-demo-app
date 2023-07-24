@@ -9,7 +9,6 @@ import {
   chakra,
   FormErrorMessage,
   useToast,
-  Text,
 } from "@chakra-ui/react";
 import EmailInput from "@/components/email-input";
 import PasswordInput from "@/components/password-input";
@@ -28,6 +27,7 @@ import {
 import { TAuthKeys, AuthTypes } from "@/lib/types/auth-types";
 import AuthHeader from "./auth-header";
 import AuthLink from "./auth-link";
+import { routes } from "@/lib/routes";
 
 const config = {
   signUp: {
@@ -177,7 +177,7 @@ const Auth = ({ type }: TAuthKeys) => {
           {type === AuthTypes.Login ? (
             <Link
               color={"blue.600"}
-              href={"/auth/forgot-password"}
+              href={routes.auth.forgot}
               marginTop={"-2"}
               fontSize={"sm"}
             >

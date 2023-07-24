@@ -1,3 +1,4 @@
+import { routes } from "@/lib/routes";
 import { TAuthKeys, AuthTypes } from "@/lib/types/auth-types";
 import { Link } from "@chakra-ui/next-js";
 import { Text } from "@chakra-ui/react";
@@ -12,19 +13,19 @@ const getText = (type: string) => {
       return createReturnObject(
         "Already have an account? ",
         "Sign in here",
-        "/auth/sign-in"
+        routes.auth.signIn
       );
     case AuthTypes.Login:
       return createReturnObject(
         "Don't have an account? ",
         "Create new account here",
-        "/auth/sign-up"
+        routes.auth.signUp
       );
     case AuthTypes.Forgot:
       return createReturnObject(
         "Changed your mind? ",
         "Go back to sign in",
-        "/auth/sign-in"
+        routes.auth.signIn
       );
     default:
       return createReturnObject("", "", "");

@@ -16,6 +16,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { Link } from "@chakra-ui/next-js";
 import AuthLink from "@/components/auth-link";
+import { routes } from "@/lib/routes";
 
 const zodForgotSchema = z.object({
   email: z
@@ -39,7 +40,16 @@ const ForgotPassword = () => {
 
   const { ref: formEmailRef, ...emailRest } = register("email");
 
-  const onSubmit: SubmitHandler<ForgotSchema> = async (forgotData) => {};
+  const onSubmit: SubmitHandler<ForgotSchema> = async (forgotData) => {
+    const { data, error } = await supabase.auth.resetPasswordForEmail(
+      forgotData.email,
+      {
+        redirectTo: `${window.location.origin}${routes.auth.passwordRecovery}`,
+      }
+    );
+
+    console.log(data, error);
+  };
 
   return (
     <Box

@@ -27,6 +27,7 @@ import {
 } from "@supabase/supabase-js";
 import { TAuthKeys, AuthTypes } from "@/lib/types/auth-types";
 import AuthHeader from "./auth-header";
+import AuthLink from "./auth-link";
 
 const config = {
   signUp: {
@@ -47,22 +48,6 @@ const zodAuthSchema = z.object({
         "Password has to be at least 8 chars long and contain: 1 uppercase, 1 symbol and 1 number",
     }),
 });
-
-const AuthLink = ({ type }: TAuthKeys) => {
-  return (
-    <Text color={"blackAlpha.800"} mt={"6"}>
-      {type === AuthTypes.Login
-        ? "Don't have an account? "
-        : "Already have an account? "}
-      <Link
-        color={"blue.600"}
-        href={type === AuthTypes.Login ? "/auth/sign-up" : "/auth/sign-in"}
-      >
-        {type === AuthTypes.Login ? "Create new account here" : "Sign in here"}
-      </Link>
-    </Text>
-  );
-};
 
 type AuthSchema = z.infer<typeof zodAuthSchema>;
 

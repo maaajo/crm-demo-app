@@ -19,6 +19,11 @@ const getText = (type: string) => {
         "Forgot password?",
         "No worries, we'll send you reset instructions"
       );
+    case AuthTypes.Change:
+      return createReturnObject(
+        "Choose new password",
+        "Almost there! Enter your new password and you're all set."
+      );
     default:
       return createReturnObject("", "");
   }

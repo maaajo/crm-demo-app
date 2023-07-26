@@ -135,7 +135,7 @@ const ForgotPassword = () => {
     >
       <AuthHeader type="forgot" />
       <chakra.form>
-        <VStack spacing={"4"} width={"md"} alignItems={"flex-end"}>
+        <VStack spacing={"4"} width={"md"}>
           <FormControl isInvalid={Boolean(errors.email)}>
             <FormLabel fontWeight={"bold"}>Enter your email</FormLabel>
             <EmailInput

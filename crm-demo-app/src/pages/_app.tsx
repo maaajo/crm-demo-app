@@ -8,6 +8,7 @@ import { InputTheme } from "@/theme/inputTheme";
 import { createBrowserSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { SessionContextProvider, Session } from "@supabase/auth-helpers-react";
 import { useState } from "react";
+import { SupabaseClient } from "@/lib/supabase";
 
 const theme = extendTheme({
   fonts: {
@@ -25,7 +26,7 @@ export default function App({
   Component,
   pageProps,
 }: AppProps<{ initialSession: Session }>) {
-  const [supabaseClient] = useState(() => createBrowserSupabaseClient());
+  const [supabaseClient] = useState(() => SupabaseClient.instance);
 
   return (
     <>

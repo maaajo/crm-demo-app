@@ -9,6 +9,7 @@ import { useState } from "react";
 import { SupabaseClient } from "@/lib/supabase";
 
 const theme = extendTheme({
+  // the below needs to be changed: https://codesandbox.io/s/extend-variants-demo-0nhtc?file=/src/theme/index.ts
   variants: {
     secondary: (props: StyleFunctionProps) => ({
       ...props.theme.components.Button.variants.outline(props),

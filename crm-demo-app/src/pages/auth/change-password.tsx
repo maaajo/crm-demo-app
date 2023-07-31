@@ -6,6 +6,8 @@ import {
   FormLabel,
   VStack,
   chakra,
+  useToast,
+  useDisclosure,
 } from "@chakra-ui/react";
 import AuthHeader from "@/components/auth-header";
 import PasswordInput from "@/components/password-input";
@@ -14,6 +16,8 @@ import validator from "validator";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
+import AuthModal from "@/components/auth-modal";
+import { routes } from "@/lib/routes";
 
 const zodChangePasswordSchema = z
   .object({
@@ -41,6 +45,8 @@ type ChangePasswordSchema = z.infer<typeof zodChangePasswordSchema>;
 
 const PasswordRecovery = () => {
   const supabase = useSupabaseClient();
+  const toast = useToast();
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const {
     register,
@@ -57,7 +63,24 @@ const PasswordRecovery = () => {
   const onSubmit: SubmitHandler<ChangePasswordSchema> = async (
     changePasswordData
   ) => {
-    console.log(changePasswordData);
+    const { data, error } = await supabase.auth.updateUser({
+      password: changePasswordData.password,
+    });
+
+    if (error?.message) {
+      toast({
+        title: "Failed to update password ",
+        description: error.message,
+        status: "error",
+        isClosable: true,
+        position: "top",
+        duration: 10000,
+      });
+
+      return;
+    }
+
+    onOpen();
   };
 
   return (
@@ -120,6 +143,14 @@ const PasswordRecovery = () => {
           </Button>
         </VStack>
       </chakra.form>
+      <AuthModal
+        isOpen={isOpen}
+        onClose={onClose}
+        headingText="Password has been changed"
+        bodyText="You're now logged in and set to go!"
+        buttonHref={"/"}
+        buttonText="Go back to home"
+      />
     </Box>
   );
 };

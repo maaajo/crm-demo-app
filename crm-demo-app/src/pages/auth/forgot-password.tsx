@@ -26,6 +26,7 @@ import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import AuthLink from "@/components/auth-link";
 import { routes } from "@/lib/routes";
 import { Link } from "@chakra-ui/next-js";
+import AuthModal from "@/components/auth-modal";
 
 const zodForgotSchema = z.object({
   email: z
@@ -35,56 +36,6 @@ const zodForgotSchema = z.object({
 });
 
 type ForgotSchema = z.infer<typeof zodForgotSchema>;
-
-type ConfirmationModalProps = {
-  isOpen: boolean;
-  onClose: () => void;
-};
-
-const ConfirmationModal = ({ isOpen, onClose }: ConfirmationModalProps) => {
-  return (
-    <Modal
-      closeOnOverlayClick={false}
-      isOpen={isOpen}
-      onClose={onClose}
-      isCentered
-    >
-      <ModalOverlay
-        bg="blackAlpha.300"
-        backdropFilter="blur(10px) hue-rotate(90deg)"
-      />
-      <ModalContent>
-        <ModalCloseButton />
-        <ModalBody textAlign={"center"} mt={20} mb={6}>
-          <Heading size={"md"} as={"h5"}>
-            Email has been sent!
-          </Heading>
-          <Text mt={"5"} color={"blackAlpha.700"}>
-            Please check your inbox and click on the received link to reset a
-            password
-          </Text>
-        </ModalBody>
-
-        <ModalFooter display={"flex"} justifyContent={"center"} width={"full"}>
-          <Button
-            as={Link}
-            href={routes.auth.signIn}
-            width={"full"}
-            variant={"solid"}
-            color={"white"}
-            _hover={{
-              bgColor: "blackAlpha.800",
-              textDecoration: "none",
-            }}
-            bgColor={"black"}
-          >
-            Go back to sign in
-          </Button>
-        </ModalFooter>
-      </ModalContent>
-    </Modal>
-  );
-};
 
 const ForgotPassword = () => {
   const toast = useToast();
@@ -170,7 +121,14 @@ const ForgotPassword = () => {
         </VStack>
       </chakra.form>
       <AuthLink type="forgot" />
-      <ConfirmationModal isOpen={isOpen} onClose={onClose} />
+      <AuthModal
+        isOpen={isOpen}
+        onClose={onClose}
+        headingText="Email has been sent!"
+        bodyText="Please check your inbox and click on the received link to reset a password"
+        buttonHref={routes.auth.signIn}
+        buttonText="Go back to sign in"
+      />
     </Box>
   );
 };

@@ -1,4 +1,6 @@
 import type { AppProps } from "next/app";
+import type { NextPage } from "next";
+import type { ReactElement, ReactNode } from "react";
 import { ChakraProvider } from "@chakra-ui/react";
 import { Inter } from "next/font/google";
 import { extendTheme, StyleFunctionProps } from "@chakra-ui/react";
@@ -27,11 +29,25 @@ const theme = extendTheme({
 
 const inter = Inter({ subsets: ["latin"] });
 
+// TODO:
+//needs testing if it works correctly with logging in
+// add layout for auth
+
+export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
+  getLayout?: (page: ReactElement) => ReactNode;
+};
+
+type AppPropsWithLayout<T = any> = AppProps<T> & {
+  Component: NextPageWithLayout<T>;
+};
+
 export default function App({
   Component,
   pageProps,
-}: AppProps<{ initialSession: Session }>) {
+}: AppPropsWithLayout<{ initialSession: Session }>) {
   const [supabaseClient] = useState(() => SupabaseClient.instance);
+
+  const getLayout = Component.getLayout;
 
   return (
     <>
@@ -47,9 +63,13 @@ export default function App({
         initialSession={pageProps.initialSession}
       >
         <ChakraProvider theme={theme}>
-          <Layout>
-            <Component {...pageProps} />
-          </Layout>
+          {getLayout ? (
+            getLayout(<Component {...pageProps} />)
+          ) : (
+            <Layout>
+              <Component {...pageProps} />
+            </Layout>
+          )}
         </ChakraProvider>
       </SessionContextProvider>
     </>

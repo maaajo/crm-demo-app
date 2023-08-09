@@ -7,15 +7,7 @@ import {
   VStack,
   chakra,
   useToast,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalCloseButton,
-  ModalBody,
-  ModalFooter,
   useDisclosure,
-  Text,
-  Heading,
 } from "@chakra-ui/react";
 import AuthHeader from "@/components/auth-header";
 import EmailInput from "@/components/email-input";
@@ -25,8 +17,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import AuthLink from "@/components/auth-link";
 import { routes } from "@/lib/routes";
-import { Link } from "@chakra-ui/next-js";
 import AuthModal from "@/components/auth-modal";
+import { NextPageWithLayout } from "../_app";
+import { ReactElement } from "react";
+import AuthLayout from "../auth-layout";
 
 const zodForgotSchema = z.object({
   email: z
@@ -37,7 +31,7 @@ const zodForgotSchema = z.object({
 
 type ForgotSchema = z.infer<typeof zodForgotSchema>;
 
-const ForgotPassword = () => {
+const ForgotPassword: NextPageWithLayout = () => {
   const toast = useToast();
   const supabase = useSupabaseClient();
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -132,5 +126,9 @@ const ForgotPassword = () => {
     </Box>
   );
 };
+
+ForgotPassword.getLayout = (page: ReactElement) => (
+  <AuthLayout>{page}</AuthLayout>
+);
 
 export default ForgotPassword;

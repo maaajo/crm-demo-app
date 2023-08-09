@@ -18,6 +18,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import AuthModal from "@/components/auth-modal";
 import { routes } from "@/lib/routes";
+import { NextPageWithLayout } from "../_app";
+import { ReactElement } from "react";
+import AuthLayout from "../auth-layout";
 
 const zodChangePasswordSchema = z
   .object({
@@ -43,7 +46,7 @@ const zodChangePasswordSchema = z
 
 type ChangePasswordSchema = z.infer<typeof zodChangePasswordSchema>;
 
-const PasswordRecovery = () => {
+const PasswordRecovery: NextPageWithLayout = () => {
   const supabase = useSupabaseClient();
   const toast = useToast();
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -154,5 +157,9 @@ const PasswordRecovery = () => {
     </Box>
   );
 };
+
+PasswordRecovery.getLayout = (page: ReactElement) => (
+  <AuthLayout>{page}</AuthLayout>
+);
 
 export default PasswordRecovery;

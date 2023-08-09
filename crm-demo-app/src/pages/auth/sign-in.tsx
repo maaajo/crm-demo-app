@@ -1,5 +1,5 @@
 import Auth from "@/components/auth";
-import { redirectToHomeOnSignedIn } from "@/lib/auth/methods";
+import { RedirectCheckType, checkPossibleRedirect } from "@/lib/auth/methods";
 import { GetServerSideProps } from "next";
 import type { NextPageWithLayout } from "../_app";
 import type { ReactElement } from "react";
@@ -10,7 +10,20 @@ const SignIn: NextPageWithLayout = () => {
 };
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  return await redirectToHomeOnSignedIn(ctx);
+  const redirectPage = await checkPossibleRedirect(ctx, RedirectCheckType.Auth);
+
+  if (redirectPage) {
+    return {
+      redirect: {
+        destination: redirectPage,
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {},
+  };
 };
 
 SignIn.getLayout = (page: ReactElement) => <AuthLayout>{page}</AuthLayout>;

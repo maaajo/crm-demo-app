@@ -17,10 +17,12 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import AuthModal from "@/components/auth-modal";
-import { routes } from "@/lib/routes";
 import { NextPageWithLayout } from "../_app";
 import { ReactElement } from "react";
 import AuthLayout from "../auth-layout";
+import { GetServerSideProps } from "next";
+import { checkPossibleRedirect } from "@/lib/auth/methods";
+import { RedirectCheckType } from "@/lib/auth/methods";
 
 const zodChangePasswordSchema = z
   .object({
@@ -161,5 +163,22 @@ const PasswordRecovery: NextPageWithLayout = () => {
 PasswordRecovery.getLayout = (page: ReactElement) => (
   <AuthLayout>{page}</AuthLayout>
 );
+
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const redirectPage = await checkPossibleRedirect(ctx, RedirectCheckType.Auth);
+
+  if (redirectPage) {
+    return {
+      redirect: {
+        destination: redirectPage,
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {},
+  };
+};
 
 export default PasswordRecovery;

@@ -21,6 +21,8 @@ import AuthModal from "@/components/auth-modal";
 import { NextPageWithLayout } from "../_app";
 import { ReactElement } from "react";
 import AuthLayout from "../auth-layout";
+import { GetServerSideProps } from "next";
+import { RedirectCheckType, checkPossibleRedirect } from "@/lib/auth/methods";
 
 const zodForgotSchema = z.object({
   email: z
@@ -130,5 +132,22 @@ const ForgotPassword: NextPageWithLayout = () => {
 ForgotPassword.getLayout = (page: ReactElement) => (
   <AuthLayout>{page}</AuthLayout>
 );
+
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const redirectPage = await checkPossibleRedirect(ctx, RedirectCheckType.Auth);
+
+  if (redirectPage) {
+    return {
+      redirect: {
+        destination: redirectPage,
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {},
+  };
+};
 
 export default ForgotPassword;

@@ -12,6 +12,8 @@ const SignIn: NextPageWithLayout = () => {
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const redirectPage = await checkPossibleRedirect(ctx, RedirectCheckType.Auth);
 
+  console.log(redirectPage);
+
   if (redirectPage) {
     return {
       redirect: {

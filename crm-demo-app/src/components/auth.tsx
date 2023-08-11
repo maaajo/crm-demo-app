@@ -100,6 +100,9 @@ const Auth = ({ type }: TAuthKeys) => {
   const onGithubLogin = async () => {
     const { data: _, error } = await supabase.auth.signInWithOAuth({
       provider: "github",
+      options: {
+        redirectTo: `${process.env.NEXT_PUBLIC_DEV_URL}${routes.auth.provider}?refresh=true`,
+      },
     });
 
     if (error?.message) {
@@ -117,6 +120,9 @@ const Auth = ({ type }: TAuthKeys) => {
   const onGoogleLogin = async () => {
     const { data: _, error } = await supabase.auth.signInWithOAuth({
       provider: "google",
+      options: {
+        redirectTo: `${process.env.NEXT_PUBLIC_DEV_URL}${routes.auth.provider}?refresh=true`,
+      },
     });
 
     if (error?.message) {

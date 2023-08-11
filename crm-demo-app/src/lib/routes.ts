@@ -1,11 +1,12 @@
-const authKeyword = "auth";
+const authMainPath = "auth";
 
 export const routes = {
   auth: {
-    signIn: `/${authKeyword}/sign-in`,
-    signOut: `/${authKeyword}/sign-out`,
-    forgot: `/${authKeyword}/forgot-password`,
-    signUp: `/${authKeyword}/sign-up`,
-    passwordRecovery: `/${authKeyword}/change-password`,
+    signIn: `/${authMainPath}/sign-in`,
+    signOut: `/${authMainPath}/sign-out`,
+    forgot: `/${authMainPath}/forgot-password`,
+    signUp: `/${authMainPath}/sign-up`,
+    passwordRecovery: `/${authMainPath}/change-password`,
+    provider: `/${authMainPath}/provider`,
   },
 };

@@ -101,7 +101,7 @@ const Auth = ({ type }: TAuthKeys) => {
     const { data: _, error } = await supabase.auth.signInWithOAuth({
       provider: "github",
       options: {
-        redirectTo: `${process.env.NEXT_PUBLIC_DEV_URL}${routes.auth.provider}?refresh=true`,
+        redirectTo: `${process.env.NEXT_PUBLIC_URL}${routes.auth.provider}`,
       },
     });
 
@@ -121,7 +121,7 @@ const Auth = ({ type }: TAuthKeys) => {
     const { data: _, error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: `${process.env.NEXT_PUBLIC_DEV_URL}${routes.auth.provider}?refresh=true`,
+        redirectTo: `${process.env.NEXT_PUBLIC_URL}${routes.auth.provider}`,
       },
     });
 

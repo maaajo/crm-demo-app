@@ -7,6 +7,7 @@ const SignOut = () => {
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const supabase = createServerSupabaseClient(ctx);
+  console.log(ctx);
 
   const { error } = await supabase.auth.signOut();
 
@@ -18,12 +19,13 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
       },
     };
   } else {
-    console.log(error);
+    return {
+      redirect: {
+        destination: `/?error=${error.message}`,
+        permanent: false,
+      },
+    };
   }
-
-  return {
-    props: {},
-  };
 };
 
 export default SignOut;

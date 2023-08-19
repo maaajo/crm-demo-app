@@ -1,12 +1,20 @@
-const authMainPath = "auth";
+export const mainPages = {
+  auth: "auth",
+  accounts: "accounts",
+  home: "home",
+};
 
 export const routes = {
+  home: "/",
+  accounts: {
+    index: `/${mainPages.accounts}`,
+  },
   auth: {
-    signIn: `/${authMainPath}/sign-in`,
-    signOut: `/${authMainPath}/sign-out`,
-    forgot: `/${authMainPath}/forgot-password`,
-    signUp: `/${authMainPath}/sign-up`,
-    passwordRecovery: `/${authMainPath}/change-password`,
-    provider: `/${authMainPath}/provider`,
+    signIn: `/${mainPages.auth}/sign-in`,
+    signOut: `/${mainPages.auth}/sign-out`,
+    forgot: `/${mainPages.auth}/forgot-password`,
+    signUp: `/${mainPages.auth}/sign-up`,
+    passwordRecovery: `/${mainPages.auth}/change-password`,
+    provider: `/${mainPages.auth}/provider`,
   },
 };

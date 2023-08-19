@@ -6,8 +6,6 @@ export default function Home() {
   return <Box fontWeight={"extrabold"}>test</Box>;
 }
 
-//below needs check, somehow session is not available when this call is made
-
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const redirectPage = await checkPossibleRedirect(ctx, RedirectCheckType.Main);
 

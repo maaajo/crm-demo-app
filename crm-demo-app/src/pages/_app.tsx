@@ -29,10 +29,6 @@ const theme = extendTheme({
 
 const inter = Inter({ subsets: ["latin"] });
 
-// TODO:
-//needs testing if it works correctly with logging in
-// add layout for auth
-
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode;
 };

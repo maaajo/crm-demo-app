@@ -33,3 +33,23 @@ export const checkPossibleRedirect = async (
 
   return "";
 };
+
+export const getServerSideAuthUserEmail = async (
+  ctx: GetServerSidePropsContext
+) => {
+  const supabase = createServerSupabaseClient(ctx);
+  const { data, error } = await supabase.auth.getUser();
+
+  if (error) {
+    console.error(error.message);
+    return "";
+  }
+
+  let userEmail = "";
+
+  if (data.user) {
+    userEmail = data.user.email ?? "";
+  }
+
+  return userEmail;
+};

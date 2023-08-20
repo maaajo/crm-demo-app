@@ -126,7 +126,7 @@ const Sidebar = ({ email }: SidebarProps) => {
           <Text fontWeight={"semibold"} fontSize={"sm"}>
             {email}
           </Text>
-          <Menu>
+          <Menu placement={"right-end"}>
             <MenuButton
               as={IconButton}
               aria-label="Open more actions for account"

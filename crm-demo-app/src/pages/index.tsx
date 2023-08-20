@@ -1,12 +1,18 @@
 import { Box } from "@chakra-ui/react";
 import { GetServerSideProps } from "next";
-import { checkPossibleRedirect, RedirectCheckType } from "@/lib/auth/methods";
+import {
+  checkPossibleRedirect,
+  getServerSideAuthUserEmail,
+  RedirectCheckType,
+} from "@/lib/auth/methods";
 
 export default function Home() {
   return <Box fontWeight={"extrabold"}>test</Box>;
 }
 
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
+export const getServerSideProps: GetServerSideProps<{
+  userEmail: string;
+}> = async (ctx) => {
   const redirectPage = await checkPossibleRedirect(ctx, RedirectCheckType.Main);
 
   if (redirectPage) {
@@ -18,7 +24,9 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     };
   }
 
+  const userEmail = await getServerSideAuthUserEmail(ctx);
+
   return {
-    props: {},
+    props: { userEmail },
   };
 };

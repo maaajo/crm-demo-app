@@ -1,21 +1,13 @@
 import { ReactNode } from "react";
 import { Flex } from "@chakra-ui/react";
-import { useUser } from "@supabase/auth-helpers-react";
 import Sidebar from "@/components/sidebar";
 
-interface LayoutProps {
+type LayoutProps = {
   children?: ReactNode;
-}
+  userEmail: string;
+};
 
-const Layout = (props: LayoutProps) => {
-  const { children } = props;
-  const user = useUser();
-  let userEmail = "";
-
-  if (user) {
-    userEmail = user.email ?? "placeholder@gmail.com";
-  }
-
+const Layout = ({ children, userEmail }: LayoutProps) => {
   return (
     <Flex>
       <Sidebar email={userEmail} />

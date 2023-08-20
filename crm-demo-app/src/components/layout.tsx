@@ -11,7 +11,7 @@ const Layout = ({ children, userEmail }: LayoutProps) => {
   return (
     <Flex>
       <Sidebar email={userEmail} />
-      <Flex ml={"64"} pl={"4"}>
+      <Flex minH={"100vh"} ml={"64"} pl={"4"}>
         {children}
       </Flex>
     </Flex>

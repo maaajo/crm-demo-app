@@ -19,7 +19,7 @@ import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import AuthModal from "@/components/auth-modal";
 import { NextPageWithLayout } from "../_app";
 import { ReactElement } from "react";
-import AuthLayout from "../auth-layout";
+import AuthLayout from "../../components/auth-layout";
 import { GetServerSideProps } from "next";
 import { checkPossibleRedirect } from "@/lib/auth/methods";
 import { RedirectCheckType } from "@/lib/auth/methods";

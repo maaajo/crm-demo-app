@@ -20,7 +20,7 @@ import { routes } from "@/lib/routes";
 import AuthModal from "@/components/auth-modal";
 import { NextPageWithLayout } from "../_app";
 import { ReactElement } from "react";
-import AuthLayout from "../auth-layout";
+import AuthLayout from "../../components/auth-layout";
 import { GetServerSideProps } from "next";
 import { RedirectCheckType, checkPossibleRedirect } from "@/lib/auth/methods";
 

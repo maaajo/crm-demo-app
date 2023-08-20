@@ -3,7 +3,7 @@ import { RedirectCheckType, checkPossibleRedirect } from "@/lib/auth/methods";
 import { GetServerSideProps } from "next";
 import type { NextPageWithLayout } from "../_app";
 import type { ReactElement } from "react";
-import AuthLayout from "../auth-layout";
+import AuthLayout from "../../components/auth-layout";
 
 const SignIn: NextPageWithLayout = () => {
   return <Auth type="login" />;

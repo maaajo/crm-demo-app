@@ -4,7 +4,7 @@ import type { ReactElement, ReactNode } from "react";
 import { ChakraProvider } from "@chakra-ui/react";
 import { Inter } from "next/font/google";
 import { extendTheme, StyleFunctionProps } from "@chakra-ui/react";
-import Layout from "./layout";
+import Layout from "../components/layout";
 import { InputTheme } from "@/theme/inputTheme";
 import { SessionContextProvider, Session } from "@supabase/auth-helpers-react";
 import { useState } from "react";
@@ -12,10 +12,17 @@ import { SupabaseClient } from "@/lib/supabase";
 
 const theme = extendTheme({
   // the below needs to be changed: https://codesandbox.io/s/extend-variants-demo-0nhtc?file=/src/theme/index.ts
-  variants: {
-    secondary: (props: StyleFunctionProps) => ({
-      ...props.theme.components.Button.variants.outline(props),
-      color: "green.500",
+  // variants: {
+  //   secondary: (props: StyleFunctionProps) => ({
+  //     ...props.theme.components.Button.variants.outline(props),
+  //     color: "green.500",
+  //   }),
+  // },
+  styles: {
+    global: () => ({
+      body: {
+        background: "blackAlpha.300",
+      },
     }),
   },
   fonts: {

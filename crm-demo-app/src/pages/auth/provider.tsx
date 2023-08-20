@@ -3,7 +3,7 @@ import { useSessionContext } from "@supabase/auth-helpers-react";
 import { useRouter } from "next/router";
 import { NextPageWithLayout } from "../_app";
 import { ReactElement } from "react";
-import AuthLayout from "../auth-layout";
+import AuthLayout from "../../components/auth-layout";
 import { Flex, Spinner, Text } from "@chakra-ui/react";
 import { useToast } from "@chakra-ui/react";
 

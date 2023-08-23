@@ -8,7 +8,11 @@ type AuthLayoutProps = {
 const AuthLayout = (props: AuthLayoutProps) => {
   const { children } = props;
 
-  return <Flex minHeight="100vh">{children}</Flex>;
+  return (
+    <Flex minHeight="100vh" backgroundColor={"white"}>
+      {children}
+    </Flex>
+  );
 };
 
 export default AuthLayout;

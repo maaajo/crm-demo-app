@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { Flex } from "@chakra-ui/react";
+import { Flex, Box } from "@chakra-ui/react";
 import Sidebar from "@/components/sidebar";
 import { config } from "@/lib/config/config";
 
@@ -10,10 +10,21 @@ type LayoutProps = {
 
 const Layout = ({ children, userEmail }: LayoutProps) => {
   return (
-    <Flex>
+    <Flex minH={"100vh"}>
       <Sidebar email={userEmail} />
       <Flex flex={1} ml={config.style.sidebarWidth} px={"10"} py={"8"}>
-        {children}
+        <Box
+          w={"full"}
+          py={"10"}
+          px={"4"}
+          backgroundColor={"whiteAlpha.600"}
+          borderRadius={"lg"}
+          boxShadow={"sm"}
+          borderWidth={"thin"}
+          borderColor={"blackAlpha.300"}
+        >
+          {children}
+        </Box>
       </Flex>
     </Flex>
   );

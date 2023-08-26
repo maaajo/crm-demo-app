@@ -8,6 +8,7 @@ export const routes = {
   home: "/",
   accounts: {
     index: `/${mainPages.accounts}`,
+    new: `/${mainPages.accounts}/new`,
   },
   auth: {
     signIn: `/${mainPages.auth}/sign-in`,

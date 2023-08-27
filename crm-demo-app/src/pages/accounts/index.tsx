@@ -3,15 +3,17 @@ import {
   checkPossibleRedirect,
   getServerSideAuthUserEmail,
 } from "@/lib/auth/methods";
-import { Box, Text, VStack, Button } from "@chakra-ui/react";
+import { Text, VStack, Button } from "@chakra-ui/react";
 import { GetServerSideProps } from "next";
 import { useState } from "react";
 import { Users2, Plus } from "lucide-react";
 import { Icon } from "@chakra-ui/react";
 import { Link } from "@chakra-ui/next-js";
 import { routes } from "@/lib/routes";
+import Head from "next/head";
+import { config } from "@/lib/config/config";
 
-const EmptyState = () => {
+function EmptyState() {
   return (
     <VStack py={"10"} spacing={5}>
       <Icon as={Users2} boxSize={"12"} color={"black"} />
@@ -39,12 +41,19 @@ const EmptyState = () => {
       </Button>
     </VStack>
   );
-};
+}
 
 export default function AccountsHome() {
   const [accounts, setAccounts] = useState(() => []);
 
-  return accounts.length ? null : <EmptyState />;
+  return (
+    <>
+      <Head>
+        <title>{config.appName} - Accounts</title>
+      </Head>
+      {accounts.length ? null : <EmptyState />}
+    </>
+  );
 }
 
 export const getServerSideProps: GetServerSideProps<{
@@ -64,6 +73,6 @@ export const getServerSideProps: GetServerSideProps<{
   const userEmail = await getServerSideAuthUserEmail(ctx);
 
   return {
-    props: { userEmail },
+    props: { userEmail, pageTitle: "Accounts" },
   };
 };

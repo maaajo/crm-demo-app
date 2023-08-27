@@ -5,9 +5,18 @@ import {
   getServerSideAuthUserEmail,
   RedirectCheckType,
 } from "@/lib/auth/methods";
+import Head from "next/head";
+import { config } from "@/lib/config/config";
 
 export default function Home() {
-  return <Box fontWeight={"extrabold"}>test</Box>;
+  return (
+    <>
+      <Head>
+        <title>{config.appName} - Home</title>
+      </Head>
+      <Box fontWeight={"extrabold"}>test</Box>
+    </>
+  );
 }
 
 export const getServerSideProps: GetServerSideProps<{

@@ -4,9 +4,18 @@ import { RedirectCheckType, checkPossibleRedirect } from "@/lib/auth/methods";
 import type { NextPageWithLayout } from "../_app";
 import { ReactElement } from "react";
 import AuthLayout from "../../components/auth-layout";
+import Head from "next/head";
+import { config } from "@/lib/config/config";
 
 const SignUp: NextPageWithLayout = () => {
-  return <Auth type="register" />;
+  return (
+    <>
+      <Head>
+        <title>{config.appName} - Sign Up</title>
+      </Head>
+      <Auth type="register" />;
+    </>
+  );
 };
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {

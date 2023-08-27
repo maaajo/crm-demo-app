@@ -23,6 +23,8 @@ import AuthLayout from "../../components/auth-layout";
 import { GetServerSideProps } from "next";
 import { checkPossibleRedirect } from "@/lib/auth/methods";
 import { RedirectCheckType } from "@/lib/auth/methods";
+import Head from "next/head";
+import { config } from "@/lib/config/config";
 
 const zodChangePasswordSchema = z
   .object({
@@ -89,74 +91,79 @@ const PasswordRecovery: NextPageWithLayout = () => {
   };
 
   return (
-    <Box
-      width={"full"}
-      display={"flex"}
-      justifyContent={"center"}
-      alignItems={"center"}
-      flexDirection={"column"}
-    >
-      <AuthHeader type="change" />
-      <chakra.form>
-        <VStack spacing={"4"} width={"md"} alignItems={"flex-end"}>
-          <FormControl isInvalid={Boolean(errors.password)}>
-            <FormLabel fontWeight={"bold"}>Password</FormLabel>
-            <PasswordInput
-              {...passwordRest}
-              name={"password"}
-              passwordRef={(e) => {
-                formPasswordRef(e);
+    <>
+      <Head>
+        <title>{config.appName} - Change Password</title>
+      </Head>
+      <Box
+        width={"full"}
+        display={"flex"}
+        justifyContent={"center"}
+        alignItems={"center"}
+        flexDirection={"column"}
+      >
+        <AuthHeader type="change" />
+        <chakra.form>
+          <VStack spacing={"4"} width={"md"} alignItems={"flex-end"}>
+            <FormControl isInvalid={Boolean(errors.password)}>
+              <FormLabel fontWeight={"bold"}>Password</FormLabel>
+              <PasswordInput
+                {...passwordRest}
+                name={"password"}
+                passwordRef={(e) => {
+                  formPasswordRef(e);
+                }}
+                isDisabled={isSubmitting}
+              />
+              {errors.password && (
+                <FormErrorMessage>
+                  {errors.password.message!.toString()}
+                </FormErrorMessage>
+              )}
+            </FormControl>
+            <FormControl isInvalid={Boolean(errors["password-confirm"])}>
+              <FormLabel fontWeight={"bold"}>Confirm Password</FormLabel>
+              <PasswordInput
+                {...passwordConfirmRest}
+                name={"password-confirm"}
+                passwordRef={(e) => {
+                  formConfirmPasswordRef(e);
+                }}
+                isDisabled={isSubmitting}
+              />
+              {errors["password-confirm"] && (
+                <FormErrorMessage>
+                  {errors["password-confirm"].message!.toString()}
+                </FormErrorMessage>
+              )}
+            </FormControl>
+            <Button
+              variant={"solid"}
+              width={"full"}
+              type={"submit"}
+              bgColor={"black"}
+              color={"white"}
+              _hover={{
+                bgColor: "blackAlpha.800",
               }}
-              isDisabled={isSubmitting}
-            />
-            {errors.password && (
-              <FormErrorMessage>
-                {errors.password.message!.toString()}
-              </FormErrorMessage>
-            )}
-          </FormControl>
-          <FormControl isInvalid={Boolean(errors["password-confirm"])}>
-            <FormLabel fontWeight={"bold"}>Confirm Password</FormLabel>
-            <PasswordInput
-              {...passwordConfirmRest}
-              name={"password-confirm"}
-              passwordRef={(e) => {
-                formConfirmPasswordRef(e);
-              }}
-              isDisabled={isSubmitting}
-            />
-            {errors["password-confirm"] && (
-              <FormErrorMessage>
-                {errors["password-confirm"].message!.toString()}
-              </FormErrorMessage>
-            )}
-          </FormControl>
-          <Button
-            variant={"solid"}
-            width={"full"}
-            type={"submit"}
-            bgColor={"black"}
-            color={"white"}
-            _hover={{
-              bgColor: "blackAlpha.800",
-            }}
-            isLoading={isSubmitting}
-            loadingText={"Changing password..."}
-            onClick={handleSubmit(onSubmit)}
-          >
-            Set New Password
-          </Button>
-        </VStack>
-      </chakra.form>
-      <AuthModal
-        isOpen={isOpen}
-        onClose={onClose}
-        headingText="Password has been changed"
-        bodyText="You're now logged in and set to go!"
-        buttonHref={"/"}
-        buttonText="Go back to home"
-      />
-    </Box>
+              isLoading={isSubmitting}
+              loadingText={"Changing password..."}
+              onClick={handleSubmit(onSubmit)}
+            >
+              Set New Password
+            </Button>
+          </VStack>
+        </chakra.form>
+        <AuthModal
+          isOpen={isOpen}
+          onClose={onClose}
+          headingText="Password has been changed"
+          bodyText="You're now logged in and set to go!"
+          buttonHref={"/"}
+          buttonText="Go back to home"
+        />
+      </Box>
+    </>
   );
 };
 

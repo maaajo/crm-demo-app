@@ -4,9 +4,18 @@ import { GetServerSideProps } from "next";
 import type { NextPageWithLayout } from "../_app";
 import type { ReactElement } from "react";
 import AuthLayout from "../../components/auth-layout";
+import Head from "next/head";
+import { config } from "@/lib/config/config";
 
 const SignIn: NextPageWithLayout = () => {
-  return <Auth type="login" />;
+  return (
+    <>
+      <Head>
+        <title>{config.appName} - Sign In</title>
+      </Head>
+      <Auth type="login" />;
+    </>
+  );
 };
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {

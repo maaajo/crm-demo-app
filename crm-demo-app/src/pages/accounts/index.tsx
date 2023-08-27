@@ -49,7 +49,7 @@ export default function AccountsHome() {
   return (
     <>
       <Head>
-        <title>{config.appName} - Accounts</title>
+        <title>{`${config.appName} - Accounts`}</title>
       </Head>
       {accounts.length ? null : <EmptyState />}
     </>

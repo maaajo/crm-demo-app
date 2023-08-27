@@ -34,7 +34,7 @@ const ProviderAuthRedirect: NextPageWithLayout = () => {
   return (
     <>
       <Head>
-        <title>{config.appName} - Provider Redirect</title>
+        <title>{`${config.appName} - Provider Redirect`}</title>
       </Head>
       <Flex
         justifyContent={"center"}

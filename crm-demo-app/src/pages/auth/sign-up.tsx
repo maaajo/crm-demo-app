@@ -11,7 +11,7 @@ const SignUp: NextPageWithLayout = () => {
   return (
     <>
       <Head>
-        <title>{config.appName} - Sign Up</title>
+        <title>{`${config.appName} - Sign Up`}</title>
       </Head>
       <Auth type="register" />;
     </>

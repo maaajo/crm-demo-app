@@ -12,7 +12,7 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>{config.appName} - Home</title>
+        <title>{`${config.appName} - Home`}</title>
       </Head>
       <Box fontWeight={"extrabold"}>test</Box>
     </>

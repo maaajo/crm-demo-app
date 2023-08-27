@@ -77,7 +77,7 @@ const ForgotPassword: NextPageWithLayout = () => {
   return (
     <>
       <Head>
-        <title>{config.appName} - Forgot Password</title>
+        <title>{`${config.appName} - Forgot Password`}</title>
       </Head>
       <Box
         width={"full"}

@@ -26,7 +26,7 @@ const Layout = ({ children, userEmail }: LayoutProps) => {
           w={"full"}
           py={"6"}
           px={"4"}
-          backgroundColor={"whiteAlpha.600"}
+          backgroundColor={"whiteAlpha.800"}
           borderRadius={"lg"}
           boxShadow={"sm"}
           borderWidth={"thin"}

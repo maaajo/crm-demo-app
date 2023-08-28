@@ -49,9 +49,9 @@ const isNavItemActive = (path: string, href: string) => {
 };
 
 const NavItem = ({ icon, href, title }: NavItemProps) => {
-  const currentPage = usePathname();
+  const path = usePathname();
 
-  const isActive = isNavItemActive(currentPage, href);
+  const isActive = isNavItemActive(path, href);
 
   return (
     <Button

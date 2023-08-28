@@ -4,10 +4,23 @@ import {
   checkPossibleRedirect,
   getServerSideAuthUserEmail,
 } from "@/lib/auth/methods";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { GetServerSideProps } from "next";
+import { useForm, SubmitHandler } from "react-hook-form";
+import { Box, VStack } from "@chakra-ui/react";
 
 const AddNewAcount = () => {
-  return <PageTitle title="Add new account" />;
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm();
+
+  return (
+    <>
+      <PageTitle title="Add new account" />
+    </>
+  );
 };
 
 export const getServerSideProps: GetServerSideProps<{

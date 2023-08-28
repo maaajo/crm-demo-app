@@ -7,7 +7,6 @@ import { Button } from "@chakra-ui/react";
 import { ArrowLeftCircle } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { routes } from "@/lib/routes";
-import Head from "next/head";
 
 type LayoutProps = {
   children?: ReactNode;

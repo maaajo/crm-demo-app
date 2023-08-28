@@ -6,6 +6,8 @@ import { ReactElement } from "react";
 import AuthLayout from "../../components/auth-layout";
 import { Flex, Spinner, Text } from "@chakra-ui/react";
 import { useToast } from "@chakra-ui/react";
+import Head from "next/head";
+import { config } from "@/lib/config/config";
 
 const ProviderAuthRedirect: NextPageWithLayout = () => {
   const router = useRouter();
@@ -30,28 +32,33 @@ const ProviderAuthRedirect: NextPageWithLayout = () => {
   }, [isLoading, session]);
 
   return (
-    <Flex
-      justifyContent={"center"}
-      alignItems={"center"}
-      direction={"column"}
-      w={"full"}
-    >
-      <Text
-        mb={"4"}
-        fontSize={"xl"}
-        fontWeight={"semibold"}
-        letterSpacing={"tight"}
+    <>
+      <Head>
+        <title>{`${config.appName} - Provider Redirect`}</title>
+      </Head>
+      <Flex
+        justifyContent={"center"}
+        alignItems={"center"}
+        direction={"column"}
+        w={"full"}
       >
-        Redirecting...
-      </Text>
-      <Spinner
-        thickness="6px"
-        speed="0.65s"
-        emptyColor="gray.200"
-        color="blackAlpha.900"
-        size="xl"
-      />
-    </Flex>
+        <Text
+          mb={"4"}
+          fontSize={"xl"}
+          fontWeight={"semibold"}
+          letterSpacing={"tight"}
+        >
+          Redirecting...
+        </Text>
+        <Spinner
+          thickness="6px"
+          speed="0.65s"
+          emptyColor="gray.200"
+          color="blackAlpha.900"
+          size="xl"
+        />
+      </Flex>
+    </>
   );
 };
 

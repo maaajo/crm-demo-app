@@ -47,7 +47,10 @@ type AppPropsWithLayout<T = any> = AppProps<T> & {
 export default function App({
   Component,
   pageProps,
-}: AppPropsWithLayout<{ initialSession: Session; userEmail: string }>) {
+}: AppPropsWithLayout<{
+  initialSession: Session;
+  userEmail: string;
+}>) {
   const [supabaseClient] = useState(() => SupabaseClient.instance);
 
   const getLayout = Component.getLayout;

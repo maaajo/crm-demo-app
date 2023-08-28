@@ -54,6 +54,9 @@ const zodChangePasswordSchema = z
 
 type ChangePasswordSchema = z.infer<typeof zodChangePasswordSchema>;
 
+// add check for error in query:
+// http://localhost:3000/auth/change-password#error=unauthorized_client&error_code=401&error_description=Email+link+is+invalid+or+has+expired
+
 const PasswordRecovery: NextPageWithLayout = () => {
   const supabase = useSupabaseClient();
   const toast = useToast();

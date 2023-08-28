@@ -23,6 +23,8 @@ import { ReactElement } from "react";
 import AuthLayout from "../../components/auth-layout";
 import { GetServerSideProps } from "next";
 import { RedirectCheckType, checkPossibleRedirect } from "@/lib/auth/methods";
+import Head from "next/head";
+import { config } from "@/lib/config/config";
 
 const zodForgotSchema = z.object({
   email: z
@@ -73,59 +75,64 @@ const ForgotPassword: NextPageWithLayout = () => {
   };
 
   return (
-    <Box
-      width={"full"}
-      display={"flex"}
-      justifyContent={"center"}
-      alignItems={"center"}
-      flexDirection={"column"}
-    >
-      <AuthHeader type="forgot" />
-      <chakra.form>
-        <VStack spacing={"4"} width={"md"}>
-          <FormControl isInvalid={Boolean(errors.email)}>
-            <FormLabel fontWeight={"bold"}>Enter your email</FormLabel>
-            <EmailInput
-              {...emailRest}
-              name={"email"}
-              emailRef={(e) => {
-                formEmailRef(e);
+    <>
+      <Head>
+        <title>{`${config.appName} - Forgot Password`}</title>
+      </Head>
+      <Box
+        width={"full"}
+        display={"flex"}
+        justifyContent={"center"}
+        alignItems={"center"}
+        flexDirection={"column"}
+      >
+        <AuthHeader type="forgot" />
+        <chakra.form>
+          <VStack spacing={"4"} width={"md"}>
+            <FormControl isInvalid={Boolean(errors.email)}>
+              <FormLabel fontWeight={"bold"}>Enter your email</FormLabel>
+              <EmailInput
+                {...emailRest}
+                name={"email"}
+                emailRef={(e) => {
+                  formEmailRef(e);
+                }}
+                isDisabled={isSubmitting}
+              />
+              {errors.email && (
+                <FormErrorMessage>
+                  {errors.email.message!.toString()}
+                </FormErrorMessage>
+              )}
+            </FormControl>
+            <Button
+              variant={"solid"}
+              width={"full"}
+              type={"submit"}
+              bgColor={"black"}
+              color={"white"}
+              _hover={{
+                bgColor: "blackAlpha.800",
               }}
-              isDisabled={isSubmitting}
-            />
-            {errors.email && (
-              <FormErrorMessage>
-                {errors.email.message!.toString()}
-              </FormErrorMessage>
-            )}
-          </FormControl>
-          <Button
-            variant={"solid"}
-            width={"full"}
-            type={"submit"}
-            bgColor={"black"}
-            color={"white"}
-            _hover={{
-              bgColor: "blackAlpha.800",
-            }}
-            isLoading={isSubmitting}
-            loadingText={"Resetting..."}
-            onClick={handleSubmit(onSubmit)}
-          >
-            Reset Password
-          </Button>
-        </VStack>
-      </chakra.form>
-      <AuthLink type="forgot" />
-      <AuthModal
-        isOpen={isOpen}
-        onClose={onClose}
-        headingText="Email has been sent!"
-        bodyText="Please check your inbox and click on the received link to reset a password"
-        buttonHref={routes.auth.signIn}
-        buttonText="Go back to sign in"
-      />
-    </Box>
+              isLoading={isSubmitting}
+              loadingText={"Resetting..."}
+              onClick={handleSubmit(onSubmit)}
+            >
+              Reset Password
+            </Button>
+          </VStack>
+        </chakra.form>
+        <AuthLink type="forgot" />
+        <AuthModal
+          isOpen={isOpen}
+          onClose={onClose}
+          headingText="Email has been sent!"
+          bodyText="Please check your inbox and click on the received link to reset a password"
+          buttonHref={routes.auth.signIn}
+          buttonText="Go back to sign in"
+        />
+      </Box>
+    </>
   );
 };
 

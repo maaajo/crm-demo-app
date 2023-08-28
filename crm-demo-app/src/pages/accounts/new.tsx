@@ -1,3 +1,4 @@
+import PageTitle from "@/components/page-title";
 import {
   RedirectCheckType,
   checkPossibleRedirect,
@@ -6,7 +7,7 @@ import {
 import { GetServerSideProps } from "next";
 
 const AddNewAcount = () => {
-  return <div>Add new account</div>;
+  return <PageTitle title="Add new account" />;
 };
 
 export const getServerSideProps: GetServerSideProps<{

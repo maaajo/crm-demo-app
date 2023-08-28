@@ -3,7 +3,7 @@ import {
   checkPossibleRedirect,
   getServerSideAuthUserEmail,
 } from "@/lib/auth/methods";
-import { Text, VStack, Button } from "@chakra-ui/react";
+import { Text, VStack, Button, Heading } from "@chakra-ui/react";
 import { GetServerSideProps } from "next";
 import { useState } from "react";
 import { Users2, Plus } from "lucide-react";
@@ -12,6 +12,7 @@ import { Link } from "@chakra-ui/next-js";
 import { routes } from "@/lib/routes";
 import Head from "next/head";
 import { config } from "@/lib/config/config";
+import PageTitle from "@/components/page-title";
 
 function EmptyState() {
   return (
@@ -51,6 +52,7 @@ export default function AccountsHome() {
       <Head>
         <title>{`${config.appName} - Accounts`}</title>
       </Head>
+      <PageTitle title="Accounts" />
       {accounts.length ? null : <EmptyState />}
     </>
   );

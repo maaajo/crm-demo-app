@@ -21,29 +21,40 @@ const Layout = ({ children, userEmail }: LayoutProps) => {
   return (
     <Flex minH={"100vh"}>
       <Sidebar email={userEmail} />
-      <Flex flex={1} ml={config.style.sidebarWidth} px={"10"} py={"8"}>
+      <Flex
+        flex={1}
+        ml={config.style.sidebarWidth}
+        px={"10"}
+        py={"8"}
+        flexDirection={"column"}
+        justifyContent={"flex-start"}
+        alignItems={"flex-start"}
+      >
+        {path !== routes.home ? (
+          <Button
+            display={"inline-flex"}
+            variant={"unstyled"}
+            leftIcon={<ArrowLeftCircle />}
+            size={"sm"}
+            onClick={() => router.back()}
+            pb={4}
+          >
+            Go Back
+          </Button>
+        ) : null}
         <Box
           w={"full"}
-          py={"6"}
-          px={"4"}
+          px={"6"}
+          py={"2"}
           backgroundColor={"whiteAlpha.800"}
           borderRadius={"lg"}
           boxShadow={"sm"}
           borderWidth={"thin"}
           borderColor={"blackAlpha.300"}
+          display={"flex"}
+          flexDirection={"column"}
+          flex={1}
         >
-          {path !== routes.home ? (
-            <Button
-              display={"inline-flex"}
-              variant={"unstyled"}
-              leftIcon={<ArrowLeftCircle />}
-              size={"sm"}
-              onClick={() => router.back()}
-            >
-              Go Back
-            </Button>
-          ) : null}
-
           {children}
         </Box>
       </Flex>

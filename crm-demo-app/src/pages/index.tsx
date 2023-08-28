@@ -7,6 +7,7 @@ import {
 } from "@/lib/auth/methods";
 import Head from "next/head";
 import { config } from "@/lib/config/config";
+import PageTitle from "@/components/page-title";
 
 export default function Home() {
   return (
@@ -14,7 +15,7 @@ export default function Home() {
       <Head>
         <title>{`${config.appName} - Home`}</title>
       </Head>
-      <Box fontWeight={"extrabold"}>test</Box>
+      <PageTitle title="Home" />
     </>
   );
 }

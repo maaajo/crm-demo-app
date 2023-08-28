@@ -8,6 +8,7 @@ import {
   chakra,
   useToast,
   useDisclosure,
+  Text,
 } from "@chakra-ui/react";
 import AuthHeader from "@/components/auth-header";
 import PasswordInput from "@/components/password-input";
@@ -23,6 +24,11 @@ import AuthLayout from "../../components/auth-layout";
 import { GetServerSideProps } from "next";
 import { checkPossibleRedirect } from "@/lib/auth/methods";
 import { RedirectCheckType } from "@/lib/auth/methods";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
+import { Link } from "@chakra-ui/next-js";
+import { routes } from "@/lib/routes";
+import { ArrowLeft } from "lucide-react";
 
 const zodChangePasswordSchema = z
   .object({
@@ -52,6 +58,8 @@ const PasswordRecovery: NextPageWithLayout = () => {
   const supabase = useSupabaseClient();
   const toast = useToast();
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { asPath } = useRouter();
+  const [error, setError] = useState("");
 
   const {
     register,
@@ -88,6 +96,12 @@ const PasswordRecovery: NextPageWithLayout = () => {
     onOpen();
   };
 
+  useEffect(() => {
+    const hash = asPath.split("#")[1];
+    const parsedHash = new URLSearchParams(hash);
+    setError(parsedHash.get("error_description") as string);
+  }, [asPath]);
+
   return (
     <Box
       width={"full"}
@@ -96,66 +110,89 @@ const PasswordRecovery: NextPageWithLayout = () => {
       alignItems={"center"}
       flexDirection={"column"}
     >
-      <AuthHeader type="change" />
-      <chakra.form>
-        <VStack spacing={"4"} width={"md"} alignItems={"flex-end"}>
-          <FormControl isInvalid={Boolean(errors.password)}>
-            <FormLabel fontWeight={"bold"}>Password</FormLabel>
-            <PasswordInput
-              {...passwordRest}
-              name={"password"}
-              passwordRef={(e) => {
-                formPasswordRef(e);
-              }}
-              isDisabled={isSubmitting}
-            />
-            {errors.password && (
-              <FormErrorMessage>
-                {errors.password.message!.toString()}
-              </FormErrorMessage>
-            )}
-          </FormControl>
-          <FormControl isInvalid={Boolean(errors["password-confirm"])}>
-            <FormLabel fontWeight={"bold"}>Confirm Password</FormLabel>
-            <PasswordInput
-              {...passwordConfirmRest}
-              name={"password-confirm"}
-              passwordRef={(e) => {
-                formConfirmPasswordRef(e);
-              }}
-              isDisabled={isSubmitting}
-            />
-            {errors["password-confirm"] && (
-              <FormErrorMessage>
-                {errors["password-confirm"].message!.toString()}
-              </FormErrorMessage>
-            )}
-          </FormControl>
+      {error ? (
+        <VStack spacing={"6"}>
+          <AuthHeader type="password_reset_error" my={"0"} />
+          <Text>{error}</Text>
           <Button
+            as={Link}
+            href={routes.auth.signIn}
             variant={"solid"}
-            width={"full"}
-            type={"submit"}
-            bgColor={"black"}
             color={"white"}
             _hover={{
               bgColor: "blackAlpha.800",
+              textDecoration: "none",
             }}
-            isLoading={isSubmitting}
-            loadingText={"Changing password..."}
-            onClick={handleSubmit(onSubmit)}
+            bgColor={"black"}
+            leftIcon={<ArrowLeft />}
           >
-            Set New Password
+            Back to Sign In
           </Button>
         </VStack>
-      </chakra.form>
-      <AuthModal
-        isOpen={isOpen}
-        onClose={onClose}
-        headingText="Password has been changed"
-        bodyText="You're now logged in and set to go!"
-        buttonHref={"/"}
-        buttonText="Go back to home"
-      />
+      ) : (
+        <>
+          <AuthHeader type="change" />
+          <chakra.form>
+            <VStack spacing={"4"} width={"md"} alignItems={"flex-end"}>
+              <FormControl isInvalid={Boolean(errors.password)}>
+                <FormLabel fontWeight={"bold"}>Password</FormLabel>
+                <PasswordInput
+                  {...passwordRest}
+                  name={"password"}
+                  passwordRef={(e) => {
+                    formPasswordRef(e);
+                  }}
+                  isDisabled={isSubmitting}
+                />
+                {errors.password && (
+                  <FormErrorMessage>
+                    {errors.password.message!.toString()}
+                  </FormErrorMessage>
+                )}
+              </FormControl>
+              <FormControl isInvalid={Boolean(errors["password-confirm"])}>
+                <FormLabel fontWeight={"bold"}>Confirm Password</FormLabel>
+                <PasswordInput
+                  {...passwordConfirmRest}
+                  name={"password-confirm"}
+                  passwordRef={(e) => {
+                    formConfirmPasswordRef(e);
+                  }}
+                  isDisabled={isSubmitting}
+                />
+                {errors["password-confirm"] && (
+                  <FormErrorMessage>
+                    {errors["password-confirm"].message!.toString()}
+                  </FormErrorMessage>
+                )}
+              </FormControl>
+              <Button
+                variant={"solid"}
+                width={"full"}
+                type={"submit"}
+                bgColor={"black"}
+                color={"white"}
+                _hover={{
+                  bgColor: "blackAlpha.800",
+                }}
+                isLoading={isSubmitting}
+                loadingText={"Changing password..."}
+                onClick={handleSubmit(onSubmit)}
+              >
+                Set New Password
+              </Button>
+            </VStack>
+          </chakra.form>
+          <AuthModal
+            isOpen={isOpen}
+            onClose={onClose}
+            headingText="Password has been changed"
+            bodyText="You're now logged in and set to go!"
+            buttonHref={"/"}
+            buttonText="Go back to home"
+          />
+        </>
+      )}
     </Box>
   );
 };

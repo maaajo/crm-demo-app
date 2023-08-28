@@ -3,6 +3,7 @@ export const AuthTypes = {
   Register: "register",
   Forgot: "forgot",
   Change: "change",
+  Password_Reset_Error: "password_reset_error",
 } as const;
 
 export type TAuthKeys = {

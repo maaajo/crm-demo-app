@@ -10,6 +10,8 @@ import { SessionContextProvider, Session } from "@supabase/auth-helpers-react";
 import { useState } from "react";
 import { SupabaseClient } from "@/lib/supabase";
 
+const inter = Inter({ subsets: ["latin"] });
+
 const theme = extendTheme({
   // the below needs to be changed: https://codesandbox.io/s/extend-variants-demo-0nhtc?file=/src/theme/index.ts
   // variants: {
@@ -33,8 +35,6 @@ const theme = extendTheme({
     Input: InputTheme,
   },
 });
-
-const inter = Inter({ subsets: ["latin"] });
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode;
@@ -60,7 +60,7 @@ export default function App({
       <style jsx global>
         {`
           :root {
-            --font-inter: ${inter.style.fontFamily};
+            --font-inter: ${inter.style.fontFamily}, "sans-serif";
           }
         `}
       </style>

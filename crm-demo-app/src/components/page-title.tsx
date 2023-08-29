@@ -6,7 +6,7 @@ type PageTitileProps = {
 
 const PageTitle = ({ title }: PageTitileProps) => {
   return (
-    <Heading fontWeight={"black"} letterSpacing={"tight"} size={"lg"} py={"4"}>
+    <Heading fontWeight={"black"} letterSpacing={"tight"} size={"lg"} py={"8"}>
       {title}
     </Heading>
   );

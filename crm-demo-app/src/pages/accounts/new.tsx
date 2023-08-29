@@ -7,7 +7,17 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { GetServerSideProps } from "next";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { Box, VStack } from "@chakra-ui/react";
+import {
+  Box,
+  VStack,
+  chakra,
+  SimpleGrid,
+  FormControl,
+  FormHelperText,
+  FormLabel,
+  Input,
+  Select,
+} from "@chakra-ui/react";
 
 const AddNewAcount = () => {
   const {
@@ -19,6 +29,37 @@ const AddNewAcount = () => {
   return (
     <>
       <PageTitle title="Add new account" />
+      <chakra.form my={4} maxW={"50%"}>
+        <VStack spacing={4}>
+          <FormControl isRequired>
+            <FormLabel>Account Name</FormLabel>
+            <Input
+              placeholder="Account Name"
+              variant={"black"}
+              errorBorderColor={"red.300"}
+              type="text"
+            />
+          </FormControl>
+          <FormControl isRequired>
+            <FormLabel>Source</FormLabel>
+            <Select variant={"outline"}>
+              <chakra.option
+                style={{ fontFamily: "var(--font-inter)" }}
+                value=""
+              ></chakra.option>
+              <chakra.option
+                style={{ font: "-moz-pull-down-menu" }}
+                value="website"
+              >
+                Company Website
+              </chakra.option>
+              <chakra.option value="linkedin">LinkedIn</chakra.option>
+              <chakra.option value="referral">Referral</chakra.option>
+              <chakra.option value="other">Other</chakra.option>
+            </Select>
+          </FormControl>
+        </VStack>
+      </chakra.form>
     </>
   );
 };

@@ -42,17 +42,16 @@ const AddNewAcount = () => {
           </FormControl>
           <FormControl isRequired>
             <FormLabel>Source</FormLabel>
-            <Select variant={"outline"}>
-              <chakra.option
-                style={{ fontFamily: "var(--font-inter)" }}
-                value=""
-              ></chakra.option>
-              <chakra.option
-                style={{ font: "-moz-pull-down-menu" }}
-                value="website"
-              >
-                Company Website
-              </chakra.option>
+            <Select
+              borderColor={"blackAlpha.500"}
+              backgroundColor={"white"}
+              _focusVisible={{
+                borderColor: "blackAlpha.900",
+              }}
+              _hover={{ borderColor: "blackAlpha.900" }}
+            >
+              <chakra.option></chakra.option>
+              <chakra.option value="website">Company Website</chakra.option>
               <chakra.option value="linkedin">LinkedIn</chakra.option>
               <chakra.option value="referral">Referral</chakra.option>
               <chakra.option value="other">Other</chakra.option>

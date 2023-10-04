@@ -1475,4 +1475,4 @@ export const countries = [
     code: "ZW",
     dial_code: "+263",
   },
-];
+] as const;

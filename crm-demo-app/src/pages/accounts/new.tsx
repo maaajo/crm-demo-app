@@ -13,7 +13,6 @@ import {
   chakra,
   SimpleGrid,
   FormControl,
-  FormHelperText,
   FormLabel,
   Input,
   Select,
@@ -22,10 +21,10 @@ import {
   Stack,
   Radio,
   InputGroup,
-  InputLeftElement,
   InputLeftAddon,
   Textarea,
   Button,
+  FormErrorMessage,
 } from "@chakra-ui/react";
 import Head from "next/head";
 import { config } from "@/lib/config/config";
@@ -38,29 +37,51 @@ const AccountStatus = {
   CLOSED: "Closed",
 } as const;
 
-const Currency = {};
+const Currencies = ["USD", "EUR", "GBP", "Other"] as const;
+const Sources = ["Company Website", "LinkedIn", "Referral", "Other"] as const;
 
-const zodAuthSchema = z.object({
+const zodSchema = z.object({
   accountName: z.string().min(2, { message: "Account Name has to be filled" }),
   isActive: z.boolean({
     required_error: "Active is required",
   }),
-  status: z.nativeEnum(AccountStatus),
+  status: z.nativeEnum(AccountStatus, {
+    required_error: "Status has to be filled",
+  }),
+  source: z.enum(Sources),
+  currency: z.enum(Currencies),
+  website: z.string().url().optional().or(z.literal("")),
+  revenue: z
+    .number({ invalid_type_error: "Revenue must be a number" })
+    .optional(),
+  addressLine: z.string().optional(),
+  country: z.string().optional(),
+  city: z.string().optional(),
+  state: z.string().optional(),
+  zip: z.string().optional(),
 });
+
+type Schema = z.infer<typeof zodSchema>;
 
 const AddNewAcount = () => {
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm();
+  } = useForm<Schema>({ resolver: zodResolver(zodSchema) });
+
+  console.log(errors);
 
   return (
     <>
       <Head>
         <title>{`${config.appName} - New account`}</title>
       </Head>
-      <chakra.form mb={6} h={"full"}>
+      <chakra.form
+        mb={6}
+        h={"full"}
+        onSubmit={handleSubmit((d) => console.log(d))}
+      >
         <Box
           display={"flex"}
           justifyContent={"space-between"}
@@ -73,44 +94,80 @@ const AddNewAcount = () => {
             type="submit"
             variant={"solid"}
             colorScheme={"blue"}
+            onClick={handleSubmit((d) => console.log(d))}
           >
             Save
           </Button>
         </Box>
         <SimpleGrid columns={2} h={"full"} gap={20}>
           <VStack spacing={6} h={"full"}>
-            <FormControl isRequired>
+            <FormControl isRequired isInvalid={Boolean(errors.accountName)}>
               <FormLabel>Account Name</FormLabel>
               <Input
                 placeholder="Account Name"
                 variant={"black"}
                 errorBorderColor={"red.300"}
                 type="text"
+                {...register("accountName")}
               />
+              {errors.accountName && (
+                <FormErrorMessage>
+                  {errors.accountName.message!.toString()}
+                </FormErrorMessage>
+              )}
             </FormControl>
-            <FormControl display={"flex"} alignItems={"center"} isRequired>
+            <FormControl
+              display={"flex"}
+              alignItems={"center"}
+              isRequired
+              isInvalid={Boolean(errors.isActive)}
+            >
               <FormLabel mb={"0"} htmlFor="is-active">
                 Is active?
               </FormLabel>
-              <Switch id="is-active" />
+              <Switch id="is-active" {...register("isActive")} />
+              {errors.isActive && (
+                <FormErrorMessage>
+                  {errors.isActive.message!.toString()}
+                </FormErrorMessage>
+              )}
             </FormControl>
-            <FormControl display={"flex"} alignItems={"center"} isRequired>
+            <FormControl
+              display={"flex"}
+              alignItems={"center"}
+              isRequired
+              isInvalid={Boolean(errors.status)}
+            >
               <FormLabel mb={"0"}>Status</FormLabel>
               <RadioGroup defaultValue="new">
                 <Stack spacing={5} direction={"row"}>
-                  <Radio value={AccountStatus.NEW.toLowerCase()}>
+                  <Radio
+                    value={AccountStatus.NEW.toLowerCase()}
+                    {...register("status")}
+                  >
                     {AccountStatus.NEW}
                   </Radio>
-                  <Radio value={AccountStatus.PENDING.toLowerCase()}>
+                  <Radio
+                    value={AccountStatus.PENDING.toLowerCase()}
+                    {...register("status")}
+                  >
                     {AccountStatus.PENDING}
                   </Radio>
-                  <Radio value={AccountStatus.CLOSED.toLowerCase()}>
+                  <Radio
+                    value={AccountStatus.CLOSED.toLowerCase()}
+                    {...register("status")}
+                  >
                     {AccountStatus.CLOSED}
                   </Radio>
                 </Stack>
               </RadioGroup>
+              {errors.status && (
+                <FormErrorMessage>
+                  {errors.status.message!.toString()}
+                </FormErrorMessage>
+              )}
             </FormControl>
-            <FormControl isRequired>
+            <FormControl isRequired isInvalid={Boolean(errors.source)}>
               <FormLabel>Source</FormLabel>
               <Select
                 borderColor={"blackAlpha.500"}
@@ -119,15 +176,22 @@ const AddNewAcount = () => {
                   borderColor: "blackAlpha.900",
                 }}
                 _hover={{ borderColor: "blackAlpha.500" }}
+                {...register("source")}
               >
                 <option></option>
-                <option value="website">Company Website</option>
-                <option value="linkedin">LinkedIn</option>
-                <option value="referral">Referral</option>
-                <option value="other">Other</option>
+                {Sources.map((source) => (
+                  <option key={source} value={source}>
+                    {source}
+                  </option>
+                ))}
               </Select>
+              {errors.source && (
+                <FormErrorMessage>
+                  {errors.source.message!.toString()}
+                </FormErrorMessage>
+              )}
             </FormControl>
-            <FormControl isRequired>
+            <FormControl isRequired isInvalid={Boolean(errors.currency)}>
               <FormLabel>Currency</FormLabel>
               <Select
                 borderColor={"blackAlpha.500"}
@@ -136,15 +200,22 @@ const AddNewAcount = () => {
                   borderColor: "blackAlpha.900",
                 }}
                 _hover={{ borderColor: "blackAlpha.500" }}
+                {...register("currency")}
               >
                 <option></option>
-                <option value="USD">USD</option>
-                <option value="EUR">EUR</option>
-                <option value="GBP">GBP</option>
-                <option value="other">Other</option>
+                {Currencies.map((currency) => (
+                  <option key={currency} value={currency}>
+                    {currency}
+                  </option>
+                ))}
               </Select>
+              {errors.currency && (
+                <FormErrorMessage>
+                  {errors.currency.message!.toString()}
+                </FormErrorMessage>
+              )}
             </FormControl>
-            <FormControl>
+            <FormControl isInvalid={Boolean(errors.website)}>
               <FormLabel>Website</FormLabel>
               <InputGroup>
                 <InputLeftAddon
@@ -158,10 +229,16 @@ const AddNewAcount = () => {
                   variant={"black"}
                   errorBorderColor={"red.300"}
                   type="text"
+                  {...register("website")}
                 />
               </InputGroup>
+              {errors.website && (
+                <FormErrorMessage>
+                  {errors.website.message!.toString()}
+                </FormErrorMessage>
+              )}
             </FormControl>
-            <FormControl>
+            <FormControl isInvalid={Boolean(errors.revenue)}>
               <FormLabel>Revenue</FormLabel>
               <InputGroup>
                 <InputLeftAddon
@@ -175,8 +252,14 @@ const AddNewAcount = () => {
                   variant={"black"}
                   errorBorderColor={"red.300"}
                   type="number"
+                  {...register("revenue", { valueAsNumber: true })}
                 />
               </InputGroup>
+              {errors.revenue && (
+                <FormErrorMessage>
+                  {errors.revenue.message!.toString()}
+                </FormErrorMessage>
+              )}
             </FormControl>
             <FormControl>
               <FormLabel>Address Line</FormLabel>
@@ -189,6 +272,7 @@ const AddNewAcount = () => {
                 }}
                 _hover={{ borderColor: "blackAlpha.500" }}
                 resize={"none"}
+                {...register("addressLine")}
               />
             </FormControl>
           </VStack>
@@ -202,6 +286,7 @@ const AddNewAcount = () => {
                   borderColor: "blackAlpha.900",
                 }}
                 _hover={{ borderColor: "blackAlpha.500" }}
+                {...register("country")}
               >
                 <option></option>
                 {countries.map((country) => (
@@ -218,6 +303,7 @@ const AddNewAcount = () => {
                 variant={"black"}
                 errorBorderColor={"red.300"}
                 type="text"
+                {...register("city")}
               />
             </FormControl>
             <FormControl>
@@ -227,6 +313,7 @@ const AddNewAcount = () => {
                 variant={"black"}
                 errorBorderColor={"red.300"}
                 type="text"
+                {...register("state")}
               />
             </FormControl>
             <FormControl>
@@ -236,6 +323,7 @@ const AddNewAcount = () => {
                 variant={"black"}
                 errorBorderColor={"red.300"}
                 type="text"
+                {...register("zip")}
               />
             </FormControl>
           </VStack>

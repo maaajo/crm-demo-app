@@ -30,11 +30,12 @@ import Head from "next/head";
 import { config } from "@/lib/config/config";
 import { countries } from "@/lib/static/countries";
 import * as z from "zod";
+import startCase from "lodash.startcase";
 
 const AccountStatus = {
-  NEW: "New",
-  PENDING: "Pending",
-  CLOSED: "Closed",
+  NEW: "new",
+  PENDING: "pending",
+  CLOSED: "closed",
 } as const;
 
 const Currencies = ["USD", "EUR", "GBP", "Other"] as const;
@@ -51,9 +52,7 @@ const zodSchema = z.object({
   source: z.enum(Sources),
   currency: z.enum(Currencies),
   website: z.string().url().optional().or(z.literal("")),
-  revenue: z
-    .number({ invalid_type_error: "Revenue must be a number" })
-    .optional(),
+  revenue: z.union([z.number(), z.nan()]).optional(),
   addressLine: z.string().optional(),
   country: z.string().optional(),
   city: z.string().optional(),
@@ -93,7 +92,11 @@ const AddNewAcount = () => {
             mt={6}
             type="submit"
             variant={"solid"}
-            colorScheme={"blue"}
+            bgColor={"black"}
+            color={"white"}
+            _hover={{
+              bgColor: "blackAlpha.800",
+            }}
             onClick={handleSubmit((d) => console.log(d))}
           >
             Save
@@ -141,23 +144,14 @@ const AddNewAcount = () => {
               <FormLabel mb={"0"}>Status</FormLabel>
               <RadioGroup defaultValue="new">
                 <Stack spacing={5} direction={"row"}>
-                  <Radio
-                    value={AccountStatus.NEW.toLowerCase()}
-                    {...register("status")}
-                  >
-                    {AccountStatus.NEW}
+                  <Radio value={AccountStatus.NEW} {...register("status")}>
+                    {startCase(AccountStatus.NEW)}
                   </Radio>
-                  <Radio
-                    value={AccountStatus.PENDING.toLowerCase()}
-                    {...register("status")}
-                  >
-                    {AccountStatus.PENDING}
+                  <Radio value={AccountStatus.PENDING} {...register("status")}>
+                    {startCase(AccountStatus.PENDING)}
                   </Radio>
-                  <Radio
-                    value={AccountStatus.CLOSED.toLowerCase()}
-                    {...register("status")}
-                  >
-                    {AccountStatus.CLOSED}
+                  <Radio value={AccountStatus.CLOSED} {...register("status")}>
+                    {startCase(AccountStatus.CLOSED)}
                   </Radio>
                 </Stack>
               </RadioGroup>

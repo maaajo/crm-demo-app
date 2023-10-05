@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "@types/lodash.startcase": "^4.4.7",
+    "lodash.startcase": "^4.4.0"
+  }
+}

@@ -31,6 +31,8 @@ import { config } from "@/lib/config/config";
 import { countries } from "@/lib/static/countries";
 import * as z from "zod";
 import startCase from "lodash.startcase";
+import { v4 as uuidv4 } from "uuid";
+import useAccounts from "@/lib/hooks/useAccounts";
 
 const AccountStatus = {
   NEW: "new",
@@ -42,6 +44,7 @@ const Currencies = ["USD", "EUR", "GBP", "Other"] as const;
 const Sources = ["Company Website", "LinkedIn", "Referral", "Other"] as const;
 
 const zodSchema = z.object({
+  id: z.string().uuid(),
   accountName: z.string().min(2, { message: "Account Name has to be filled" }),
   isActive: z.boolean({
     required_error: "Active is required",
@@ -60,16 +63,17 @@ const zodSchema = z.object({
   zip: z.string().optional(),
 });
 
-type Schema = z.infer<typeof zodSchema>;
+export type TAccountSchema = z.infer<typeof zodSchema>;
 
 const AddNewAcount = () => {
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<Schema>({ resolver: zodResolver(zodSchema) });
+  } = useForm<TAccountSchema>({ resolver: zodResolver(zodSchema) });
 
   console.log(errors);
+  const { updateAccountsFn } = useAccounts();
 
   return (
     <>
@@ -104,6 +108,13 @@ const AddNewAcount = () => {
         </Box>
         <SimpleGrid columns={2} h={"full"} gap={20}>
           <VStack spacing={6} h={"full"}>
+            <Input
+              variant={"black"}
+              type="text"
+              {...register("id")}
+              defaultValue={uuidv4()}
+              display={"none"}
+            />
             <FormControl isRequired isInvalid={Boolean(errors.accountName)}>
               <FormLabel>Account Name</FormLabel>
               <Input

@@ -29,62 +29,34 @@ import {
 import Head from "next/head";
 import { config } from "@/lib/config/config";
 import { countries } from "@/lib/static/countries";
-import * as z from "zod";
 import startCase from "lodash.startcase";
 import { v4 as uuidv4 } from "uuid";
-import useAccounts from "@/lib/hooks/useAccounts";
-
-const AccountStatus = {
-  NEW: "new",
-  PENDING: "pending",
-  CLOSED: "closed",
-} as const;
-
-const Currencies = ["USD", "EUR", "GBP", "Other"] as const;
-const Sources = ["Company Website", "LinkedIn", "Referral", "Other"] as const;
-
-const zodSchema = z.object({
-  id: z.string().uuid(),
-  accountName: z.string().min(2, { message: "Account Name has to be filled" }),
-  isActive: z.boolean({
-    required_error: "Active is required",
-  }),
-  status: z.nativeEnum(AccountStatus, {
-    required_error: "Status has to be filled",
-  }),
-  source: z.enum(Sources),
-  currency: z.enum(Currencies),
-  website: z.string().url().optional().or(z.literal("")),
-  revenue: z.union([z.number(), z.nan()]).optional(),
-  addressLine: z.string().optional(),
-  country: z.string().optional(),
-  city: z.string().optional(),
-  state: z.string().optional(),
-  zip: z.string().optional(),
-});
-
-export type TAccountSchema = z.infer<typeof zodSchema>;
+import { TAccount } from "@/lib/types/account";
+import { newAccountSchema } from "@/lib/schemas/newAccount";
+import { AccountStatus, Currencies, Sources } from "@/lib/types/account";
+import { useAccounts } from "@/lib/context/account";
 
 const AddNewAcount = () => {
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<TAccountSchema>({ resolver: zodResolver(zodSchema) });
+  } = useForm<TAccount>({ resolver: zodResolver(newAccountSchema) });
 
-  console.log(errors);
-  const { updateAccountsFn } = useAccounts();
+  const { state: accountsState, dispatch: updateAccount } = useAccounts();
+
+  console.log(accountsState);
+
+  const onSubmit: SubmitHandler<TAccount> = (newAccountData) => {
+    updateAccount({ type: "add", payload: newAccountData });
+  };
 
   return (
     <>
       <Head>
         <title>{`${config.appName} - New account`}</title>
       </Head>
-      <chakra.form
-        mb={6}
-        h={"full"}
-        onSubmit={handleSubmit((d) => console.log(d))}
-      >
+      <chakra.form mb={6} h={"full"} onSubmit={handleSubmit(onSubmit)}>
         <Box
           display={"flex"}
           justifyContent={"space-between"}
@@ -101,7 +73,7 @@ const AddNewAcount = () => {
             _hover={{
               bgColor: "blackAlpha.800",
             }}
-            onClick={handleSubmit((d) => console.log(d))}
+            onClick={handleSubmit(onSubmit)}
           >
             Save
           </Button>

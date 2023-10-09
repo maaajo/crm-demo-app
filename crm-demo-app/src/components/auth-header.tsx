@@ -1,4 +1,4 @@
-import { TAuthKeys, AuthTypes } from "@/lib/types/auth-types";
+import { TAuthKeys, AuthTypes } from "@/lib/types/auth";
 import { VStack, Heading, Text, StackProps } from "@chakra-ui/react";
 
 const createReturnObject = (headerText: string, supportingText: string) => {

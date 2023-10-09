@@ -9,6 +9,7 @@ import { InputTheme } from "@/theme/inputTheme";
 import { SessionContextProvider, Session } from "@supabase/auth-helpers-react";
 import { useState } from "react";
 import { SupabaseClient } from "@/lib/supabase";
+import { AccountsProvider } from "@/lib/context/account";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -69,13 +70,15 @@ export default function App({
         initialSession={pageProps.initialSession}
       >
         <ChakraProvider theme={theme}>
-          {getLayout ? (
-            getLayout(<Component {...pageProps} />)
-          ) : (
-            <Layout userEmail={pageProps.userEmail}>
-              <Component {...pageProps} />
-            </Layout>
-          )}
+          <AccountsProvider>
+            {getLayout ? (
+              getLayout(<Component {...pageProps} />)
+            ) : (
+              <Layout userEmail={pageProps.userEmail}>
+                <Component {...pageProps} />
+              </Layout>
+            )}
+          </AccountsProvider>
         </ChakraProvider>
       </SessionContextProvider>
     </>

@@ -1,5 +1,5 @@
 import { routes } from "@/lib/routes";
-import { TAuthKeys, AuthTypes } from "@/lib/types/auth-types";
+import { TAuthKeys, AuthTypes } from "@/lib/types/auth";
 import { Link } from "@chakra-ui/next-js";
 import { Text } from "@chakra-ui/react";
 

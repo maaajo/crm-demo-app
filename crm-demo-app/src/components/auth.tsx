@@ -24,7 +24,7 @@ import {
   SignInWithPasswordCredentials,
   SignUpWithPasswordCredentials,
 } from "@supabase/supabase-js";
-import { TAuthKeys, AuthTypes } from "@/lib/types/auth-types";
+import { TAuthKeys, AuthTypes } from "@/lib/types/auth";
 import AuthHeader from "./auth-header";
 import AuthLink from "./auth-link";
 import { routes } from "@/lib/routes";

@@ -56,6 +56,8 @@ function EmptyState() {
 export default function AccountsHome() {
   const { state: accounts } = useAccounts();
 
+  // table: https://chakra-ui.com/getting-started/with-react-table
+
   return (
     <div>
       <Head>

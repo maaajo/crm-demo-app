@@ -17,7 +17,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import AuthLink from "@/components/auth-link";
 import { routes } from "@/lib/routes";
-import AuthModal from "@/components/auth-modal";
+import AuthModal from "@/components/notificationModal";
 import { NextPageWithLayout } from "../_app";
 import { ReactElement } from "react";
 import AuthLayout from "../../components/auth-layout";

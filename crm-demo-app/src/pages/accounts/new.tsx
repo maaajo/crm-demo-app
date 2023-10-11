@@ -23,8 +23,9 @@ import {
   InputGroup,
   InputLeftAddon,
   Textarea,
-  Button,
   FormErrorMessage,
+  Button,
+  useToast,
 } from "@chakra-ui/react";
 import Head from "next/head";
 import { config } from "@/lib/config/config";
@@ -35,6 +36,8 @@ import { TAccount } from "@/lib/types/account";
 import { newAccountSchema } from "@/lib/schemas/newAccount";
 import { AccountStatus, Currencies, Sources } from "@/lib/types/account";
 import { useAccounts } from "@/lib/context/account";
+import { routes } from "@/lib/routes";
+import { useRouter } from "next/router";
 
 const AddNewAcount = () => {
   const {
@@ -42,13 +45,34 @@ const AddNewAcount = () => {
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<TAccount>({ resolver: zodResolver(newAccountSchema) });
-
-  const { state: accountsState, dispatch: updateAccount } = useAccounts();
-
-  console.log(accountsState);
+  const { dispatch: updateAccount } = useAccounts();
+  const router = useRouter();
+  const toast = useToast();
 
   const onSubmit: SubmitHandler<TAccount> = (newAccountData) => {
-    updateAccount({ type: "add", payload: newAccountData });
+    try {
+      updateAccount({ type: "add", payload: newAccountData });
+
+      toast({
+        title: `Account added`,
+        description: `${newAccountData.accountName} saved with success!`,
+        status: "success",
+        isClosable: true,
+        position: "top",
+        duration: 10000,
+      });
+
+      router.push(routes.accounts.index);
+    } catch (error: any) {
+      toast({
+        title: "Failed to save account",
+        description: error,
+        status: "error",
+        isClosable: true,
+        position: "top",
+        duration: 10000,
+      });
+    }
   };
 
   return (
@@ -73,6 +97,8 @@ const AddNewAcount = () => {
             _hover={{
               bgColor: "blackAlpha.800",
             }}
+            isLoading={isSubmitting}
+            loadingText="Saving..."
             onClick={handleSubmit(onSubmit)}
           >
             Save
@@ -86,6 +112,7 @@ const AddNewAcount = () => {
               {...register("id")}
               defaultValue={uuidv4()}
               display={"none"}
+              isDisabled={isSubmitting}
             />
             <FormControl isRequired isInvalid={Boolean(errors.accountName)}>
               <FormLabel>Account Name</FormLabel>
@@ -94,6 +121,7 @@ const AddNewAcount = () => {
                 variant={"black"}
                 errorBorderColor={"red.300"}
                 type="text"
+                isDisabled={isSubmitting}
                 {...register("accountName")}
               />
               {errors.accountName && (
@@ -111,7 +139,11 @@ const AddNewAcount = () => {
               <FormLabel mb={"0"} htmlFor="is-active">
                 Is active?
               </FormLabel>
-              <Switch id="is-active" {...register("isActive")} />
+              <Switch
+                id="is-active"
+                {...register("isActive")}
+                isDisabled={isSubmitting}
+              />
               {errors.isActive && (
                 <FormErrorMessage>
                   {errors.isActive.message!.toString()}
@@ -127,13 +159,25 @@ const AddNewAcount = () => {
               <FormLabel mb={"0"}>Status</FormLabel>
               <RadioGroup defaultValue="new">
                 <Stack spacing={5} direction={"row"}>
-                  <Radio value={AccountStatus.NEW} {...register("status")}>
+                  <Radio
+                    value={AccountStatus.NEW}
+                    {...register("status")}
+                    isDisabled={isSubmitting}
+                  >
                     {startCase(AccountStatus.NEW)}
                   </Radio>
-                  <Radio value={AccountStatus.PENDING} {...register("status")}>
+                  <Radio
+                    value={AccountStatus.PENDING}
+                    {...register("status")}
+                    isDisabled={isSubmitting}
+                  >
                     {startCase(AccountStatus.PENDING)}
                   </Radio>
-                  <Radio value={AccountStatus.CLOSED} {...register("status")}>
+                  <Radio
+                    value={AccountStatus.CLOSED}
+                    {...register("status")}
+                    isDisabled={isSubmitting}
+                  >
                     {startCase(AccountStatus.CLOSED)}
                   </Radio>
                 </Stack>
@@ -153,6 +197,7 @@ const AddNewAcount = () => {
                   borderColor: "blackAlpha.900",
                 }}
                 _hover={{ borderColor: "blackAlpha.500" }}
+                isDisabled={isSubmitting}
                 {...register("source")}
               >
                 <option></option>
@@ -177,6 +222,7 @@ const AddNewAcount = () => {
                   borderColor: "blackAlpha.900",
                 }}
                 _hover={{ borderColor: "blackAlpha.500" }}
+                isDisabled={isSubmitting}
                 {...register("currency")}
               >
                 <option></option>
@@ -207,6 +253,7 @@ const AddNewAcount = () => {
                   errorBorderColor={"red.300"}
                   type="text"
                   {...register("website")}
+                  isDisabled={isSubmitting}
                 />
               </InputGroup>
               {errors.website && (
@@ -230,6 +277,7 @@ const AddNewAcount = () => {
                   errorBorderColor={"red.300"}
                   type="number"
                   {...register("revenue", { valueAsNumber: true })}
+                  isDisabled={isSubmitting}
                 />
               </InputGroup>
               {errors.revenue && (
@@ -250,6 +298,7 @@ const AddNewAcount = () => {
                 _hover={{ borderColor: "blackAlpha.500" }}
                 resize={"none"}
                 {...register("addressLine")}
+                isDisabled={isSubmitting}
               />
             </FormControl>
           </VStack>
@@ -264,6 +313,7 @@ const AddNewAcount = () => {
                 }}
                 _hover={{ borderColor: "blackAlpha.500" }}
                 {...register("country")}
+                isDisabled={isSubmitting}
               >
                 <option></option>
                 {countries.map((country) => (
@@ -281,6 +331,7 @@ const AddNewAcount = () => {
                 errorBorderColor={"red.300"}
                 type="text"
                 {...register("city")}
+                isDisabled={isSubmitting}
               />
             </FormControl>
             <FormControl>
@@ -291,6 +342,7 @@ const AddNewAcount = () => {
                 errorBorderColor={"red.300"}
                 type="text"
                 {...register("state")}
+                isDisabled={isSubmitting}
               />
             </FormControl>
             <FormControl>
@@ -301,6 +353,7 @@ const AddNewAcount = () => {
                 errorBorderColor={"red.300"}
                 type="text"
                 {...register("zip")}
+                isDisabled={isSubmitting}
               />
             </FormControl>
           </VStack>

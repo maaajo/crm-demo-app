@@ -12,7 +12,7 @@ import {
 } from "@chakra-ui/react";
 import { CheckCircle2 } from "lucide-react";
 
-type AuthModalProps = {
+type NotificationModalProps = {
   isOpen: boolean;
   onClose: () => void;
   headingText: string;
@@ -21,14 +21,16 @@ type AuthModalProps = {
   buttonText: string;
 };
 
-const AuthModal = ({
+// maybe needs type like success, warning, failure?
+
+const NotificationModal = ({
   isOpen,
   onClose,
   headingText,
   bodyText,
   buttonHref,
   buttonText,
-}: AuthModalProps) => {
+}: NotificationModalProps) => {
   return (
     <Modal
       closeOnOverlayClick={false}
@@ -72,4 +74,4 @@ const AuthModal = ({
   );
 };
 
-export default AuthModal;
+export default NotificationModal;

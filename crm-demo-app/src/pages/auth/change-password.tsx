@@ -17,7 +17,7 @@ import validator from "validator";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import AuthModal from "@/components/auth-modal";
+import AuthModal from "@/components/notificationModal";
 import { NextPageWithLayout } from "../_app";
 import { ReactElement } from "react";
 import AuthLayout from "../../components/auth-layout";

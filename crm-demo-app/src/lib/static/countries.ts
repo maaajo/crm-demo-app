@@ -1,4 +1,4 @@
-export const countries = [
+export const Countries = [
   {
     name: "Afghanistan",
     flag: "🇦🇫",

@@ -12,11 +12,11 @@ export const newAccountSchema = z.object({
   }),
   source: z.enum(Sources),
   currency: z.enum(Currencies),
+  country: z.string().min(2, { message: "City has to be selected" }),
+  city: z.string().min(3, { message: "City has to be filled" }),
   website: z.string().url().optional().or(z.literal("")),
   revenue: z.union([z.number(), z.nan()]).optional(),
   addressLine: z.string().optional(),
-  country: z.string().optional(),
-  city: z.string().optional(),
   state: z.string().optional(),
   zip: z.string().optional(),
 });

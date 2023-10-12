@@ -29,7 +29,7 @@ import {
 } from "@chakra-ui/react";
 import Head from "next/head";
 import { config } from "@/lib/config/config";
-import { countries } from "@/lib/static/countries";
+import { Countries } from "@/lib/static/countries";
 import startCase from "lodash.startcase";
 import { v4 as uuidv4 } from "uuid";
 import { TAccount } from "@/lib/types/account";
@@ -48,6 +48,8 @@ const AddNewAcount = () => {
   const { dispatch: updateAccount } = useAccounts();
   const router = useRouter();
   const toast = useToast();
+
+  console.log(errors);
 
   const onSubmit: SubmitHandler<TAccount> = (newAccountData) => {
     try {
@@ -303,7 +305,7 @@ const AddNewAcount = () => {
             </FormControl>
           </VStack>
           <VStack spacing={6} h={"full"}>
-            <FormControl>
+            <FormControl isRequired isInvalid={Boolean(errors.country)}>
               <FormLabel>Country</FormLabel>
               <Select
                 borderColor={"blackAlpha.500"}
@@ -316,14 +318,19 @@ const AddNewAcount = () => {
                 isDisabled={isSubmitting}
               >
                 <option></option>
-                {countries.map((country) => (
+                {Countries.map((country) => (
                   <option value={country.code} key={country.code}>
                     {country.flag} {country.name}
                   </option>
                 ))}
               </Select>
+              {errors.country && (
+                <FormErrorMessage>
+                  {errors.country.message!.toString()}
+                </FormErrorMessage>
+              )}
             </FormControl>
-            <FormControl>
+            <FormControl isRequired isInvalid={Boolean(errors.city)}>
               <FormLabel>City</FormLabel>
               <Input
                 placeholder="City"
@@ -333,6 +340,11 @@ const AddNewAcount = () => {
                 {...register("city")}
                 isDisabled={isSubmitting}
               />
+              {errors.city && (
+                <FormErrorMessage>
+                  {errors.city.message!.toString()}
+                </FormErrorMessage>
+              )}
             </FormControl>
             <FormControl>
               <FormLabel>State</FormLabel>

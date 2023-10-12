@@ -13,6 +13,9 @@ import Head from "next/head";
 import { config } from "@/lib/config/config";
 import PageTitle from "@/components/page-title";
 import { useAccounts } from "@/lib/context/account";
+import { createColumnHelper } from "@tanstack/react-table";
+import { TAccount } from "@/lib/types/account";
+import { DataTable } from "@/components/data-table";
 
 function AddNewAccountButton() {
   return (
@@ -53,6 +56,39 @@ function EmptyState() {
   );
 }
 
+const columnHelper = createColumnHelper<TAccount>();
+
+const columns = [
+  columnHelper.accessor("accountName", {
+    cell: (info) => info.getValue(),
+    header: "Name",
+  }),
+  columnHelper.accessor("isActive", {
+    cell: (info) => info.getValue(),
+    header: "Active",
+  }),
+  columnHelper.accessor("status", {
+    cell: (info) => info.getValue(),
+    header: "Status",
+  }),
+  columnHelper.accessor("source", {
+    cell: (info) => info.getValue(),
+    header: "Source",
+  }),
+  columnHelper.accessor("currency", {
+    cell: (info) => info.getValue(),
+    header: "Currency",
+  }),
+  columnHelper.accessor("country", {
+    cell: (info) => info.getValue(),
+    header: "Country",
+  }),
+  columnHelper.accessor("city", {
+    cell: (info) => info.getValue(),
+    header: "City",
+  }),
+];
+
 export default function AccountsHome() {
   const { state: accounts } = useAccounts();
 
@@ -73,11 +109,7 @@ export default function AccountsHome() {
             <PageTitle title="Accounts" />
             <AddNewAccountButton />
           </Flex>
-          <div>
-            {accounts.map((account) => (
-              <p key={account.id}>{account.id}</p>
-            ))}
-          </div>
+          <DataTable data={accounts} columns={columns} />
         </>
       ) : (
         <EmptyState />

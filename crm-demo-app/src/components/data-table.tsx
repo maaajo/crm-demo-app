@@ -1,4 +1,13 @@
-import { Table, Tbody, Td, Th, Thead, Tr, chakra } from "@chakra-ui/react";
+import {
+  Table,
+  Tbody,
+  Td,
+  Th,
+  Thead,
+  Tr,
+  chakra,
+  Icon,
+} from "@chakra-ui/react";
 import {
   ColumnDef,
   SortingState,
@@ -7,7 +16,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { ChevronDownIcon, ChevronUpIcon } from "lucide-react";
+import { ChevronDownIcon, ChevronUpIcon, ChevronsUpDown } from "lucide-react";
 import { useState } from "react";
 
 export type DataTableProps<Data extends object> = {
@@ -35,26 +44,42 @@ export function DataTable<Data extends object>({
     <Table>
       <Thead>
         {table.getHeaderGroups().map((headerGroup) => (
-          <Tr key={headerGroup.id}>
+          <Tr key={headerGroup.id} backgroundColor={"blackAlpha.100"}>
             {headerGroup.headers.map((header) => {
+              const canSortColumn = header.column.getCanSort();
               return (
                 <Th
                   key={header.id}
                   onClick={header.column.getToggleSortingHandler()}
                   isNumeric={header.column.columnDef.meta?.isNumeric}
+                  textTransform={"none"}
+                  fontSize={"lg"}
+                  fontWeight={"bold"}
+                  color={"blackAlpha.800"}
+                  py={6}
+                  letterSpacing={"tight"}
+                  cursor={`${canSortColumn ? "pointer" : null}`}
                 >
-                  {flexRender(
-                    header.column.columnDef.header,
-                    header.getContext()
-                  )}
+                  <chakra.span display={"flex"} alignItems={"center"}>
+                    <chakra.span>
+                      {flexRender(
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
+                    </chakra.span>
 
-                  <chakra.span pl="4">
-                    {header.column.getIsSorted() ? (
-                      header.column.getIsSorted() === "desc" ? (
-                        <ChevronDownIcon aria-label="sorted descending" />
-                      ) : (
-                        <ChevronUpIcon aria-label="sorted ascending" />
-                      )
+                    {header.column.getCanSort() ? (
+                      <chakra.span pl="4">
+                        {header.column.getIsSorted() ? (
+                          header.column.getIsSorted() === "desc" ? (
+                            <Icon as={ChevronDownIcon} boxSize={4} />
+                          ) : (
+                            <Icon as={ChevronUpIcon} boxSize={4} />
+                          )
+                        ) : (
+                          <Icon as={ChevronsUpDown} boxSize={4} />
+                        )}
+                      </chakra.span>
                     ) : null}
                   </chakra.span>
                 </Th>
@@ -64,12 +89,18 @@ export function DataTable<Data extends object>({
         ))}
       </Thead>
       <Tbody>
-        {table.getRowModel().rows.map((row) => (
+        {table.getRowModel().rows.map((row, rowIndex, rowArray) => (
           <Tr key={row.id}>
             {row.getVisibleCells().map((cell) => (
               <Td
                 key={cell.id}
                 isNumeric={cell.column.columnDef.meta?.isNumeric}
+                fontSize={"md"}
+                borderBottomColor={`${
+                  rowIndex !== rowArray.length - 1 ? "blackAlpha.200" : null
+                }`}
+                py={6}
+                color={"blackAlpha.800"}
               >
                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
               </Td>

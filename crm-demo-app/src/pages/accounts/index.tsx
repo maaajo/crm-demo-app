@@ -6,7 +6,7 @@ import {
 import { Text, VStack, Button, Flex } from "@chakra-ui/react";
 import { GetServerSideProps } from "next";
 import { Users2, Plus } from "lucide-react";
-import { Icon } from "@chakra-ui/react";
+import { Icon, IconButton } from "@chakra-ui/react";
 import { Link } from "@chakra-ui/next-js";
 import { routes } from "@/lib/routes";
 import Head from "next/head";
@@ -16,6 +16,9 @@ import { useAccounts } from "@/lib/context/account";
 import { createColumnHelper } from "@tanstack/react-table";
 import { TAccount } from "@/lib/types/account";
 import { DataTable } from "@/components/data-table";
+import { Countries } from "@/lib/static/countries";
+import startCase from "lodash.startcase";
+import { MoreHorizontal } from "lucide-react";
 
 function AddNewAccountButton() {
   return (
@@ -60,33 +63,49 @@ const columnHelper = createColumnHelper<TAccount>();
 
 const columns = [
   columnHelper.accessor("accountName", {
-    cell: (info) => info.getValue(),
+    cell: (value) => startCase(value.getValue()),
     header: "Name",
   }),
   columnHelper.accessor("isActive", {
-    cell: (info) => info.getValue(),
+    cell: (value) => startCase(String(value.getValue())),
     header: "Active",
   }),
   columnHelper.accessor("status", {
-    cell: (info) => info.getValue(),
+    cell: (value) => startCase(value.getValue()),
     header: "Status",
   }),
   columnHelper.accessor("source", {
-    cell: (info) => info.getValue(),
+    cell: (value) => value.getValue(),
     header: "Source",
   }),
   columnHelper.accessor("currency", {
-    cell: (info) => info.getValue(),
+    cell: (value) => value.getValue(),
     header: "Currency",
   }),
   columnHelper.accessor("country", {
-    cell: (info) => info.getValue(),
+    cell: (value) => {
+      const countryData = Countries.filter(
+        (country) => country.code === value.getValue()
+      )[0];
+      return `${countryData.flag} ${countryData.name}`;
+    },
     header: "Country",
   }),
   columnHelper.accessor("city", {
-    cell: (info) => info.getValue(),
+    cell: (value) => startCase(value.getValue()),
     header: "City",
   }),
+  {
+    id: "more_actions",
+    header: "",
+    cell: () => (
+      <IconButton
+        aria-label="More actions for each row in accounts table"
+        icon={<MoreHorizontal />}
+        variant={"unstyled"}
+      />
+    ),
+  },
 ];
 
 export default function AccountsHome() {

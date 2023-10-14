@@ -38,6 +38,8 @@ import { AccountStatus, Currencies, Sources } from "@/lib/types/account";
 import { useAccounts } from "@/lib/context/account";
 import { routes } from "@/lib/routes";
 import { useRouter } from "next/router";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
+import { Database } from "@/lib/types/supabase";
 
 const AddNewAcount = () => {
   const {
@@ -48,33 +50,53 @@ const AddNewAcount = () => {
   const { dispatch: updateAccount } = useAccounts();
   const router = useRouter();
   const toast = useToast();
+  const supabase = useSupabaseClient<Database>();
 
-  console.log(errors);
+  const onSubmit: SubmitHandler<TAccount> = async (newAccountData) => {
+    const { data, error } = await supabase
+      .from("accounts")
+      .insert([
+        {
+          id: newAccountData.id,
+          name: newAccountData.accountName,
+          is_active: newAccountData.isActive,
+          status: newAccountData.status,
+          source: newAccountData.source,
+          currency: newAccountData.currency,
+          website: newAccountData.website,
+          revenue: newAccountData.revenue,
+          address_line: newAccountData.addressLine,
+          country: newAccountData.country,
+          city: newAccountData.city,
+          state: newAccountData.state,
+          zip: newAccountData.zip,
+        },
+      ])
+      .select();
 
-  const onSubmit: SubmitHandler<TAccount> = (newAccountData) => {
-    try {
-      updateAccount({ type: "add", payload: newAccountData });
-
-      toast({
-        title: `Account added`,
-        description: `${newAccountData.accountName} saved with success!`,
-        status: "success",
-        isClosable: true,
-        position: "top",
-        duration: 10000,
-      });
-
-      router.push(routes.accounts.index);
-    } catch (error: any) {
+    if (error) {
       toast({
         title: "Failed to save account",
-        description: error,
+        description: error.message,
         status: "error",
         isClosable: true,
         position: "top",
         duration: 10000,
       });
+
+      return;
     }
+
+    toast({
+      title: `Account added`,
+      description: `${data[0].name} saved with success!`,
+      status: "success",
+      isClosable: true,
+      position: "top",
+      duration: 10000,
+    });
+
+    router.push(routes.accounts.index);
   };
 
   return (

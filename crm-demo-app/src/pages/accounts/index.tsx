@@ -18,7 +18,7 @@ import { TAccount } from "@/lib/types/account";
 import { DataTable } from "@/components/data-table";
 import { Countries } from "@/lib/static/countries";
 import startCase from "lodash.startcase";
-import { MoreHorizontal } from "lucide-react";
+import { Pencil } from "lucide-react";
 
 function AddNewAccountButton() {
   return (
@@ -95,17 +95,20 @@ const columns = [
     cell: (value) => startCase(value.getValue()),
     header: "City",
   }),
-  {
-    id: "more_actions",
-    header: "",
-    cell: () => (
+  columnHelper.accessor("id", {
+    cell: (value) => (
       <IconButton
         aria-label="More actions for each row in accounts table"
-        icon={<MoreHorizontal />}
+        as={Link}
+        href={`${routes.accounts.edit}/${value.getValue()}`}
+        icon={<Pencil />}
         variant={"unstyled"}
+        size={"sm"}
       />
     ),
-  },
+    enableSorting: false,
+    header: "",
+  }),
 ];
 
 export default function AccountsHome() {

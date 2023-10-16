@@ -100,7 +100,7 @@ const columns = [
   columnHelper.accessor("id", {
     cell: (value) => (
       <IconButton
-        aria-label="More actions for each row in accounts table"
+        aria-label="Edit current account"
         as={Link}
         href={`${routes.accounts.edit}/${value.getValue()}`}
         icon={<Pencil />}

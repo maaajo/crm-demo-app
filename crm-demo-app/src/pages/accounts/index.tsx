@@ -6,7 +6,7 @@ import {
 import { Text, VStack, Button, Flex } from "@chakra-ui/react";
 import { GetServerSideProps } from "next";
 import { Users2, Plus } from "lucide-react";
-import { Icon, IconButton } from "@chakra-ui/react";
+import { Icon, IconButton, useToast } from "@chakra-ui/react";
 import { Link } from "@chakra-ui/next-js";
 import { routes } from "@/lib/routes";
 import Head from "next/head";
@@ -20,6 +20,7 @@ import startCase from "lodash.startcase";
 import { Pencil } from "lucide-react";
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { Database } from "@/lib/types/supabase";
+import { PostgrestError } from "@supabase/supabase-js";
 
 function AddNewAccountButton() {
   return (
@@ -114,9 +115,23 @@ const columns = [
 
 type AccountsHomeProps = {
   accounts: TAccountSupabase[];
+  error: PostgrestError | null;
 };
 
-export default function AccountsHome({ accounts }: AccountsHomeProps) {
+export default function AccountsHome({ accounts, error }: AccountsHomeProps) {
+  const toast = useToast();
+
+  if (error) {
+    toast({
+      title: `Failed to get accounts`,
+      description: `${error.message}`,
+      status: "error",
+      isClosable: true,
+      position: "top",
+      duration: 10000,
+    });
+  }
+
   return (
     <div>
       <Head>
@@ -143,7 +158,8 @@ export default function AccountsHome({ accounts }: AccountsHomeProps) {
 
 export const getServerSideProps: GetServerSideProps<{
   userEmail: string;
-  accounts: TAccountSupabase[] | null;
+  accounts: TAccountSupabase[];
+  error: PostgrestError | null;
 }> = async (ctx) => {
   const supabase = createServerSupabaseClient<Database>(ctx);
   const redirectPage = await checkPossibleRedirect(
@@ -162,9 +178,18 @@ export const getServerSideProps: GetServerSideProps<{
 
   const userEmail = await getServerSideAuthUserEmail(supabase);
 
+  // look what to do here in case fo error
   const { data, error } = await supabase.from("accounts").select("*");
 
+  let accounts: TAccountSupabase[];
+
+  if (!data) {
+    accounts = [];
+  } else {
+    accounts = data;
+  }
+
   return {
-    props: { userEmail, accounts: data },
+    props: { userEmail, accounts, error },
   };
 };

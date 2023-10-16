@@ -1,6 +1,6 @@
-import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
-import { GetServerSidePropsContext } from "next";
+import { SupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { routes } from "../routes";
+import { Database } from "../types/supabase";
 
 export const RedirectCheckType = {
   Auth: "auth",
@@ -11,13 +11,12 @@ export type RedirectCheckKeys =
   (typeof RedirectCheckType)[keyof typeof RedirectCheckType];
 
 export const checkPossibleRedirect = async (
-  ctx: GetServerSidePropsContext,
+  supabaseClient: SupabaseClient<Database>,
   type: RedirectCheckKeys
 ) => {
-  const supabase = createServerSupabaseClient(ctx);
   const {
     data: { session },
-  } = await supabase.auth.getSession();
+  } = await supabaseClient.auth.getSession();
 
   if (type === RedirectCheckType.Auth) {
     if (session) {
@@ -35,10 +34,9 @@ export const checkPossibleRedirect = async (
 };
 
 export const getServerSideAuthUserEmail = async (
-  ctx: GetServerSidePropsContext
+  supabaseClient: SupabaseClient<Database>
 ) => {
-  const supabase = createServerSupabaseClient(ctx);
-  const { data, error } = await supabase.auth.getUser();
+  const { data, error } = await supabaseClient.auth.getUser();
 
   if (error) {
     console.error(error.message);

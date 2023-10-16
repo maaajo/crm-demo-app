@@ -38,7 +38,7 @@ export interface Database {
           currency: string
           edited_at?: string | null
           edited_by?: string | null
-          id: string
+          id?: string
           is_active?: boolean | null
           name: string
           revenue?: number | null

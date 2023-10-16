@@ -29,6 +29,8 @@ import { useEffect, useState } from "react";
 import { Link } from "@chakra-ui/next-js";
 import { routes } from "@/lib/routes";
 import { ArrowLeft } from "lucide-react";
+import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
+import { Database } from "@/lib/types/supabase";
 
 const zodChangePasswordSchema = z
   .object({
@@ -205,7 +207,11 @@ PasswordRecovery.getLayout = (page: ReactElement) => (
 );
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const redirectPage = await checkPossibleRedirect(ctx, RedirectCheckType.Auth);
+  const supabase = createServerSupabaseClient<Database>(ctx);
+  const redirectPage = await checkPossibleRedirect(
+    supabase,
+    RedirectCheckType.Auth
+  );
 
   if (redirectPage) {
     return {

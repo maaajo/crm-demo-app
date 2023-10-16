@@ -31,8 +31,7 @@ import Head from "next/head";
 import { config } from "@/lib/config/config";
 import { Countries } from "@/lib/static/countries";
 import startCase from "lodash.startcase";
-import { v4 as uuidv4 } from "uuid";
-import { TAccount } from "@/lib/types/account";
+import { TAccountZOD } from "@/lib/types/account";
 import { newAccountSchema } from "@/lib/schemas/newAccount";
 import { AccountStatus, Currencies, Sources } from "@/lib/types/account";
 import { useAccounts } from "@/lib/context/account";
@@ -40,24 +39,24 @@ import { routes } from "@/lib/routes";
 import { useRouter } from "next/router";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { Database } from "@/lib/types/supabase";
+import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 
 const AddNewAcount = () => {
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<TAccount>({ resolver: zodResolver(newAccountSchema) });
+  } = useForm<TAccountZOD>({ resolver: zodResolver(newAccountSchema) });
   const { dispatch: updateAccount } = useAccounts();
   const router = useRouter();
   const toast = useToast();
   const supabase = useSupabaseClient<Database>();
 
-  const onSubmit: SubmitHandler<TAccount> = async (newAccountData) => {
+  const onSubmit: SubmitHandler<TAccountZOD> = async (newAccountData) => {
     const { data, error } = await supabase
       .from("accounts")
       .insert([
         {
-          id: newAccountData.id,
           name: newAccountData.accountName,
           is_active: newAccountData.isActive,
           status: newAccountData.status,
@@ -130,14 +129,6 @@ const AddNewAcount = () => {
         </Box>
         <SimpleGrid columns={2} h={"full"} gap={20}>
           <VStack spacing={6} h={"full"}>
-            <Input
-              variant={"black"}
-              type="text"
-              {...register("id")}
-              defaultValue={uuidv4()}
-              display={"none"}
-              isDisabled={isSubmitting}
-            />
             <FormControl isRequired isInvalid={Boolean(errors.accountName)}>
               <FormLabel>Account Name</FormLabel>
               <Input
@@ -400,7 +391,11 @@ const AddNewAcount = () => {
 export const getServerSideProps: GetServerSideProps<{
   userEmail: string;
 }> = async (ctx) => {
-  const redirectPage = await checkPossibleRedirect(ctx, RedirectCheckType.Main);
+  const supabase = createServerSupabaseClient<Database>(ctx);
+  const redirectPage = await checkPossibleRedirect(
+    supabase,
+    RedirectCheckType.Main
+  );
 
   if (redirectPage) {
     return {
@@ -411,7 +406,7 @@ export const getServerSideProps: GetServerSideProps<{
     };
   }
 
-  const userEmail = await getServerSideAuthUserEmail(ctx);
+  const userEmail = await getServerSideAuthUserEmail(supabase);
 
   return {
     props: { userEmail },

@@ -1,4 +1,5 @@
 import { newAccountSchema } from "../schemas/newAccount";
+import { Database } from "./supabase";
 import * as z from "zod";
 
 export const AccountStatus = {
@@ -15,7 +16,9 @@ export const Sources = [
   "Other",
 ] as const;
 
-export type TAccount = z.infer<typeof newAccountSchema>;
+export type TAccountZOD = z.infer<typeof newAccountSchema>;
+
+export type TAccountSupabase = Database["public"]["Tables"]["accounts"]["Row"];
 
 export const AccountAction = {
   ADD: "add",

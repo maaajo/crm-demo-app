@@ -2,7 +2,6 @@ import * as z from "zod";
 import { AccountStatus, Sources, Currencies } from "../types/account";
 
 export const newAccountSchema = z.object({
-  id: z.string().uuid(),
   accountName: z.string().min(2, { message: "Account Name has to be filled" }),
   isActive: z.boolean({
     required_error: "Active is required",

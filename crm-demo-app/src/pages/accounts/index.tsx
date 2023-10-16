@@ -12,13 +12,14 @@ import { routes } from "@/lib/routes";
 import Head from "next/head";
 import { config } from "@/lib/config/config";
 import PageTitle from "@/components/page-title";
-import { useAccounts } from "@/lib/context/account";
 import { createColumnHelper } from "@tanstack/react-table";
-import { TAccount } from "@/lib/types/account";
+import { TAccountSupabase } from "@/lib/types/account";
 import { DataTable } from "@/components/data-table";
 import { Countries } from "@/lib/static/countries";
 import startCase from "lodash.startcase";
 import { Pencil } from "lucide-react";
+import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
+import { Database } from "@/lib/types/supabase";
 
 function AddNewAccountButton() {
   return (
@@ -59,14 +60,14 @@ function EmptyState() {
   );
 }
 
-const columnHelper = createColumnHelper<TAccount>();
+const columnHelper = createColumnHelper<TAccountSupabase>();
 
 const columns = [
-  columnHelper.accessor("accountName", {
+  columnHelper.accessor("name", {
     cell: (value) => startCase(value.getValue()),
     header: "Name",
   }),
-  columnHelper.accessor("isActive", {
+  columnHelper.accessor("is_active", {
     cell: (value) => startCase(String(value.getValue())),
     header: "Active",
   }),
@@ -111,11 +112,11 @@ const columns = [
   }),
 ];
 
-export default function AccountsHome() {
-  const { state: accounts } = useAccounts();
+type AccountsHomeProps = {
+  accounts: TAccountSupabase[];
+};
 
-  // table: https://chakra-ui.com/getting-started/with-react-table
-
+export default function AccountsHome({ accounts }: AccountsHomeProps) {
   return (
     <div>
       <Head>
@@ -142,8 +143,13 @@ export default function AccountsHome() {
 
 export const getServerSideProps: GetServerSideProps<{
   userEmail: string;
+  accounts: TAccountSupabase[] | null;
 }> = async (ctx) => {
-  const redirectPage = await checkPossibleRedirect(ctx, RedirectCheckType.Main);
+  const supabase = createServerSupabaseClient<Database>(ctx);
+  const redirectPage = await checkPossibleRedirect(
+    supabase,
+    RedirectCheckType.Main
+  );
 
   if (redirectPage) {
     return {
@@ -154,9 +160,11 @@ export const getServerSideProps: GetServerSideProps<{
     };
   }
 
-  const userEmail = await getServerSideAuthUserEmail(ctx);
+  const userEmail = await getServerSideAuthUserEmail(supabase);
+
+  const { data, error } = await supabase.from("accounts").select("*");
 
   return {
-    props: { userEmail, pageTitle: "Accounts" },
+    props: { userEmail, accounts: data },
   };
 };

@@ -1,5 +1,9 @@
 import { ReactNode, createContext, useContext, useReducer } from "react";
-import { TAccount, TAccountAction, AccountAction } from "../types/account";
+import {
+  TAccountSupabase,
+  TAccountAction,
+  AccountAction,
+} from "../types/account";
 
 type TAccountProviderProps = {
   children: ReactNode;
@@ -7,17 +11,20 @@ type TAccountProviderProps = {
 
 type TAccountReducerAction = {
   type: TAccountAction;
-  payload: TAccount;
+  payload: TAccountSupabase;
 };
 
 type TAccountContext = {
-  state: TAccount[];
+  state: TAccountSupabase[];
   dispatch: (action: TAccountReducerAction) => void;
 };
 
 const AccountsContext = createContext<TAccountContext | undefined>(undefined);
 
-const accountReducer = (state: TAccount[], action: TAccountReducerAction) => {
+const accountReducer = (
+  state: TAccountSupabase[],
+  action: TAccountReducerAction
+) => {
   switch (action.type) {
     case AccountAction.ADD:
       return [...state, action.payload];

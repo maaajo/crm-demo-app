@@ -8,6 +8,8 @@ import {
 import Head from "next/head";
 import { config } from "@/lib/config/config";
 import PageTitle from "@/components/page-title";
+import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
+import { Database } from "@/lib/types/supabase";
 
 export default function Home() {
   return (
@@ -23,7 +25,12 @@ export default function Home() {
 export const getServerSideProps: GetServerSideProps<{
   userEmail: string;
 }> = async (ctx) => {
-  const redirectPage = await checkPossibleRedirect(ctx, RedirectCheckType.Main);
+  const supabase = createServerSupabaseClient<Database>(ctx);
+
+  const redirectPage = await checkPossibleRedirect(
+    supabase,
+    RedirectCheckType.Main
+  );
 
   if (redirectPage) {
     return {
@@ -34,7 +41,7 @@ export const getServerSideProps: GetServerSideProps<{
     };
   }
 
-  const userEmail = await getServerSideAuthUserEmail(ctx);
+  const userEmail = await getServerSideAuthUserEmail(supabase);
 
   return {
     props: { userEmail },

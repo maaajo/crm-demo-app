@@ -6,6 +6,8 @@ import type { ReactElement } from "react";
 import AuthLayout from "../../components/auth-layout";
 import Head from "next/head";
 import { config } from "@/lib/config/config";
+import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
+import { Database } from "@/lib/types/supabase";
 
 const SignIn: NextPageWithLayout = () => {
   return (
@@ -19,9 +21,11 @@ const SignIn: NextPageWithLayout = () => {
 };
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const redirectPage = await checkPossibleRedirect(ctx, RedirectCheckType.Auth);
-
-  console.log(redirectPage);
+  const supabase = createServerSupabaseClient<Database>(ctx);
+  const redirectPage = await checkPossibleRedirect(
+    supabase,
+    RedirectCheckType.Auth
+  );
 
   if (redirectPage) {
     return {

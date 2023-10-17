@@ -3,10 +3,10 @@ import {
   checkPossibleRedirect,
   getServerSideAuthUserEmail,
 } from "@/lib/auth/methods";
-import { Text, VStack, Button, Flex } from "@chakra-ui/react";
+import { Text, VStack, Button, Flex, useToast } from "@chakra-ui/react";
 import { GetServerSideProps } from "next";
 import { Users2, Plus } from "lucide-react";
-import { Icon, IconButton, useToast } from "@chakra-ui/react";
+import { Icon, IconButton } from "@chakra-ui/react";
 import { Link } from "@chakra-ui/next-js";
 import { routes } from "@/lib/routes";
 import Head from "next/head";
@@ -20,7 +20,7 @@ import startCase from "lodash.startcase";
 import { Pencil } from "lucide-react";
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { Database } from "@/lib/types/supabase";
-import { PostgrestError } from "@supabase/supabase-js";
+import { useEffect } from "react";
 
 function AddNewAccountButton() {
   return (
@@ -65,7 +65,7 @@ const columnHelper = createColumnHelper<TAccountSupabase>();
 
 const columns = [
   columnHelper.accessor("name", {
-    cell: (value) => startCase(value.getValue()),
+    cell: (value) => value.getValue(),
     header: "Name",
   }),
   columnHelper.accessor("is_active", {
@@ -115,22 +115,27 @@ const columns = [
 
 type AccountsHomeProps = {
   accounts: TAccountSupabase[];
-  error: PostgrestError | null;
+  errorMessage: string;
 };
 
-export default function AccountsHome({ accounts, error }: AccountsHomeProps) {
+export default function AccountsHome({
+  accounts,
+  errorMessage,
+}: AccountsHomeProps) {
   const toast = useToast();
 
-  if (error) {
-    toast({
-      title: `Failed to get accounts`,
-      description: `${error.message}`,
-      status: "error",
-      isClosable: true,
-      position: "top",
-      duration: 10000,
-    });
-  }
+  useEffect(() => {
+    if (errorMessage) {
+      toast({
+        title: "Failed to read accounts",
+        description: errorMessage,
+        status: "error",
+        isClosable: true,
+        position: "top",
+        duration: 10000,
+      });
+    }
+  }, [errorMessage, toast]);
 
   return (
     <div>
@@ -159,7 +164,7 @@ export default function AccountsHome({ accounts, error }: AccountsHomeProps) {
 export const getServerSideProps: GetServerSideProps<{
   userEmail: string;
   accounts: TAccountSupabase[];
-  error: PostgrestError | null;
+  errorMessage: string;
 }> = async (ctx) => {
   const supabase = createServerSupabaseClient<Database>(ctx);
   const redirectPage = await checkPossibleRedirect(
@@ -181,15 +186,10 @@ export const getServerSideProps: GetServerSideProps<{
   // look what to do here in case fo error
   const { data, error } = await supabase.from("accounts").select("*");
 
-  let accounts: TAccountSupabase[];
-
-  if (!data) {
-    accounts = [];
-  } else {
-    accounts = data;
-  }
+  let accounts = data ? data : [];
+  let errorMessage = error ? error.message : "";
 
   return {
-    props: { userEmail, accounts, error },
+    props: { userEmail, accounts, errorMessage },
   };
 };

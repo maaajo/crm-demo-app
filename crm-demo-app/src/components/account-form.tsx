@@ -1,11 +1,5 @@
 import PageTitle from "@/components/page-title";
-import {
-  RedirectCheckType,
-  checkPossibleRedirect,
-  getServerSideAuthUserEmail,
-} from "@/lib/auth/methods";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { GetServerSideProps } from "next";
 import { useForm, SubmitHandler } from "react-hook-form";
 import {
   Box,
@@ -31,17 +25,50 @@ import Head from "next/head";
 import { config } from "@/lib/config/config";
 import { Countries } from "@/lib/static/countries";
 import startCase from "lodash.startcase";
-import { TAccountZOD } from "@/lib/types/account";
+import { TAccountSupabase, TAccountZOD } from "@/lib/types/account";
 import { newAccountSchema } from "@/lib/schemas/newAccount";
 import { AccountStatus, Currencies, Sources } from "@/lib/types/account";
-import { useAccounts } from "@/lib/context/account";
 import { routes } from "@/lib/routes";
 import { useRouter } from "next/router";
-import { useSupabaseClient } from "@supabase/auth-helpers-react";
+import {
+  SupabaseClient,
+  useSupabaseClient,
+} from "@supabase/auth-helpers-react";
 import { Database } from "@/lib/types/supabase";
-import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 
-const AddNewAcount = () => {
+type AccountFormProps = {
+  actionType: "add" | "edit";
+  account: TAccountSupabase | null;
+};
+
+const addNewAccount = async (
+  supabase: SupabaseClient<Database>,
+  newAccountData: TAccountZOD
+) => {
+  const { data, error } = await supabase
+    .from("accounts")
+    .insert([
+      {
+        name: newAccountData.accountName,
+        is_active: newAccountData.isActive,
+        status: newAccountData.status,
+        source: newAccountData.source,
+        currency: newAccountData.currency,
+        website: newAccountData.website,
+        revenue: newAccountData.revenue,
+        address_line: newAccountData.addressLine,
+        country: newAccountData.country,
+        city: newAccountData.city,
+        state: newAccountData.state,
+        zip: newAccountData.zip,
+      },
+    ])
+    .select();
+
+  return { data, error };
+};
+
+export default function AccountForm({ actionType, account }: AccountFormProps) {
   const {
     register,
     handleSubmit,
@@ -52,47 +79,33 @@ const AddNewAcount = () => {
   const supabase = useSupabaseClient<Database>();
 
   const onSubmit: SubmitHandler<TAccountZOD> = async (newAccountData) => {
-    const { data, error } = await supabase
-      .from("accounts")
-      .insert([
-        {
-          name: newAccountData.accountName,
-          is_active: newAccountData.isActive,
-          status: newAccountData.status,
-          source: newAccountData.source,
-          currency: newAccountData.currency,
-          website: newAccountData.website,
-          revenue: newAccountData.revenue,
-          address_line: newAccountData.addressLine,
-          country: newAccountData.country,
-          city: newAccountData.city,
-          state: newAccountData.state,
-          zip: newAccountData.zip,
-        },
-      ])
-      .select();
+    if (actionType == "add") {
+      const { data, error } = await addNewAccount(supabase, newAccountData);
 
-    if (error) {
-      toast({
-        title: "Failed to save account",
-        description: error.message,
-        status: "error",
-        isClosable: true,
-        position: "top",
-        duration: 10000,
-      });
+      if (error) {
+        toast({
+          title: "Failed to save account",
+          description: error.message,
+          status: "error",
+          isClosable: true,
+          position: "top",
+          duration: 10000,
+        });
 
-      return;
+        return;
+      }
+
+      if (data) {
+        toast({
+          title: `Account added`,
+          description: `${data[0].name} saved with success!`,
+          status: "success",
+          isClosable: true,
+          position: "top",
+          duration: 10000,
+        });
+      }
     }
-
-    toast({
-      title: `Account added`,
-      description: `${data[0].name} saved with success!`,
-      status: "success",
-      isClosable: true,
-      position: "top",
-      duration: 10000,
-    });
 
     router.push(routes.accounts.index);
   };
@@ -385,31 +398,4 @@ const AddNewAcount = () => {
       </chakra.form>
     </>
   );
-};
-
-export const getServerSideProps: GetServerSideProps<{
-  userEmail: string;
-}> = async (ctx) => {
-  const supabase = createServerSupabaseClient<Database>(ctx);
-  const redirectPage = await checkPossibleRedirect(
-    supabase,
-    RedirectCheckType.Main
-  );
-
-  if (redirectPage) {
-    return {
-      redirect: {
-        destination: redirectPage,
-        permanent: false,
-      },
-    };
-  }
-
-  const userEmail = await getServerSideAuthUserEmail(supabase);
-
-  return {
-    props: { userEmail },
-  };
-};
-
-export default AddNewAcount;
+}

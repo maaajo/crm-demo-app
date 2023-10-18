@@ -1,24 +1,39 @@
+import AccountForm from "@/components/account-form";
 import {
   RedirectCheckType,
   checkPossibleRedirect,
   getServerSideAuthUserDetails,
 } from "@/lib/auth/methods";
+import { config } from "@/lib/config/config";
 import { TAccountSupabase } from "@/lib/types/account";
 import { Database } from "@/lib/types/supabase";
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { GetServerSideProps } from "next";
+import Head from "next/head";
 import { ParsedUrlQuery } from "querystring";
 
 type PageProps = {
   account: TAccountSupabase | null;
+  userId: string;
 };
 
 type QueryParams = ParsedUrlQuery & {
   id: string;
 };
 
-export default function AccountEdit({ account }: PageProps) {
-  return <div>{account?.name}</div>;
+export default function AccountEdit({ account, userId }: PageProps) {
+  return (
+    <>
+      <Head>
+        <title>{`${config.appName} - Edit account`}</title>
+      </Head>
+      {account ? (
+        <AccountForm actionType="edit" userId={userId} account={account} />
+      ) : (
+        <div>Account not found</div>
+      )}
+    </>
+  );
 }
 
 export const getServerSideProps: GetServerSideProps<
@@ -40,7 +55,7 @@ export const getServerSideProps: GetServerSideProps<
     };
   }
 
-  const { userEmail } = await getServerSideAuthUserDetails(supabase);
+  const { userEmail, userId } = await getServerSideAuthUserDetails(supabase);
 
   const { data, error } = await supabase
     .from("accounts")
@@ -50,6 +65,6 @@ export const getServerSideProps: GetServerSideProps<
   const account = data ? data[0] : null;
 
   return {
-    props: { userEmail, account },
+    props: { userEmail, account, userId },
   };
 };

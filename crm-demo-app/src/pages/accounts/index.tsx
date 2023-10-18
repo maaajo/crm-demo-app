@@ -1,7 +1,7 @@
 import {
   RedirectCheckType,
   checkPossibleRedirect,
-  getServerSideAuthUserEmail,
+  getServerSideAuthUserDetails,
 } from "@/lib/auth/methods";
 import { Text, VStack, Button, Flex, useToast } from "@chakra-ui/react";
 import { GetServerSideProps } from "next";
@@ -181,7 +181,7 @@ export const getServerSideProps: GetServerSideProps<{
     };
   }
 
-  const userEmail = await getServerSideAuthUserEmail(supabase);
+  const { userEmail } = await getServerSideAuthUserDetails(supabase);
 
   // look what to do here in case fo error
   const { data, error } = await supabase.from("accounts").select("*");

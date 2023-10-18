@@ -1,7 +1,7 @@
 import {
   RedirectCheckType,
   checkPossibleRedirect,
-  getServerSideAuthUserEmail,
+  getServerSideAuthUserDetails,
 } from "@/lib/auth/methods";
 import { TAccountSupabase } from "@/lib/types/account";
 import { Database } from "@/lib/types/supabase";
@@ -40,7 +40,7 @@ export const getServerSideProps: GetServerSideProps<
     };
   }
 
-  const userEmail = await getServerSideAuthUserEmail(supabase);
+  const { userEmail } = await getServerSideAuthUserDetails(supabase);
 
   const { data, error } = await supabase
     .from("accounts")

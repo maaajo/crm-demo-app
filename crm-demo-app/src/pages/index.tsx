@@ -1,8 +1,7 @@
-import { Box } from "@chakra-ui/react";
 import { GetServerSideProps } from "next";
 import {
   checkPossibleRedirect,
-  getServerSideAuthUserEmail,
+  getServerSideAuthUserDetails,
   RedirectCheckType,
 } from "@/lib/auth/methods";
 import Head from "next/head";
@@ -41,7 +40,7 @@ export const getServerSideProps: GetServerSideProps<{
     };
   }
 
-  const userEmail = await getServerSideAuthUserEmail(supabase);
+  const { userEmail } = await getServerSideAuthUserDetails(supabase);
 
   return {
     props: { userEmail },

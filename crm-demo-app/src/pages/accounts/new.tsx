@@ -2,7 +2,7 @@ import PageTitle from "@/components/page-title";
 import {
   RedirectCheckType,
   checkPossibleRedirect,
-  getServerSideAuthUserEmail,
+  getServerSideAuthUserDetails,
 } from "@/lib/auth/methods";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { GetServerSideProps } from "next";
@@ -34,7 +34,6 @@ import startCase from "lodash.startcase";
 import { TAccountZOD } from "@/lib/types/account";
 import { newAccountSchema } from "@/lib/schemas/newAccount";
 import { AccountStatus, Currencies, Sources } from "@/lib/types/account";
-import { useAccounts } from "@/lib/context/account";
 import { routes } from "@/lib/routes";
 import { useRouter } from "next/router";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
@@ -405,7 +404,7 @@ export const getServerSideProps: GetServerSideProps<{
     };
   }
 
-  const userEmail = await getServerSideAuthUserEmail(supabase);
+  const { userEmail } = await getServerSideAuthUserDetails(supabase);
 
   return {
     props: { userEmail },

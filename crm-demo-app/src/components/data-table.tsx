@@ -17,28 +17,41 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { ChevronDownIcon, ChevronUpIcon, ChevronsUpDown } from "lucide-react";
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 
 export type DataTableProps<Data extends object> = {
   data: Data[];
   columns: ColumnDef<Data, any>[];
+  isSelectable?: boolean;
+  rowSelectionState?: {};
+  onSelectChangeHandler?: Dispatch<SetStateAction<any>>;
 };
 
 export function DataTable<Data extends object>({
   data,
   columns,
+  isSelectable,
+  rowSelectionState,
+  onSelectChangeHandler,
 }: DataTableProps<Data>) {
   const [shouldSort, setShouldSort] = useState<SortingState>([]);
+
   const table = useReactTable({
     columns,
     data,
     getCoreRowModel: getCoreRowModel(),
     onSortingChange: setShouldSort,
     getSortedRowModel: getSortedRowModel(),
+    ...(isSelectable
+      ? {
+          enableRowSelection: true,
+          onRowSelectionChange: onSelectChangeHandler,
+        }
+      : {}),
     state: {
       sorting: shouldSort,
+      rowSelection: rowSelectionState,
     },
-    debugTable: true,
   });
 
   return (

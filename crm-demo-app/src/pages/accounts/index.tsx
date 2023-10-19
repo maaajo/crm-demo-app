@@ -27,7 +27,7 @@ import startCase from "lodash.startcase";
 import { Pencil } from "lucide-react";
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { Database } from "@/lib/types/supabase";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import dayjs from "dayjs";
 
 function AddNewAccountButton() {
@@ -73,40 +73,52 @@ const columnHelper = createColumnHelper<TAccountSupabase>();
 
 const columns = [
   columnHelper.accessor("id", {
-    cell: (value) => <Checkbox key={value.getValue()} />,
+    cell: ({ cell, row }) => {
+      console.log("Is Selected: ", row.getIsSelected());
+      return (
+        <Checkbox
+          key={cell.getValue()}
+          colorScheme={"blackAlpha"}
+          isChecked={row.getIsSelected()}
+          onChange={row.getToggleSelectedHandler()}
+        />
+      );
+    },
     header: "",
     enableSorting: false,
     id: "checkbox",
   }),
   columnHelper.accessor("name", {
-    cell: (value) => value.getValue(),
+    cell: ({ cell }) => {
+      return cell.getValue();
+    },
     header: "Name",
     sortingFn: "alphanumeric",
   }),
   columnHelper.accessor("is_active", {
-    cell: (value) => startCase(String(value.getValue())),
+    cell: ({ cell }) => startCase(String(cell.getValue())),
     header: "Active",
     sortingFn: "alphanumeric",
   }),
   columnHelper.accessor("status", {
-    cell: (value) => startCase(value.getValue()),
+    cell: ({ cell }) => startCase(cell.getValue()),
     header: "Status",
     sortingFn: "alphanumeric",
   }),
   columnHelper.accessor("source", {
-    cell: (value) => value.getValue(),
+    cell: ({ cell }) => cell.getValue(),
     header: "Source",
     sortingFn: "alphanumeric",
   }),
   columnHelper.accessor("currency", {
-    cell: (value) => value.getValue(),
+    cell: ({ cell }) => cell.getValue(),
     header: "Currency",
     sortingFn: "alphanumeric",
   }),
   columnHelper.accessor("country", {
-    cell: (value) => {
+    cell: ({ cell }) => {
       const countryData = Countries.filter(
-        (country) => country.code === value.getValue()
+        (country) => country.code === cell.getValue()
       )[0];
       return `${countryData.flag} ${countryData.name}`;
     },
@@ -114,21 +126,21 @@ const columns = [
     sortingFn: "alphanumeric",
   }),
   columnHelper.accessor("city", {
-    cell: (value) => startCase(value.getValue()),
+    cell: ({ cell }) => startCase(cell.getValue()),
     header: "City",
     sortingFn: "alphanumeric",
   }),
   columnHelper.accessor("created_at", {
-    cell: (value) => dayjs(value.getValue()).format("DD/MM/YYYY HH:mm"),
+    cell: ({ cell }) => dayjs(cell.getValue()).format("DD/MM/YYYY HH:mm"),
     header: "Created at",
     sortingFn: "datetime",
   }),
   columnHelper.accessor("id", {
-    cell: (value) => (
+    cell: ({ cell }) => (
       <IconButton
         aria-label="Edit current account"
         as={Link}
-        href={`${routes.accounts.edit}/${value.getValue()}`}
+        href={`${routes.accounts.edit}/${cell.getValue()}`}
         icon={<Pencil />}
         variant={"unstyled"}
         size={"sm"}
@@ -149,6 +161,12 @@ export default function AccountsHome({
   errorMessage,
 }: AccountsHomeProps) {
   const toast = useToast();
+
+  // check how to fix this with custom data:
+  //https://github.com/TanStack/table/discussions/2155
+  const [selectedAccounts, setSelectedAccounts] = useState({});
+
+  console.log(selectedAccounts);
 
   useEffect(() => {
     if (errorMessage) {
@@ -178,7 +196,13 @@ export default function AccountsHome({
             <PageTitle title="Accounts" />
             <AddNewAccountButton />
           </Flex>
-          <DataTable data={accounts} columns={columns} />
+          <DataTable
+            data={accounts}
+            columns={columns}
+            isSelectable={true}
+            rowSelectionState={selectedAccounts}
+            onSelectChangeHandler={setSelectedAccounts}
+          />
         </>
       ) : (
         <EmptyState />

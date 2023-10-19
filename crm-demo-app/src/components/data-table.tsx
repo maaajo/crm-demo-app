@@ -38,6 +38,7 @@ export function DataTable<Data extends object>({
     state: {
       sorting: shouldSort,
     },
+    debugTable: true,
   });
 
   return (
@@ -68,7 +69,7 @@ export function DataTable<Data extends object>({
                       )}
                     </chakra.span>
 
-                    {header.column.getCanSort() ? (
+                    {canSortColumn ? (
                       <chakra.span pl="4">
                         {header.column.getIsSorted() ? (
                           header.column.getIsSorted() === "desc" ? (

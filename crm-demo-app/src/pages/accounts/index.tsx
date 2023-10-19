@@ -3,7 +3,14 @@ import {
   checkPossibleRedirect,
   getServerSideAuthUserDetails,
 } from "@/lib/auth/methods";
-import { Text, VStack, Button, Flex, useToast } from "@chakra-ui/react";
+import {
+  Text,
+  VStack,
+  Button,
+  Flex,
+  useToast,
+  Checkbox,
+} from "@chakra-ui/react";
 import { GetServerSideProps } from "next";
 import { Users2, Plus } from "lucide-react";
 import { Icon, IconButton } from "@chakra-ui/react";
@@ -21,6 +28,7 @@ import { Pencil } from "lucide-react";
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { Database } from "@/lib/types/supabase";
 import { useEffect } from "react";
+import dayjs from "dayjs";
 
 function AddNewAccountButton() {
   return (
@@ -64,25 +72,36 @@ function EmptyState() {
 const columnHelper = createColumnHelper<TAccountSupabase>();
 
 const columns = [
+  columnHelper.accessor("id", {
+    cell: (value) => <Checkbox key={value.getValue()} />,
+    header: "",
+    enableSorting: false,
+    id: "checkbox",
+  }),
   columnHelper.accessor("name", {
     cell: (value) => value.getValue(),
     header: "Name",
+    sortingFn: "alphanumeric",
   }),
   columnHelper.accessor("is_active", {
     cell: (value) => startCase(String(value.getValue())),
     header: "Active",
+    sortingFn: "alphanumeric",
   }),
   columnHelper.accessor("status", {
     cell: (value) => startCase(value.getValue()),
     header: "Status",
+    sortingFn: "alphanumeric",
   }),
   columnHelper.accessor("source", {
     cell: (value) => value.getValue(),
     header: "Source",
+    sortingFn: "alphanumeric",
   }),
   columnHelper.accessor("currency", {
     cell: (value) => value.getValue(),
     header: "Currency",
+    sortingFn: "alphanumeric",
   }),
   columnHelper.accessor("country", {
     cell: (value) => {
@@ -92,10 +111,17 @@ const columns = [
       return `${countryData.flag} ${countryData.name}`;
     },
     header: "Country",
+    sortingFn: "alphanumeric",
   }),
   columnHelper.accessor("city", {
     cell: (value) => startCase(value.getValue()),
     header: "City",
+    sortingFn: "alphanumeric",
+  }),
+  columnHelper.accessor("created_at", {
+    cell: (value) => dayjs(value.getValue()).format("DD/MM/YYYY HH:mm"),
+    header: "Created at",
+    sortingFn: "datetime",
   }),
   columnHelper.accessor("id", {
     cell: (value) => (
@@ -184,7 +210,10 @@ export const getServerSideProps: GetServerSideProps<{
   const { userEmail } = await getServerSideAuthUserDetails(supabase);
 
   // look what to do here in case fo error
-  const { data, error } = await supabase.from("accounts").select("*");
+  const { data, error } = await supabase
+    .from("accounts")
+    .select("*")
+    .order("created_at", { ascending: true });
 
   let accounts = data ? data : [];
   let errorMessage = error ? error.message : "";

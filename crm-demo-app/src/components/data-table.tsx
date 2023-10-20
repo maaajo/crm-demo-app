@@ -50,7 +50,11 @@ export function DataTable<Data extends object>({
       : {}),
     state: {
       sorting: shouldSort,
-      rowSelection: rowSelectionState,
+      ...(isSelectable
+        ? {
+            rowSelection: rowSelectionState,
+          }
+        : {}),
     },
   });
 

@@ -19,7 +19,11 @@ import { routes } from "@/lib/routes";
 import Head from "next/head";
 import { config } from "@/lib/config/config";
 import PageTitle from "@/components/page-title";
-import { createColumnHelper } from "@tanstack/react-table";
+import {
+  Row,
+  RowSelectionState,
+  createColumnHelper,
+} from "@tanstack/react-table";
 import { TAccountSupabase } from "@/lib/types/account";
 import { DataTable } from "@/components/data-table";
 import { Countries } from "@/lib/static/countries";
@@ -30,57 +34,18 @@ import { Database } from "@/lib/types/supabase";
 import { useEffect, useState } from "react";
 import dayjs from "dayjs";
 
-function AddNewAccountButton() {
-  return (
-    <Button
-      variant={"solid"}
-      type={"submit"}
-      bgColor={"black"}
-      color={"white"}
-      _hover={{
-        bgColor: "blackAlpha.800",
-        textDecoration: "none",
-      }}
-      leftIcon={<Plus />}
-      px={"5"}
-      as={Link}
-      href={routes.accounts.new}
-    >
-      Add new account
-    </Button>
-  );
-}
-
-function EmptyState() {
-  return (
-    <>
-      <PageTitle title="Accounts" />
-      <VStack py={"10"} spacing={5}>
-        <Icon as={Users2} boxSize={"12"} color={"black"} />
-        <Text fontSize={"xl"} fontWeight={"bold"} letterSpacing={"tight"}>
-          No accounts yet
-        </Text>
-        <Text fontSize={"md"} color={"blackAlpha.800"}>
-          Add new account to easily track your sales opportunities
-        </Text>
-        <AddNewAccountButton />
-      </VStack>
-    </>
-  );
-}
-
 const columnHelper = createColumnHelper<TAccountSupabase>();
 
 const columns = [
   columnHelper.accessor("id", {
     cell: ({ cell, row }) => {
-      console.log("Is Selected: ", row.getIsSelected());
       return (
         <Checkbox
           key={cell.getValue()}
-          colorScheme={"blackAlpha"}
+          colorScheme="blackAlpha"
           isChecked={row.getIsSelected()}
           onChange={row.getToggleSelectedHandler()}
+          borderColor={"blackAlpha.100"}
         />
       );
     },
@@ -151,6 +116,45 @@ const columns = [
   }),
 ];
 
+function AddNewAccountButton() {
+  return (
+    <Button
+      variant={"solid"}
+      type={"submit"}
+      bgColor={"black"}
+      color={"white"}
+      _hover={{
+        bgColor: "blackAlpha.800",
+        textDecoration: "none",
+      }}
+      leftIcon={<Plus />}
+      px={"5"}
+      as={Link}
+      href={routes.accounts.new}
+    >
+      Add new account
+    </Button>
+  );
+}
+
+function EmptyState() {
+  return (
+    <>
+      <PageTitle title="Accounts" />
+      <VStack py={"10"} spacing={5}>
+        <Icon as={Users2} boxSize={"12"} color={"black"} />
+        <Text fontSize={"xl"} fontWeight={"bold"} letterSpacing={"tight"}>
+          No accounts yet
+        </Text>
+        <Text fontSize={"md"} color={"blackAlpha.800"}>
+          Add new account to easily track your sales opportunities
+        </Text>
+        <AddNewAccountButton />
+      </VStack>
+    </>
+  );
+}
+
 type AccountsHomeProps = {
   accounts: TAccountSupabase[];
   errorMessage: string;
@@ -161,12 +165,10 @@ export default function AccountsHome({
   errorMessage,
 }: AccountsHomeProps) {
   const toast = useToast();
-
-  // check how to fix this with custom data:
-  //https://github.com/TanStack/table/discussions/2155
-  const [selectedAccounts, setSelectedAccounts] = useState({});
-
-  console.log(selectedAccounts);
+  const [selectedAccounts, setSelectedAccounts] = useState<RowSelectionState>(
+    {}
+  );
+  console.log(Object.keys(selectedAccounts));
 
   useEffect(() => {
     if (errorMessage) {

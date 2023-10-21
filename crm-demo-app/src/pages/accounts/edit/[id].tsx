@@ -45,8 +45,6 @@ export const getServerSideProps: GetServerSideProps<
     RedirectCheckType.Main
   );
 
-  console.log(query);
-
   if (redirectPage) {
     return {
       redirect: {
@@ -58,12 +56,7 @@ export const getServerSideProps: GetServerSideProps<
 
   const { userEmail, userId } = await getServerSideAuthUserDetails(supabase);
 
-  const { data, error } = await supabase
-    .from("accounts")
-    .select("*")
-    .eq("id", query.id);
-
-  const account = data ? data[0] : null;
+  const account: TAccountSupabase = query;
 
   return {
     props: { userEmail, account, userId },

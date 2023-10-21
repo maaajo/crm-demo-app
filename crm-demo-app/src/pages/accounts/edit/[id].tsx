@@ -17,9 +17,7 @@ type PageProps = {
   userId: string;
 };
 
-type QueryParams = ParsedUrlQuery & {
-  id: string;
-};
+type QueryParams = ParsedUrlQuery & TAccountSupabase;
 
 export default function AccountEdit({ account, userId }: PageProps) {
   return (
@@ -40,11 +38,14 @@ export const getServerSideProps: GetServerSideProps<
   PageProps & { userEmail: string }
 > = async (ctx) => {
   const query = ctx.query as QueryParams;
+
   const supabase = createServerSupabaseClient<Database>(ctx);
   const redirectPage = await checkPossibleRedirect(
     supabase,
     RedirectCheckType.Main
   );
+
+  console.log(query);
 
   if (redirectPage) {
     return {

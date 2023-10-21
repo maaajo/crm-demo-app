@@ -23,6 +23,8 @@ import {
   Row,
   RowSelectionState,
   createColumnHelper,
+  Cell,
+  CellContext,
 } from "@tanstack/react-table";
 import { TAccountSupabase } from "@/lib/types/account";
 import { DataTable } from "@/components/data-table";
@@ -100,20 +102,39 @@ const columns = [
     header: "Created at",
     sortingFn: "datetime",
   }),
-  columnHelper.accessor("id", {
-    cell: ({ cell }) => (
-      <IconButton
-        aria-label="Edit current account"
-        as={Link}
-        href={`${routes.accounts.edit}/${cell.getValue()}`}
-        icon={<Pencil />}
-        variant={"unstyled"}
-        size={"sm"}
-      />
-    ),
+  {
+    cell: ({ row }: CellContext<TAccountSupabase, unknown>) => {
+      const editURLSearchParamas = new URLSearchParams();
+
+      const dataKeysFiltered = Object.keys(row.original).filter(
+        (item) => item !== "id"
+      );
+
+      for (let objectKey of dataKeysFiltered) {
+        const currentValue =
+          row.original[objectKey as keyof typeof row.original];
+        if (currentValue) {
+          editURLSearchParamas.append(objectKey, currentValue.toString());
+        } else {
+          editURLSearchParamas.append(objectKey, "");
+        }
+      }
+
+      return (
+        <IconButton
+          aria-label="Edit current account"
+          as={Link}
+          href={`${routes.accounts.edit}/${row.original.id}?${editURLSearchParamas}`}
+          icon={<Pencil />}
+          variant={"unstyled"}
+          size={"sm"}
+        />
+      );
+    },
     enableSorting: false,
     header: "",
-  }),
+    id: "edit",
+  },
 ];
 
 function AddNewAccountButton() {
@@ -238,7 +259,9 @@ export const getServerSideProps: GetServerSideProps<{
   // look what to do here in case fo error
   const { data, error } = await supabase
     .from("accounts")
-    .select("*")
+    .select(
+      "id, created_at, country, address_line, city, currency, edited_at, is_active, name, revenue, source, state, status, website, zip"
+    )
     .order("created_at", { ascending: true });
 
   let accounts = data ? data : [];

@@ -10,6 +10,7 @@ import {
   Flex,
   useToast,
   Checkbox,
+  HStack,
 } from "@chakra-ui/react";
 import { GetServerSideProps } from "next";
 import { Users2, Plus } from "lucide-react";
@@ -20,10 +21,8 @@ import Head from "next/head";
 import { config } from "@/lib/config/config";
 import PageTitle from "@/components/page-title";
 import {
-  Row,
   RowSelectionState,
   createColumnHelper,
-  Cell,
   CellContext,
 } from "@tanstack/react-table";
 import { TAccountSupabase } from "@/lib/types/account";
@@ -31,13 +30,20 @@ import { DataTable } from "@/components/data-table";
 import { Countries } from "@/lib/static/countries";
 import startCase from "lodash.startcase";
 import { Pencil } from "lucide-react";
-import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
+import {
+  SupabaseClient,
+  createServerSupabaseClient,
+} from "@supabase/auth-helpers-nextjs";
 import { Database } from "@/lib/types/supabase";
 import { useEffect, useState } from "react";
 import dayjs from "dayjs";
+import { Trash2 } from "lucide-react";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
+import { useRouter } from "next/router";
 
 const columnHelper = createColumnHelper<TAccountSupabase>();
 
+// how to remove selection on delete?
 const columns = [
   columnHelper.accessor("id", {
     cell: ({ cell, row }) => {
@@ -104,7 +110,7 @@ const columns = [
   }),
   {
     cell: ({ row }: CellContext<TAccountSupabase, unknown>) => {
-      const editURLSearchParamas = new URLSearchParams();
+      const editURLSearchParams = new URLSearchParams();
 
       const dataKeysFiltered = Object.keys(row.original).filter(
         (item) => item !== "id"
@@ -114,9 +120,9 @@ const columns = [
         const currentValue =
           row.original[objectKey as keyof typeof row.original];
         if (currentValue) {
-          editURLSearchParamas.append(objectKey, currentValue.toString());
+          editURLSearchParams.append(objectKey, currentValue.toString());
         } else {
-          editURLSearchParamas.append(objectKey, "");
+          editURLSearchParams.append(objectKey, "");
         }
       }
 
@@ -124,7 +130,7 @@ const columns = [
         <IconButton
           aria-label="Edit current account"
           as={Link}
-          href={`${routes.accounts.edit}/${row.original.id}?${editURLSearchParamas}`}
+          href={`${routes.accounts.edit}/${row.original.id}?${editURLSearchParams}`}
           icon={<Pencil />}
           variant={"unstyled"}
           size={"sm"}
@@ -181,6 +187,18 @@ type AccountsHomeProps = {
   errorMessage: string;
 };
 
+const deleteAccounts = async (
+  accountsToDelete: string[],
+  supabase: SupabaseClient<Database>
+) => {
+  const { error } = await supabase
+    .from("accounts")
+    .delete()
+    .in("id", accountsToDelete);
+
+  return error;
+};
+
 export default function AccountsHome({
   accounts,
   errorMessage,
@@ -189,7 +207,35 @@ export default function AccountsHome({
   const [selectedAccounts, setSelectedAccounts] = useState<RowSelectionState>(
     {}
   );
-  console.log(Object.keys(selectedAccounts));
+  const selectedAccountsDataArrayIDs = Object.keys(selectedAccounts);
+
+  console.log(selectedAccountsDataArrayIDs);
+
+  const supabase = useSupabaseClient<Database>();
+  const router = useRouter();
+
+  const handleDeleteSelected = async () => {
+    const selectedAccountsIDs = selectedAccountsDataArrayIDs.map(
+      (item) => accounts[Number(item)].id
+    );
+    const error = await deleteAccounts(selectedAccountsIDs, supabase);
+
+    if (error) {
+      toast({
+        title: "Failed to delete accounts",
+        description: error.message,
+        status: "error",
+        isClosable: true,
+        position: "top",
+        duration: 10000,
+      });
+
+      return;
+    }
+
+    // refresh server side props. re-fetch the data, on demand, without doing a hard refresh of the whole page
+    router.replace(router.asPath);
+  };
 
   useEffect(() => {
     if (errorMessage) {
@@ -217,8 +263,21 @@ export default function AccountsHome({
             justifyContent={"space-between"}
           >
             <PageTitle title="Accounts" />
-            <AddNewAccountButton />
+            <HStack spacing={4}>
+              {selectedAccountsDataArrayIDs.length > 0 ? (
+                <Button
+                  leftIcon={<Trash2 />}
+                  aria-label="button to delete accounts"
+                  colorScheme={"red"}
+                  onClick={handleDeleteSelected}
+                >
+                  Delete
+                </Button>
+              ) : null}
+              <AddNewAccountButton />
+            </HStack>
           </Flex>
+
           <DataTable
             data={accounts}
             columns={columns}

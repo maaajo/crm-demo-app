@@ -6,6 +6,7 @@ import { Inter } from "next/font/google";
 import { extendTheme, StyleFunctionProps } from "@chakra-ui/react";
 import Layout from "../components/layout";
 import { InputTheme } from "@/theme/inputTheme";
+import { CheckboxTheme } from "@/theme/checkboxTheme";
 import { SessionContextProvider, Session } from "@supabase/auth-helpers-react";
 import { useState } from "react";
 import { SupabaseClient } from "@/lib/supabase";
@@ -34,6 +35,7 @@ const theme = extendTheme({
   },
   components: {
     Input: InputTheme,
+    Checkbox: CheckboxTheme,
   },
 });
 

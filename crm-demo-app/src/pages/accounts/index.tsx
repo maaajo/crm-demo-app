@@ -47,7 +47,7 @@ const columns = [
           colorScheme="blackAlpha"
           isChecked={row.getIsSelected()}
           onChange={row.getToggleSelectedHandler()}
-          borderColor={"blackAlpha.100"}
+          variant={"black"}
         />
       );
     },

@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "theme": "chakra-cli tokens src/theme/index.ts"
   },
   "dependencies": {
     "@chakra-ui/next-js": "^2.1.4",
@@ -41,6 +42,7 @@
     "zod": "^3.21.4"
   },
   "devDependencies": {
+    "@chakra-ui/cli": "^2.4.1",
     "supabase": "^1.100.1"
   }
 }

@@ -12,7 +12,18 @@ import {
 } from "@chakra-ui/react";
 import { CheckCircle2 } from "lucide-react";
 
+const constNotificationType = {
+  SUCCESS: "success",
+  WARNING: "warning",
+  FAILURE: "failure",
+  INFO: "info",
+} as const;
+
+type NotificationType =
+  (typeof constNotificationType)[keyof typeof constNotificationType];
+
 type NotificationModalProps = {
+  type: NotificationType;
   isOpen: boolean;
   onClose: () => void;
   headingText: string;
@@ -24,6 +35,7 @@ type NotificationModalProps = {
 // maybe needs type like success, warning, failure?
 
 const NotificationModal = ({
+  type,
   isOpen,
   onClose,
   headingText,

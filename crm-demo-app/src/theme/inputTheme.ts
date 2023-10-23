@@ -1,6 +1,6 @@
 import { ComponentStyleConfig } from "@chakra-ui/react";
 
-export const InputTheme: ComponentStyleConfig = {
+const InputTheme: ComponentStyleConfig = {
   variants: {
     black: {
       field: {
@@ -17,3 +17,5 @@ export const InputTheme: ComponentStyleConfig = {
     },
   },
 };
+
+export default InputTheme;

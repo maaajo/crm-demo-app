@@ -25,6 +25,8 @@ import { GetServerSideProps } from "next";
 import { RedirectCheckType, checkPossibleRedirect } from "@/lib/auth/methods";
 import Head from "next/head";
 import { config } from "@/lib/config/config";
+import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
+import { Database } from "@/lib/types/supabase";
 
 const zodForgotSchema = z.object({
   email: z
@@ -124,6 +126,7 @@ const ForgotPassword: NextPageWithLayout = () => {
         </chakra.form>
         <AuthLink type="forgot" />
         <AuthModal
+          type={"info"}
           isOpen={isOpen}
           onClose={onClose}
           headingText="Email has been sent!"
@@ -141,7 +144,11 @@ ForgotPassword.getLayout = (page: ReactElement) => (
 );
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const redirectPage = await checkPossibleRedirect(ctx, RedirectCheckType.Auth);
+  const supabase = createServerSupabaseClient<Database>(ctx);
+  const redirectPage = await checkPossibleRedirect(
+    supabase,
+    RedirectCheckType.Auth
+  );
 
   if (redirectPage) {
     return {

@@ -146,18 +146,12 @@ const columns = [
 function AddNewAccountButton() {
   return (
     <Button
-      variant={"solid"}
       type={"submit"}
-      bgColor={"black"}
-      color={"white"}
-      _hover={{
-        bgColor: "blackAlpha.800",
-        textDecoration: "none",
-      }}
       leftIcon={<Plus />}
       px={"5"}
       as={Link}
       href={routes.accounts.new}
+      variant={"blackSolid"}
     >
       Add new account
     </Button>
@@ -199,6 +193,13 @@ const deleteAccounts = async (
   return error;
 };
 
+const getAccountsIDsToDeleteFromSelection = (
+  selectedAccountsIndexes: string[],
+  accounts: TAccountSupabase[]
+) => {
+  return selectedAccountsIndexes.map((item) => accounts[Number(item)].id);
+};
+
 export default function AccountsHome({
   accounts,
   errorMessage,
@@ -207,18 +208,16 @@ export default function AccountsHome({
   const [selectedAccounts, setSelectedAccounts] = useState<RowSelectionState>(
     {}
   );
-  const selectedAccountsDataArrayIDs = Object.keys(selectedAccounts);
-
-  console.log(selectedAccountsDataArrayIDs);
+  const selectedAccountsIndexes = Object.keys(selectedAccounts);
 
   const supabase = useSupabaseClient<Database>();
   const router = useRouter();
 
   const handleDeleteSelected = async () => {
-    const selectedAccountsIDs = selectedAccountsDataArrayIDs.map(
-      (item) => accounts[Number(item)].id
+    const error = await deleteAccounts(
+      getAccountsIDsToDeleteFromSelection(selectedAccountsIndexes, accounts),
+      supabase
     );
-    const error = await deleteAccounts(selectedAccountsIDs, supabase);
 
     if (error) {
       toast({
@@ -232,9 +231,8 @@ export default function AccountsHome({
 
       return;
     }
-
-    // refresh server side props. re-fetch the data, on demand, without doing a hard refresh of the whole page
     router.replace(router.asPath);
+    setSelectedAccounts({});
   };
 
   useEffect(() => {
@@ -264,7 +262,7 @@ export default function AccountsHome({
           >
             <PageTitle title="Accounts" />
             <HStack spacing={4}>
-              {selectedAccountsDataArrayIDs.length > 0 ? (
+              {selectedAccountsIndexes.length > 0 ? (
                 <Button
                   leftIcon={<Trash2 />}
                   aria-label="button to delete accounts"

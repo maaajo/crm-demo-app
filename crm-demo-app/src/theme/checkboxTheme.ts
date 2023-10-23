@@ -10,6 +10,8 @@ const black = definePartsStyle({
   }),
 });
 
-export const CheckboxTheme = defineMultiStyleConfig({
+const CheckboxTheme = defineMultiStyleConfig({
   variants: { black },
 });
+
+export default CheckboxTheme;

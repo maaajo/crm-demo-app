@@ -3,41 +3,33 @@ import type { NextPage } from "next";
 import type { ReactElement, ReactNode } from "react";
 import { ChakraProvider } from "@chakra-ui/react";
 import { Inter } from "next/font/google";
-import { extendTheme, StyleFunctionProps } from "@chakra-ui/react";
 import Layout from "../components/layout";
-import { InputTheme } from "@/theme/inputTheme";
-import { CheckboxTheme } from "@/theme/checkboxTheme";
 import { SessionContextProvider, Session } from "@supabase/auth-helpers-react";
 import { useState } from "react";
 import { SupabaseClient } from "@/lib/supabase";
 import { AccountsProvider } from "@/lib/context/account";
+import customTheme from "@/theme";
 
 const inter = Inter({ subsets: ["latin"] });
 
-const theme = extendTheme({
-  // the below needs to be changed: https://codesandbox.io/s/extend-variants-demo-0nhtc?file=/src/theme/index.ts
-  // variants: {
-  //   secondary: (props: StyleFunctionProps) => ({
-  //     ...props.theme.components.Button.variants.outline(props),
-  //     color: "green.500",
-  //   }),
-  // },
-  styles: {
-    global: () => ({
-      body: {
-        background: "blackAlpha.300",
-      },
-    }),
-  },
-  fonts: {
-    heading: "var(--font-inter)",
-    body: "var(--font-inter)",
-  },
-  components: {
-    Input: InputTheme,
-    Checkbox: CheckboxTheme,
-  },
-});
+// const theme = extendTheme({
+//   styles: {
+//     global: () => ({
+//       body: {
+//         background: "blackAlpha.300",
+//       },
+//     }),
+//   },
+//   fonts: {
+//     heading: "var(--font-inter)",
+//     body: "var(--font-inter)",
+//   },
+//   components: {
+//     Input: InputTheme,
+//     Checkbox: CheckboxTheme,
+//     Button: ButtonTheme,
+//   },
+// });
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode;
@@ -71,7 +63,7 @@ export default function App({
         supabaseClient={supabaseClient}
         initialSession={pageProps.initialSession}
       >
-        <ChakraProvider theme={theme}>
+        <ChakraProvider theme={customTheme}>
           <AccountsProvider>
             {getLayout ? (
               getLayout(<Component {...pageProps} />)

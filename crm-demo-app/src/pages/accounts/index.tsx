@@ -46,18 +46,28 @@ const columnHelper = createColumnHelper<TAccountSupabase>();
 // how to remove selection on delete?
 const columns = [
   columnHelper.accessor("id", {
-    cell: ({ cell, row }) => {
+    header: ({ table }) => {
       return (
         <Checkbox
-          key={cell.getValue()}
+          colorScheme="blackAlpha"
+          variant={"black"}
+          isChecked={table.getIsAllRowsSelected()}
+          isIndeterminate={table.getIsSomeRowsSelected()}
+          onChange={table.getToggleAllRowsSelectedHandler()}
+        />
+      );
+    },
+    cell: ({ row }) => {
+      return (
+        <Checkbox
           colorScheme="blackAlpha"
           isChecked={row.getIsSelected()}
           onChange={row.getToggleSelectedHandler()}
+          isIndeterminate={row.getIsSomeSelected()}
           variant={"black"}
         />
       );
     },
-    header: "",
     enableSorting: false,
     id: "checkbox",
   }),
@@ -262,16 +272,15 @@ export default function AccountsHome({
           >
             <PageTitle title="Accounts" />
             <HStack spacing={4}>
-              {selectedAccountsIndexes.length > 0 ? (
-                <Button
-                  leftIcon={<Trash2 />}
-                  aria-label="button to delete accounts"
-                  colorScheme={"red"}
-                  onClick={handleDeleteSelected}
-                >
-                  Delete
-                </Button>
-              ) : null}
+              <Button
+                leftIcon={<Trash2 />}
+                aria-label="button to delete accounts"
+                colorScheme={"red"}
+                onClick={handleDeleteSelected}
+                isDisabled={selectedAccountsIndexes.length === 0}
+              >
+                Delete
+              </Button>
               <AddNewAccountButton />
             </HStack>
           </Flex>

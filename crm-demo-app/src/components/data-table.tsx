@@ -59,7 +59,7 @@ export function DataTable<Data extends object>({
   });
 
   return (
-    <Table>
+    <Table size={{ base: "sm" }}>
       <Thead>
         {table.getHeaderGroups().map((headerGroup) => (
           <Tr key={headerGroup.id} backgroundColor={"blackAlpha.100"}>
@@ -71,7 +71,7 @@ export function DataTable<Data extends object>({
                   onClick={header.column.getToggleSortingHandler()}
                   isNumeric={header.column.columnDef.meta?.isNumeric}
                   textTransform={"none"}
-                  fontSize={"lg"}
+                  fontSize={{ base: "md", "2xl": "lg" }}
                   fontWeight={"bold"}
                   color={"blackAlpha.800"}
                   py={6}
@@ -113,7 +113,7 @@ export function DataTable<Data extends object>({
               <Td
                 key={cell.id}
                 isNumeric={cell.column.columnDef.meta?.isNumeric}
-                fontSize={"md"}
+                fontSize={{ base: "sm", "2xl": "md" }}
                 borderBottomColor={`${
                   rowIndex !== rowArray.length - 1 ? "blackAlpha.200" : null
                 }`}

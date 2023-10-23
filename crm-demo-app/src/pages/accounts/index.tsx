@@ -141,9 +141,8 @@ const columns = [
           aria-label="Edit current account"
           as={Link}
           href={`${routes.accounts.edit}/${row.original.id}?${editURLSearchParams}`}
-          icon={<Pencil />}
+          icon={<Icon as={Pencil} boxSize={{ base: 5, "2xl": 6 }} />}
           variant={"unstyled"}
-          size={"sm"}
         />
       );
     },

@@ -11,6 +11,7 @@ import {
   useToast,
   Checkbox,
   HStack,
+  useDisclosure,
 } from "@chakra-ui/react";
 import { GetServerSideProps } from "next";
 import { Users2, Plus } from "lucide-react";
@@ -40,10 +41,10 @@ import dayjs from "dayjs";
 import { Trash2 } from "lucide-react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { useRouter } from "next/router";
+import WarningConfirmationModal from "@/components/confirmation-modal/warning";
 
 const columnHelper = createColumnHelper<TAccountSupabase>();
 
-// how to remove selection on delete?
 const columns = [
   columnHelper.accessor("id", {
     header: ({ table }) => {
@@ -218,9 +219,9 @@ export default function AccountsHome({
     {}
   );
   const selectedAccountsIndexes = Object.keys(selectedAccounts);
-
   const supabase = useSupabaseClient<Database>();
   const router = useRouter();
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const handleDeleteSelected = async () => {
     const error = await deleteAccounts(
@@ -238,10 +239,13 @@ export default function AccountsHome({
         duration: 10000,
       });
 
+      onClose();
       return;
     }
+
     router.replace(router.asPath);
     setSelectedAccounts({});
+    onClose();
   };
 
   useEffect(() => {
@@ -258,7 +262,7 @@ export default function AccountsHome({
   }, [errorMessage, toast]);
 
   return (
-    <div>
+    <>
       <Head>
         <title>{`${config.appName} - Accounts`}</title>
       </Head>
@@ -275,7 +279,7 @@ export default function AccountsHome({
                 leftIcon={<Trash2 />}
                 aria-label="button to delete accounts"
                 colorScheme={"red"}
-                onClick={handleDeleteSelected}
+                onClick={onOpen}
                 isDisabled={selectedAccountsIndexes.length === 0}
               >
                 Delete
@@ -295,7 +299,15 @@ export default function AccountsHome({
       ) : (
         <EmptyState />
       )}
-    </div>
+      <WarningConfirmationModal
+        isOpen={isOpen}
+        onClose={onClose}
+        headingText="Confirm deletion"
+        bodyText={`You're about to delete ${selectedAccountsIndexes.length} account(s) permanently. Please confirm.`}
+        confirmButtonText="Delete"
+        confirmButtonHandler={handleDeleteSelected}
+      />
+    </>
   );
 }
 

@@ -198,12 +198,7 @@ export default function AccountForm(props: AccountFormProps) {
           px={10}
           mt={6}
           type="submit"
-          variant={"solid"}
-          bgColor={"black"}
-          color={"white"}
-          _hover={{
-            bgColor: "blackAlpha.800",
-          }}
+          variant={"blackSolid"}
           isLoading={isSubmitting}
           loadingText={actionType === "add" ? "Saving..." : "Updating..."}
           onClick={handleSubmit(onSubmit)}

@@ -12,16 +12,26 @@ import {
   HStack,
   Text,
   Select,
+  IconButton,
 } from "@chakra-ui/react";
 import {
   ColumnDef,
   SortingState,
+  Table as ReactTable,
   flexRender,
   getCoreRowModel,
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { ChevronDownIcon, ChevronUpIcon, ChevronsUpDown } from "lucide-react";
+import {
+  ChevronDownIcon,
+  ChevronUpIcon,
+  ChevronsUpDown,
+  ChevronsLeft,
+  ChevronLeft,
+  ChevronRight,
+  ChevronsRight,
+} from "lucide-react";
 import { Dispatch, SetStateAction, useState } from "react";
 
 export type DataTableProps<Data extends object> = {
@@ -30,7 +40,88 @@ export type DataTableProps<Data extends object> = {
   isSelectable?: boolean;
   rowSelectionState?: {};
   onSelectChangeHandler?: Dispatch<SetStateAction<any>>;
+  showPagination?: boolean;
 };
+
+type PaginationProps<Data extends object> = {
+  table: ReactTable<Data>;
+};
+
+function Pagination<Data extends object>({ table }: PaginationProps<Data>) {
+  return (
+    <Flex
+      alignItems={"center"}
+      justifyContent={"space-between"}
+      px={2}
+      py={6}
+      fontSize={"sm"}
+    >
+      <Box color={"blackAlpha.600"}>
+        {`${table.getFilteredSelectedRowModel().rows.length} of ${
+          table.getFilteredRowModel().rows.length
+        } row(s) selected.`}
+      </Box>
+      <HStack alignItems={"center"} spacing={6}>
+        <HStack alignItems={"center"} spacing={2}>
+          <Text whiteSpace={"nowrap"} fontWeight={"medium"}>
+            Rows per page:
+          </Text>
+          <Select
+            value={`${table.getState().pagination.pageSize}`}
+            onChange={(e) => table.setPageSize(parseInt(e.target.value))}
+            size={"sm"}
+          >
+            {[10, 20, 30].map((pageSize) => (
+              <chakra.option value={`${pageSize}`} key={pageSize}>
+                {pageSize}
+              </chakra.option>
+            ))}
+          </Select>
+        </HStack>
+        <Flex
+          alignItems={"center"}
+          justifyContent={"center"}
+          fontSize={"sm"}
+          fontWeight={"medium"}
+        >
+          {`Page ${
+            table.getState().pagination.pageIndex + 1
+          } of ${table.getPageCount()}`}
+        </Flex>
+        <HStack alignItems={"center"} spacing={2}>
+          <IconButton
+            icon={<Icon as={ChevronsLeft} />}
+            aria-label="Go to first page"
+            variant={"solid"}
+            isDisabled={!table.getCanPreviousPage()}
+            onClick={() => table.setPageIndex(0)}
+          />
+          <IconButton
+            icon={<Icon as={ChevronLeft} />}
+            aria-label="Go to previous page"
+            variant={"solid"}
+            isDisabled={!table.getCanPreviousPage()}
+            onClick={() => table.previousPage()}
+          />
+          <IconButton
+            icon={<Icon as={ChevronRight} />}
+            aria-label="Go to next page"
+            variant={"solid"}
+            isDisabled={!table.getCanNextPage()}
+            onClick={() => table.nextPage()}
+          />
+          <IconButton
+            icon={<Icon as={ChevronsRight} />}
+            aria-label="Go to last page"
+            variant={"solid"}
+            isDisabled={!table.getCanNextPage()}
+            onClick={() => table.setPageIndex(table.getPageCount() - 1)}
+          />
+        </HStack>
+      </HStack>
+    </Flex>
+  );
+}
 
 export function DataTable<Data extends object>({
   data,
@@ -38,6 +129,7 @@ export function DataTable<Data extends object>({
   isSelectable,
   rowSelectionState,
   onSelectChangeHandler,
+  showPagination,
 }: DataTableProps<Data>) {
   const [shouldSort, setShouldSort] = useState<SortingState>([]);
 
@@ -133,35 +225,7 @@ export function DataTable<Data extends object>({
           ))}
         </Tbody>
       </Table>
-      <Flex
-        alignItems={"center"}
-        justifyContent={"space-between"}
-        px={2}
-        py={6}
-        fontSize={"sm"}
-      >
-        <Box flex={1} color={"blackAlpha.600"}>
-          {`${table.getFilteredSelectedRowModel().rows.length} of ${
-            table.getFilteredRowModel().rows.length
-          } row(s) selected.`}
-        </Box>
-        <HStack flex={1} alignItems={"center"} spacing={6}>
-          <HStack alignItems={"center"} spacing={2} justifyContent={"flex-end"}>
-            <Text fontWeight={"medium"}>Rows per page:</Text>
-            <Select
-              value={`${table.getState().pagination.pageSize}`}
-              onChange={(e) => table.setPageSize(parseInt(e.target.value))}
-              size={"sm"}
-            >
-              {[10, 20, 30].map((pageSize) => (
-                <chakra.option value={`${pageSize}`} key={pageSize}>
-                  {pageSize}
-                </chakra.option>
-              ))}
-            </Select>
-          </HStack>
-        </HStack>
-      </Flex>
+      {showPagination ? <Pagination table={table} /> : null}
     </>
   );
 }

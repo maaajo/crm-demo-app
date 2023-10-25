@@ -9,35 +9,26 @@ import {
   Button,
   Flex,
   useToast,
-  Checkbox,
   HStack,
   useDisclosure,
 } from "@chakra-ui/react";
 import { GetServerSideProps } from "next";
 import { Users2, Plus } from "lucide-react";
-import { Icon, IconButton } from "@chakra-ui/react";
+import { Icon } from "@chakra-ui/react";
 import { Link } from "@chakra-ui/next-js";
 import { routes } from "@/lib/routes";
 import Head from "next/head";
 import { config } from "@/lib/config/config";
 import PageTitle from "@/components/page-title";
-import {
-  RowSelectionState,
-  createColumnHelper,
-  CellContext,
-} from "@tanstack/react-table";
-import { TAccountSupabase } from "@/lib/types/account";
+import { RowSelectionState } from "@tanstack/react-table";
+import { AccountStatus, TAccountSupabase } from "@/lib/types/account";
 import { DataTable } from "@/components/data-table";
-import { Countries } from "@/lib/static/countries";
-import startCase from "lodash.startcase";
-import { Pencil } from "lucide-react";
 import {
   SupabaseClient,
   createServerSupabaseClient,
 } from "@supabase/auth-helpers-nextjs";
 import { Database } from "@/lib/types/supabase";
 import { useEffect, useState } from "react";
-import dayjs from "dayjs";
 import { Trash2 } from "lucide-react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { useRouter } from "next/router";

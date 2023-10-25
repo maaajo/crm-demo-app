@@ -16,7 +16,7 @@ import { User2, MoreHorizontal, LogOut, Home } from "lucide-react";
 import { config } from "@/lib/config/config";
 import { Link } from "@chakra-ui/next-js";
 import { usePathname } from "next/navigation";
-import { toTitleCase } from "@/lib/utils";
+import startCase from "lodash.startcase";
 
 type NavItemProps = {
   icon: JSX.Element;
@@ -30,13 +30,13 @@ const navItems: NavItemProps[] = [
     icon: <Home />,
     id: "adsqwd",
     href: routes.home,
-    title: toTitleCase(mainPages.home),
+    title: startCase(mainPages.home),
   },
   {
     icon: <User2 />,
     id: "ddshj123",
     href: routes.accounts.index,
-    title: toTitleCase(mainPages.accounts),
+    title: startCase(mainPages.accounts),
   },
 ];
 

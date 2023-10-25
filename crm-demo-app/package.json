@@ -43,6 +43,7 @@
   },
   "devDependencies": {
     "@chakra-ui/cli": "^2.4.1",
+    "@faker-js/faker": "^8.2.0",
     "supabase": "^1.100.1"
   }
 }

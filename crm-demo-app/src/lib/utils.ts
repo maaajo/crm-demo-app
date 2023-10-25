@@ -21,7 +21,11 @@ function getRandomValueFromSimpleObject<T extends object>(simpleObject: T) {
   return simpleObject[randomProp];
 }
 
-function getRandomValueFromArray<T>(arr: T[]) {
+function getRandomValueFromArray<T>(arr: readonly T[] | T[]) {
+  if (!arr.length) {
+    return undefined;
+  }
+
   return arr[faker.number.int({ min: 0, max: arr.length - 1 })];
 }
 
@@ -37,8 +41,7 @@ export const generateFakeAccount = (): TAccountZOD => {
     state: faker.location.state(),
     zip: faker.location.zipCode(),
     status: getRandomValueFromSimpleObject(AccountStatus),
-    currency:
-      Currencies[faker.number.int({ min: 0, max: Currencies.length - 1 })],
-    source: getRandomValueFromArray(Sources),
+    currency: getRandomValueFromArray(Currencies)!,
+    source: getRandomValueFromArray(Sources)!,
   };
 };

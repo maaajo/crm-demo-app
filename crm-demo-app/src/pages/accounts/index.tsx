@@ -34,6 +34,7 @@ import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { useRouter } from "next/router";
 import WarningConfirmationModal from "@/components/confirmation-modal/warning";
 import { accountsTableColumns } from "./dataTableColumns";
+import { generateFakeAccount } from "@/lib/utils";
 
 function AddNewAccountButton() {
   return (
@@ -142,6 +143,8 @@ export default function AccountsHome({
       });
     }
   }, [errorMessage, toast]);
+
+  console.log(generateFakeAccount());
 
   return (
     <>

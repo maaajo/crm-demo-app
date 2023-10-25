@@ -35,7 +35,7 @@ export const generateFakeAccount = (): TAccountZOD => {
     city: faker.location.city(),
     country: faker.location.country(),
     isActive: Boolean(faker.number.int({ min: 0, max: 1 })),
-    revenue: faker.number.float({ min: 0, max: 1000000 }),
+    revenue: faker.number.float({ min: 0, max: 1000000, precision: 0.01 }),
     website: faker.internet.url(),
     addressLine: faker.location.streetAddress({ useFullAddress: true }),
     state: faker.location.state(),

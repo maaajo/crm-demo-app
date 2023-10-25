@@ -21,7 +21,7 @@ import Head from "next/head";
 import { config } from "@/lib/config/config";
 import PageTitle from "@/components/page-title";
 import { RowSelectionState } from "@tanstack/react-table";
-import { AccountStatus, TAccountSupabase } from "@/lib/types/account";
+import { TAccountSupabase } from "@/lib/types/account";
 import { DataTable } from "@/components/data-table";
 import {
   SupabaseClient,
@@ -34,7 +34,6 @@ import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { useRouter } from "next/router";
 import WarningConfirmationModal from "@/components/confirmation-modal/warning";
 import { accountsTableColumns } from "./dataTableColumns";
-import { generateFakeAccount } from "@/lib/utils";
 
 function AddNewAccountButton() {
   return (
@@ -143,8 +142,6 @@ export default function AccountsHome({
       });
     }
   }, [errorMessage, toast]);
-
-  console.log(generateFakeAccount());
 
   return (
     <>

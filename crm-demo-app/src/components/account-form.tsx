@@ -1,6 +1,6 @@
 import PageTitle from "@/components/page-title";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm, SubmitHandler } from "react-hook-form";
+import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import {
   Box,
   VStack,
@@ -34,6 +34,7 @@ import {
   useSupabaseClient,
 } from "@supabase/auth-helpers-react";
 import { Database } from "@/lib/types/supabase";
+import { generateFakeAccount } from "@/lib/utils";
 
 type AccountFormPropsAdd = {
   actionType: "add";
@@ -111,10 +112,20 @@ export default function AccountForm(props: AccountFormProps) {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
+    reset,
+    control,
   } = useForm<TAccountZOD>({ resolver: zodResolver(newAccountSchema) });
+
   const router = useRouter();
   const toast = useToast();
   const supabase = useSupabaseClient<Database>();
+
+  const onFakeDataClick = () => {
+    const fakeData = generateFakeAccount();
+    console.log(fakeData);
+
+    reset(fakeData);
+  };
 
   const onSubmit: SubmitHandler<TAccountZOD> = async (newAccountData) => {
     if (actionType == "add") {
@@ -197,10 +208,11 @@ export default function AccountForm(props: AccountFormProps) {
         />
         <HStack alignItems={"center"} spacing={4}>
           <Button
-            type={"submit"}
+            type={"button"}
             variant={"outline"}
             colorScheme={"blackAlpha"}
             color={"blackAlpha.900"}
+            onClick={onFakeDataClick}
           >
             Fill with fake data
           </Button>
@@ -227,7 +239,6 @@ export default function AccountForm(props: AccountFormProps) {
               type="text"
               isDisabled={isSubmitting}
               {...register("accountName")}
-              defaultValue={actionType === "edit" ? props.account.name : ""}
             />
             {errors.accountName && (
               <FormErrorMessage>
@@ -244,18 +255,14 @@ export default function AccountForm(props: AccountFormProps) {
             <FormLabel mb={"0"} htmlFor="is-active">
               Is active?
             </FormLabel>
-            <Switch
-              id="is-active"
-              {...register("isActive")}
-              isDisabled={isSubmitting}
-              defaultChecked={
-                actionType === "edit"
-                  ? props.account.is_active
-                    ? true
-                    : false
-                  : false
-              }
+            <Controller
+              control={control}
+              name="isActive"
+              render={({ field: { onChange, value, ref } }) => (
+                <Switch isChecked={value} onChange={onChange} ref={ref} />
+              )}
             />
+
             {errors.isActive && (
               <FormErrorMessage>
                 {errors.isActive.message!.toString()}
@@ -269,35 +276,38 @@ export default function AccountForm(props: AccountFormProps) {
             isInvalid={Boolean(errors.status)}
           >
             <FormLabel mb={"0"}>Status</FormLabel>
-            <RadioGroup
-              defaultValue={
-                actionType === "edit" ? props.account.status : "new"
-              }
-            >
-              <Stack spacing={5} direction={"row"}>
-                <Radio
-                  value={AccountStatus.NEW}
-                  {...register("status")}
-                  isDisabled={isSubmitting}
-                >
-                  {startCase(AccountStatus.NEW)}
-                </Radio>
-                <Radio
-                  value={AccountStatus.PENDING}
-                  {...register("status")}
-                  isDisabled={isSubmitting}
-                >
-                  {startCase(AccountStatus.PENDING)}
-                </Radio>
-                <Radio
-                  value={AccountStatus.CLOSED}
-                  {...register("status")}
-                  isDisabled={isSubmitting}
-                >
-                  {startCase(AccountStatus.CLOSED)}
-                </Radio>
-              </Stack>
-            </RadioGroup>
+            <Controller
+              control={control}
+              name="status"
+              render={({ field: { onChange, value, ref } }) => (
+                <RadioGroup value={value} ref={ref}>
+                  <Stack spacing={5} direction={"row"}>
+                    <Radio
+                      value={AccountStatus.NEW}
+                      isDisabled={isSubmitting}
+                      onChange={onChange}
+                    >
+                      {startCase(AccountStatus.NEW)}
+                    </Radio>
+                    <Radio
+                      value={AccountStatus.PENDING}
+                      isDisabled={isSubmitting}
+                      onChange={onChange}
+                    >
+                      {startCase(AccountStatus.PENDING)}
+                    </Radio>
+                    <Radio
+                      value={AccountStatus.CLOSED}
+                      isDisabled={isSubmitting}
+                      onChange={onChange}
+                    >
+                      {startCase(AccountStatus.CLOSED)}
+                    </Radio>
+                  </Stack>
+                </RadioGroup>
+              )}
+            />
+
             {errors.status && (
               <FormErrorMessage>
                 {errors.status.message!.toString()}
@@ -314,7 +324,6 @@ export default function AccountForm(props: AccountFormProps) {
               }}
               _hover={{ borderColor: "blackAlpha.500" }}
               isDisabled={isSubmitting}
-              defaultValue={actionType === "edit" ? props.account.source : ""}
               {...register("source")}
             >
               <option></option>
@@ -340,7 +349,6 @@ export default function AccountForm(props: AccountFormProps) {
               }}
               _hover={{ borderColor: "blackAlpha.500" }}
               isDisabled={isSubmitting}
-              defaultValue={actionType === "edit" ? props.account.currency : ""}
               {...register("currency")}
             >
               <option></option>
@@ -371,13 +379,6 @@ export default function AccountForm(props: AccountFormProps) {
                 errorBorderColor={"red.300"}
                 type="text"
                 {...register("website")}
-                defaultValue={
-                  actionType === "edit"
-                    ? props.account.website
-                      ? props.account.website
-                      : ""
-                    : ""
-                }
                 isDisabled={isSubmitting}
               />
             </InputGroup>
@@ -401,13 +402,6 @@ export default function AccountForm(props: AccountFormProps) {
                 variant={"black"}
                 errorBorderColor={"red.300"}
                 type="number"
-                defaultValue={
-                  actionType === "edit"
-                    ? props.account.revenue
-                      ? props.account.revenue
-                      : ""
-                    : ""
-                }
                 {...register("revenue", { valueAsNumber: true })}
                 isDisabled={isSubmitting}
               />
@@ -429,13 +423,6 @@ export default function AccountForm(props: AccountFormProps) {
               }}
               _hover={{ borderColor: "blackAlpha.500" }}
               resize={"none"}
-              defaultValue={
-                actionType === "edit"
-                  ? props.account.address_line
-                    ? props.account.address_line
-                    : ""
-                  : ""
-              }
               {...register("addressLine")}
               isDisabled={isSubmitting}
             />
@@ -451,7 +438,6 @@ export default function AccountForm(props: AccountFormProps) {
                 borderColor: "blackAlpha.900",
               }}
               _hover={{ borderColor: "blackAlpha.500" }}
-              defaultValue={actionType === "edit" ? props.account.country : ""}
               {...register("country")}
               isDisabled={isSubmitting}
             >
@@ -476,7 +462,6 @@ export default function AccountForm(props: AccountFormProps) {
               errorBorderColor={"red.300"}
               type="text"
               {...register("city")}
-              defaultValue={actionType === "edit" ? props.account.city : ""}
               isDisabled={isSubmitting}
             />
             {errors.city && (
@@ -493,13 +478,6 @@ export default function AccountForm(props: AccountFormProps) {
               errorBorderColor={"red.300"}
               type="text"
               {...register("state")}
-              defaultValue={
-                actionType === "edit"
-                  ? props.account.state
-                    ? props.account.state
-                    : ""
-                  : ""
-              }
               isDisabled={isSubmitting}
             />
           </FormControl>
@@ -511,13 +489,6 @@ export default function AccountForm(props: AccountFormProps) {
               errorBorderColor={"red.300"}
               type="text"
               {...register("zip")}
-              defaultValue={
-                actionType === "edit"
-                  ? props.account.zip
-                    ? props.account.zip
-                    : ""
-                  : ""
-              }
               isDisabled={isSubmitting}
             />
           </FormControl>

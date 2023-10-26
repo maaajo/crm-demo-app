@@ -1,9 +1,4 @@
-import {
-  AccountStatus,
-  Currencies,
-  Sources,
-  TAccountZOD,
-} from "./types/account";
+import { AccountStatus, Currencies, Sources } from "./types/account";
 import { faker } from "@faker-js/faker";
 
 function getRandomValueFromSimpleObject<T extends object>(simpleObject: T) {
@@ -29,11 +24,11 @@ function getRandomValueFromArray<T>(arr: readonly T[] | T[]) {
   return arr[faker.number.int({ min: 0, max: arr.length - 1 })];
 }
 
-export const generateFakeAccount = (): TAccountZOD => {
+export const generateFakeAccount = () => {
   return {
     accountName: faker.company.name(),
     city: faker.location.city(),
-    country: faker.location.country(),
+    country: faker.location.countryCode(),
     isActive: Boolean(faker.number.int({ min: 0, max: 1 })),
     revenue: faker.number.float({ min: 0, max: 1000000, precision: 0.01 }),
     website: faker.internet.url(),
@@ -45,3 +40,18 @@ export const generateFakeAccount = (): TAccountZOD => {
     source: getRandomValueFromArray(Sources)!,
   };
 };
+
+export const getDefaultAccount = () => ({
+  city: "",
+  country: "",
+  currency: "",
+  name: "",
+  source: "",
+  status: "",
+  address_line: "",
+  is_active: false,
+  revenue: 0,
+  state: "",
+  website: "",
+  zip: "",
+});

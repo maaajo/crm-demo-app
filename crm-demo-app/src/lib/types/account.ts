@@ -25,6 +25,11 @@ export type TAccountSupabase = Omit<
   "created_by" | "edited_by"
 >;
 
+export type TAccountSupabaseInsert = Omit<
+  Database["public"]["Tables"]["accounts"]["Insert"],
+  "created_by" | "edited_by"
+>;
+
 export const AccountAction = {
   ADD: "add",
   UPDATE: "update",

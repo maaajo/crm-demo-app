@@ -114,7 +114,11 @@ export default function AccountForm(props: AccountFormProps) {
     formState: { errors, isSubmitting },
     reset,
     control,
-  } = useForm<TAccountZOD>({ resolver: zodResolver(newAccountSchema) });
+  } = useForm<TAccountZOD>({
+    resolver: zodResolver(newAccountSchema),
+    // TODO fix below, make sure taccountZOD matches TaccountSupabase
+    ...(actionType === "edit" ? { defaultValues: {} } : {}),
+  });
 
   const router = useRouter();
   const toast = useToast();

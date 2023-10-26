@@ -1,4 +1,9 @@
-import { AccountStatus, Currencies, Sources } from "./types/account";
+import {
+  AccountStatus,
+  Currencies,
+  Sources,
+  TAccountZOD,
+} from "./types/account";
 import { faker } from "@faker-js/faker";
 
 function getRandomValueFromSimpleObject<T extends object>(simpleObject: T) {
@@ -45,11 +50,11 @@ export const getDefaultAccount = () => ({
   city: "",
   country: "",
   currency: "",
-  name: "",
+  accountName: "",
   source: "",
   status: "",
-  address_line: "",
-  is_active: false,
+  addressLine: "",
+  isActive: false,
   revenue: 0,
   state: "",
   website: "",

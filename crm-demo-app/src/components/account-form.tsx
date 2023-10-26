@@ -20,6 +20,7 @@ import {
   FormErrorMessage,
   Button,
   useToast,
+  HStack,
 } from "@chakra-ui/react";
 import { Countries } from "@/lib/static/countries";
 import startCase from "lodash.startcase";
@@ -194,17 +195,26 @@ export default function AccountForm(props: AccountFormProps) {
               : `Edit account - ${props.account.name}`
           }
         />
-        <Button
-          px={10}
-          mt={6}
-          type="submit"
-          variant={"blackSolid"}
-          isLoading={isSubmitting}
-          loadingText={actionType === "add" ? "Saving..." : "Updating..."}
-          onClick={handleSubmit(onSubmit)}
-        >
-          {actionType === "add" ? "Save" : "Update"}
-        </Button>
+        <HStack alignItems={"center"} spacing={4}>
+          <Button
+            type={"submit"}
+            variant={"outline"}
+            colorScheme={"blackAlpha"}
+            color={"blackAlpha.900"}
+          >
+            Fill with fake data
+          </Button>
+          <Button
+            px={10}
+            type="submit"
+            variant={"blackSolid"}
+            isLoading={isSubmitting}
+            loadingText={actionType === "add" ? "Saving..." : "Updating..."}
+            onClick={handleSubmit(onSubmit)}
+          >
+            {actionType === "add" ? "Save" : "Update"}
+          </Button>
+        </HStack>
       </Box>
       <SimpleGrid columns={2} h={"full"} gap={20}>
         <VStack spacing={6} h={"full"}>

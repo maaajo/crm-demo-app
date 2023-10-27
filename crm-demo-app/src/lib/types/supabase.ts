@@ -1,8 +1,10 @@
+import { TAccountStatus, TCurrency, TSource } from "./account";
+
 export type Json =
   | string
   | number
   | boolean
-  | null
+  | undefined
   | { [key: string]: Json | undefined }
   | Json[];
 
@@ -11,61 +13,61 @@ export interface Database {
     Tables: {
       accounts: {
         Row: {
-          address_line: string | null;
+          address_line: string | undefined;
           city: string;
           country: string;
           created_at: string;
           created_by: string;
-          currency: string;
-          edited_at: string | null;
-          edited_by: string | null;
+          currency: TCurrency;
+          edited_at: string | undefined;
+          edited_by: string | undefined;
           id: string;
           is_active: boolean;
           name: string;
-          revenue: number | null;
-          source: string;
-          state: string | null;
-          status: string;
-          website: string | null;
-          zip: string | null;
+          revenue: number | undefined;
+          source: TSource;
+          state: string | undefined;
+          status: TAccountStatus;
+          website: string | undefined;
+          zip: string | undefined;
         };
         Insert: {
-          address_line?: string | null;
+          address_line?: string | undefined;
           city: string;
           country: string;
           created_at?: string;
           created_by?: string;
-          currency: string;
-          edited_at?: string | null;
-          edited_by?: string | null;
+          currency: TCurrency;
+          edited_at?: string | undefined;
+          edited_by?: string | undefined;
           id?: string;
           is_active?: boolean;
           name: string;
-          revenue?: number | null;
-          source: string;
-          state?: string | null;
-          status: string;
-          website?: string | null;
-          zip?: string | null;
+          revenue?: number | undefined;
+          source: TSource;
+          state?: string | undefined;
+          status: TAccountStatus;
+          website?: string | undefined;
+          zip?: string | undefined;
         };
         Update: {
-          address_line?: string | null;
+          address_line?: string | undefined;
           city?: string;
           country?: string;
           created_at?: string;
           created_by?: string;
-          currency?: string;
-          edited_at?: string | null;
-          edited_by?: string | null;
+          currency?: TCurrency;
+          edited_at?: string | undefined;
+          edited_by?: string | undefined;
           id?: string;
           is_active?: boolean;
           name?: string;
-          revenue?: number | null;
-          source?: string;
-          state?: string | null;
-          status?: string;
-          website?: string | null;
-          zip?: string | null;
+          revenue?: number | undefined;
+          source?: TSource;
+          state?: string | undefined;
+          status?: TAccountStatus;
+          website?: string | undefined;
+          zip?: string | undefined;
         };
         Relationships: [];
       };

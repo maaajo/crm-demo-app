@@ -46,7 +46,15 @@ type AccountFormPropsEdit = {
   userId: string;
 };
 
-type AccountFormProps = AccountFormPropsAdd | AccountFormPropsEdit;
+type AccountFormPropsView = {
+  actionType: "view";
+  account: TAccountSupabase;
+};
+
+type AccountFormProps =
+  | AccountFormPropsAdd
+  | AccountFormPropsEdit
+  | AccountFormPropsView;
 
 const addNewAccount = async (
   supabase: SupabaseClient<Database>,
@@ -54,22 +62,7 @@ const addNewAccount = async (
 ) => {
   const { data, error } = await supabase
     .from("accounts")
-    .insert([
-      {
-        name: newAccountData.accountName,
-        is_active: newAccountData.isActive,
-        status: newAccountData.status,
-        source: newAccountData.source,
-        currency: newAccountData.currency,
-        website: newAccountData.website,
-        revenue: newAccountData.revenue,
-        address_line: newAccountData.addressLine,
-        country: newAccountData.country,
-        city: newAccountData.city,
-        state: newAccountData.state,
-        zip: newAccountData.zip,
-      },
-    ])
+    .insert([newAccountData])
     .select();
 
   return { data, error };
@@ -84,18 +77,7 @@ const editAccount = async (
   const { data, error } = await supabase
     .from("accounts")
     .update({
-      name: newAccountData.accountName,
-      is_active: newAccountData.isActive,
-      status: newAccountData.status,
-      source: newAccountData.source,
-      currency: newAccountData.currency,
-      website: newAccountData.website,
-      revenue: newAccountData.revenue,
-      address_line: newAccountData.addressLine,
-      country: newAccountData.country,
-      city: newAccountData.city,
-      state: newAccountData.state,
-      zip: newAccountData.zip,
+      ...newAccountData,
       edited_at: new Date(Date.now()).toISOString(),
       edited_by: userId,
     })
@@ -103,6 +85,19 @@ const editAccount = async (
     .select();
 
   return { data, error };
+};
+
+const getPageTitle = (action: AccountFormProps["actionType"]) => {
+  switch (action) {
+    case "add":
+      return "Add new account";
+    case "edit":
+      return `Edit account`;
+    case "view":
+      return `View account`;
+    default:
+      return "";
+  }
 };
 
 export default function AccountForm(props: AccountFormProps) {
@@ -116,17 +111,18 @@ export default function AccountForm(props: AccountFormProps) {
     control,
   } = useForm<TAccountZOD>({
     resolver: zodResolver(newAccountSchema),
-    // TODO fix below, make sure taccountZOD matches TaccountSupabase
-    ...(actionType === "edit" ? { defaultValues: {} } : {}),
+    ...(actionType === "edit" || actionType === "view"
+      ? { defaultValues: props.account }
+      : {}),
   });
 
   const router = useRouter();
   const toast = useToast();
   const supabase = useSupabaseClient<Database>();
+  const isView = actionType === "view";
 
   const onFakeDataClick = () => {
     const fakeData = generateFakeAccount();
-    console.log(fakeData);
 
     reset(fakeData);
   };
@@ -203,50 +199,46 @@ export default function AccountForm(props: AccountFormProps) {
         justifyContent={"space-between"}
         alignItems={"center"}
       >
-        <PageTitle
-          title={
-            actionType === "add"
-              ? "Add new account"
-              : `Edit account - ${props.account.name}`
-          }
-        />
-        <HStack alignItems={"center"} spacing={4}>
-          <Button
-            type={"button"}
-            variant={"outline"}
-            colorScheme={"blackAlpha"}
-            color={"blackAlpha.900"}
-            onClick={onFakeDataClick}
-          >
-            Fill with fake data
-          </Button>
-          <Button
-            px={10}
-            type="submit"
-            variant={"blackSolid"}
-            isLoading={isSubmitting}
-            loadingText={actionType === "add" ? "Saving..." : "Updating..."}
-            onClick={handleSubmit(onSubmit)}
-          >
-            {actionType === "add" ? "Save" : "Update"}
-          </Button>
-        </HStack>
+        <PageTitle title={getPageTitle(actionType)} />
+        {!isView ? (
+          <HStack alignItems={"center"} spacing={4}>
+            <Button
+              type={"button"}
+              variant={"outline"}
+              colorScheme={"blackAlpha"}
+              color={"blackAlpha.900"}
+              onClick={onFakeDataClick}
+            >
+              Fill with fake data
+            </Button>
+            <Button
+              px={10}
+              type="submit"
+              variant={"blackSolid"}
+              isLoading={isSubmitting}
+              loadingText={actionType === "add" ? "Saving..." : "Updating..."}
+              onClick={handleSubmit(onSubmit)}
+            >
+              {actionType === "add" ? "Save" : "Update"}
+            </Button>
+          </HStack>
+        ) : null}
       </Box>
       <SimpleGrid columns={2} h={"full"} gap={20}>
         <VStack spacing={6} h={"full"}>
-          <FormControl isRequired isInvalid={Boolean(errors.accountName)}>
+          <FormControl isRequired isInvalid={Boolean(errors.name)}>
             <FormLabel>Account Name</FormLabel>
             <Input
               placeholder="Account Name"
               variant={"black"}
               errorBorderColor={"red.300"}
               type="text"
-              isDisabled={isSubmitting}
-              {...register("accountName")}
+              isDisabled={isSubmitting || isView}
+              {...register("name")}
             />
-            {errors.accountName && (
+            {errors.name && (
               <FormErrorMessage>
-                {errors.accountName.message!.toString()}
+                {errors.name.message!.toString()}
               </FormErrorMessage>
             )}
           </FormControl>
@@ -254,22 +246,27 @@ export default function AccountForm(props: AccountFormProps) {
             display={"flex"}
             alignItems={"center"}
             isRequired
-            isInvalid={Boolean(errors.isActive)}
+            isInvalid={Boolean(errors.is_active)}
           >
             <FormLabel mb={"0"} htmlFor="is-active">
               Is active?
             </FormLabel>
             <Controller
               control={control}
-              name="isActive"
+              name="is_active"
               render={({ field: { onChange, value, ref } }) => (
-                <Switch isChecked={value} onChange={onChange} ref={ref} />
+                <Switch
+                  isChecked={value}
+                  onChange={onChange}
+                  ref={ref}
+                  isDisabled={isSubmitting || isView}
+                />
               )}
             />
 
-            {errors.isActive && (
+            {errors.is_active && (
               <FormErrorMessage>
-                {errors.isActive.message!.toString()}
+                {errors.is_active.message!.toString()}
               </FormErrorMessage>
             )}
           </FormControl>
@@ -284,7 +281,11 @@ export default function AccountForm(props: AccountFormProps) {
               control={control}
               name="status"
               render={({ field: { onChange, value, ref } }) => (
-                <RadioGroup value={value} ref={ref}>
+                <RadioGroup
+                  value={value}
+                  ref={ref}
+                  isDisabled={isSubmitting || isView}
+                >
                   <Stack spacing={5} direction={"row"}>
                     <Radio
                       value={AccountStatus.NEW}
@@ -327,7 +328,7 @@ export default function AccountForm(props: AccountFormProps) {
                 borderColor: "blackAlpha.900",
               }}
               _hover={{ borderColor: "blackAlpha.500" }}
-              isDisabled={isSubmitting}
+              isDisabled={isSubmitting || isView}
               {...register("source")}
             >
               <option></option>
@@ -352,7 +353,7 @@ export default function AccountForm(props: AccountFormProps) {
                 borderColor: "blackAlpha.900",
               }}
               _hover={{ borderColor: "blackAlpha.500" }}
-              isDisabled={isSubmitting}
+              isDisabled={isSubmitting || isView}
               {...register("currency")}
             >
               <option></option>
@@ -427,8 +428,8 @@ export default function AccountForm(props: AccountFormProps) {
               }}
               _hover={{ borderColor: "blackAlpha.500" }}
               resize={"none"}
-              {...register("addressLine")}
-              isDisabled={isSubmitting}
+              {...register("address_line")}
+              isDisabled={isSubmitting || isView}
             />
           </FormControl>
         </VStack>
@@ -466,7 +467,7 @@ export default function AccountForm(props: AccountFormProps) {
               errorBorderColor={"red.300"}
               type="text"
               {...register("city")}
-              isDisabled={isSubmitting}
+              isDisabled={isSubmitting || isView}
             />
             {errors.city && (
               <FormErrorMessage>
@@ -493,7 +494,7 @@ export default function AccountForm(props: AccountFormProps) {
               errorBorderColor={"red.300"}
               type="text"
               {...register("zip")}
-              isDisabled={isSubmitting}
+              isDisabled={isSubmitting || isView}
             />
           </FormControl>
         </VStack>

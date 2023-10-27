@@ -2,8 +2,8 @@ import * as z from "zod";
 import { AccountStatus, Sources, Currencies } from "../types/account";
 
 export const newAccountSchema = z.object({
-  accountName: z.string().min(2, { message: "Account Name has to be filled" }),
-  isActive: z.boolean({
+  name: z.string().min(2, { message: "Account Name has to be filled" }),
+  is_active: z.boolean({
     required_error: "Active is required",
   }),
   status: z.nativeEnum(AccountStatus, {
@@ -15,7 +15,7 @@ export const newAccountSchema = z.object({
   city: z.string().min(3, { message: "City has to be filled" }),
   website: z.string().url().optional().or(z.literal("")),
   revenue: z.union([z.number(), z.nan()]).optional(),
-  addressLine: z.string().optional(),
+  address_line: z.string().optional(),
   state: z.string().optional(),
   zip: z.string().optional(),
 });

@@ -37,3 +37,6 @@ export const AccountAction = {
 } as const;
 
 export type TAccountAction = (typeof AccountAction)[keyof typeof AccountAction];
+export type TCurrency = (typeof Currencies)[number];
+export type TSource = (typeof Sources)[number];
+export type TAccountStatus = (typeof AccountStatus)[keyof typeof AccountStatus];

@@ -6,23 +6,26 @@ import {
   Modal,
   ModalBody,
   ModalContent,
-  ModalFooter,
   ModalOverlay,
-  Text,
   HStack,
   ModalCloseButton,
   Select,
+  chakra,
+  FormControl,
+  FormLabel,
 } from "@chakra-ui/react";
 import {
   SupabaseClient,
   useSupabaseClient,
 } from "@supabase/auth-helpers-react";
-import { MouseEventHandler } from "react";
+import { FormEvent } from "react";
 
 type FakeDataModal = {
   isOpen: boolean;
   onClose: () => void;
 };
+
+const selectFormName = "accounts_number";
 
 const insertFakeAccounts = async (
   supabase: SupabaseClient<Database>,
@@ -37,12 +40,15 @@ const insertFakeAccounts = async (
   return error;
 };
 
-const WarningConfirmationModal = ({ isOpen, onClose }: FakeDataModal) => {
+const FakeDataModal = ({ isOpen, onClose }: FakeDataModal) => {
   const supabase = useSupabaseClient<Database>();
 
-  const handleGenerateFakeAccounts = (
-    event: MouseEventHandler<HTMLButtonElement, MouseEvent>
-  ) => {};
+  const handleGenerateFakeAccounts = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const formData = new FormData(e.target as HTMLFormElement);
+    const numberOfAccountsToGenerate = formData.get(selectFormName);
+  };
 
   return (
     <Modal
@@ -57,54 +63,58 @@ const WarningConfirmationModal = ({ isOpen, onClose }: FakeDataModal) => {
       />
       <ModalContent py={8} px={4}>
         <ModalCloseButton />
-        <ModalBody textAlign={"center"} mt={20} mb={6}>
-          <Heading size={"md"} as={"h5"}>
-            Generate fake accounts
-          </Heading>
-          <Text mt={"5"} color={"blackAlpha.700"}>
-            Select number of fake accounts to generate
-          </Text>
-          <Select
-            borderColor={"blackAlpha.500"}
-            backgroundColor={"white"}
-            _focusVisible={{
-              borderColor: "blackAlpha.900",
-            }}
-            _hover={{ borderColor: "blackAlpha.500" }}
-            name="accounts_number"
-          >
-            {[10, 20, 30, 40, 50, 60, 70, 80, 90, 100].map((item) => (
-              <option value={item} key={item}>
-                {item}
-              </option>
-            ))}
-          </Select>
+        <ModalBody textAlign={"center"} mt={20} mb={4}>
+          <chakra.form onSubmit={handleGenerateFakeAccounts}>
+            <Heading fontSize={"2xl"} fontWeight={"extrabold"}>
+              Generate fake accounts
+            </Heading>
+            <FormControl mt={6}>
+              <FormLabel textAlign={"center"}>
+                Number of fake accounts to generate:
+              </FormLabel>
+              <Select
+                borderColor={"blackAlpha.500"}
+                backgroundColor={"white"}
+                _focusVisible={{
+                  borderColor: "blackAlpha.900",
+                }}
+                _hover={{ borderColor: "blackAlpha.500" }}
+                name={selectFormName}
+                mt={4}
+              >
+                {[10, 20, 30, 40, 50, 60, 70, 80, 90, 100].map((item) => (
+                  <option value={item} key={item}>
+                    {item}
+                  </option>
+                ))}
+              </Select>
+            </FormControl>
+            <HStack pt={8} width={"full"}>
+              <Button
+                flex={1}
+                name="confirm"
+                variant={"outline"}
+                colorScheme={"blackAlpha"}
+                color={"blackAlpha.900"}
+                type={"submit"}
+              >
+                Generate
+              </Button>
+              <Button
+                flex={1}
+                name="cancel"
+                variant={"blackSolid"}
+                onClick={onClose}
+                type={"button"}
+              >
+                Cancel
+              </Button>
+            </HStack>
+          </chakra.form>
         </ModalBody>
-        <ModalFooter display={"flex"} justifyContent={"center"} width={"full"}>
-          <HStack width={"full"}>
-            <Button
-              flex={1}
-              name="confirm"
-              onClick={handleGenerateFakeAccounts}
-              variant={"outline"}
-              colorScheme={"blackAlpha"}
-              color={"blackAlpha.900"}
-            >
-              Generate
-            </Button>
-            <Button
-              flex={1}
-              name="cancel"
-              variant={"blackSolid"}
-              onClick={onClose}
-            >
-              Cancel
-            </Button>
-          </HStack>
-        </ModalFooter>
       </ModalContent>
     </Modal>
   );
 };
 
-export default WarningConfirmationModal;
+export default FakeDataModal;

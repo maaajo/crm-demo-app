@@ -39,8 +39,7 @@ import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { useRouter } from "next/router";
 import WarningConfirmationModal from "@/components/confirmation-modal/warning";
 import { accountsTableColumns } from "@/components/account/data-table-columns";
-
-function GenerateFakeDataModal() {}
+import FakeDataModal from "@/components/account/fake-data-modal";
 
 function AddNewAccountButton() {
   return (
@@ -110,7 +109,16 @@ export default function AccountsHome({
   const selectedAccountsIndexes = Object.keys(selectedAccounts);
   const supabase = useSupabaseClient<Database>();
   const router = useRouter();
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const {
+    isOpen: deleteWarningModalIsOpen,
+    onOpen: deleteWarningModalOnOpen,
+    onClose: deleteWarningModalOnClose,
+  } = useDisclosure();
+  const {
+    isOpen: fakeAccountsModalIsOpen,
+    onOpen: fakeAccountsModalOnOpen,
+    onClose: fakeAccountsModalOnClose,
+  } = useDisclosure();
 
   const handleDeleteSelected = async () => {
     const error = await deleteAccounts(
@@ -128,13 +136,13 @@ export default function AccountsHome({
         duration: 10000,
       });
 
-      onClose();
+      deleteWarningModalOnClose();
       return;
     }
 
     router.replace(router.asPath);
     setSelectedAccounts({});
-    onClose();
+    deleteWarningModalOnClose();
   };
 
   useEffect(() => {
@@ -168,7 +176,7 @@ export default function AccountsHome({
                 leftIcon={<Trash2 />}
                 aria-label="button to delete accounts"
                 colorScheme={"red"}
-                onClick={onOpen}
+                onClick={deleteWarningModalOnOpen}
                 isDisabled={selectedAccountsIndexes.length === 0}
               >
                 Delete
@@ -191,6 +199,7 @@ export default function AccountsHome({
                       <Icon as={UserPlus} boxSize={{ base: 5, "2xl": 6 }} />
                     }
                     _hover={{ textDecoration: "none" }}
+                    onClick={fakeAccountsModalOnOpen}
                   >
                     Generate fake data
                   </MenuItem>
@@ -212,12 +221,16 @@ export default function AccountsHome({
         <EmptyState />
       )}
       <WarningConfirmationModal
-        isOpen={isOpen}
-        onClose={onClose}
+        isOpen={deleteWarningModalIsOpen}
+        onClose={deleteWarningModalOnClose}
         headingText="Confirm deletion"
         bodyText={`You're about to delete ${selectedAccountsIndexes.length} account(s) permanently. Please confirm.`}
         confirmButtonText="Delete"
         confirmButtonHandler={handleDeleteSelected}
+      />
+      <FakeDataModal
+        isOpen={fakeAccountsModalIsOpen}
+        onClose={fakeAccountsModalOnClose}
       />
     </>
   );

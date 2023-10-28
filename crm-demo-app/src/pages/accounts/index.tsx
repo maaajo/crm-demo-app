@@ -11,9 +11,14 @@ import {
   useToast,
   HStack,
   useDisclosure,
+  IconButton,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
 } from "@chakra-ui/react";
 import { GetServerSideProps } from "next";
-import { Users2, Plus } from "lucide-react";
+import { Users2, Plus, MoreVertical, UserPlus } from "lucide-react";
 import { Icon } from "@chakra-ui/react";
 import { Link } from "@chakra-ui/next-js";
 import { routes } from "@/lib/routes";
@@ -33,7 +38,9 @@ import { Trash2 } from "lucide-react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { useRouter } from "next/router";
 import WarningConfirmationModal from "@/components/confirmation-modal/warning";
-import { accountsTableColumns } from "./dataTableColumns";
+import { accountsTableColumns } from "@/components/account/data-table-columns";
+
+function GenerateFakeDataModal() {}
 
 function AddNewAccountButton() {
   return (
@@ -167,6 +174,28 @@ export default function AccountsHome({
                 Delete
               </Button>
               <AddNewAccountButton />
+              <Menu isLazy={true}>
+                {/* create new variant for that */}
+                <MenuButton
+                  as={IconButton}
+                  aria-label="Account options"
+                  icon={<MoreVertical />}
+                  variant={"outline"}
+                  colorScheme={"blackAlpha"}
+                  color={"blackAlpha.900"}
+                />
+                <MenuList fontSize={"sm"}>
+                  <MenuItem
+                    py={2}
+                    icon={
+                      <Icon as={UserPlus} boxSize={{ base: 5, "2xl": 6 }} />
+                    }
+                    _hover={{ textDecoration: "none" }}
+                  >
+                    Generate fake data
+                  </MenuItem>
+                </MenuList>
+              </Menu>
             </HStack>
           </Flex>
 

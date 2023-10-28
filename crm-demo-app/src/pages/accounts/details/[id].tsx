@@ -1,4 +1,4 @@
-import AccountForm from "@/components/account-form";
+import AccountForm from "@/components/account/account-form";
 import {
   RedirectCheckType,
   checkPossibleRedirect,

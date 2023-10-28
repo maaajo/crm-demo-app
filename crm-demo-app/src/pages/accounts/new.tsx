@@ -8,7 +8,7 @@ import Head from "next/head";
 import { config } from "@/lib/config/config";
 import { Database } from "@/lib/types/supabase";
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
-import AccountForm from "@/components/account-form";
+import AccountForm from "@/components/account/account-form";
 
 const AddNewAcount = () => {
   return (

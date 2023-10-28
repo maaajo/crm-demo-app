@@ -22,8 +22,6 @@ type WarningConfirmationModalProps = {
   confirmButtonHandler: () => {};
 };
 
-// maybe needs type like success, warning, failure?
-
 const WarningConfirmationModal = ({
   isOpen,
   onClose,

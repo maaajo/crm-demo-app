@@ -18,7 +18,7 @@ import {
   SupabaseClient,
   useSupabaseClient,
 } from "@supabase/auth-helpers-react";
-import { FormEvent } from "react";
+import { FormEvent, useState } from "react";
 
 type FakeDataModal = {
   isOpen: boolean;
@@ -42,17 +42,37 @@ const insertFakeAccounts = async (
 
 const FakeDataModal = ({ isOpen, onClose }: FakeDataModal) => {
   const supabase = useSupabaseClient<Database>();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleGenerateFakeAccounts = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+    try {
+      e.preventDefault();
+      setIsSubmitting(true);
+      const formData = new FormData(e.target as HTMLFormElement);
+      const numberOfAccountsToGenerate = formData
+        .get(selectFormName)!
+        .toString();
+      const postgresError = await insertFakeAccounts(
+        supabase,
+        parseInt(numberOfAccountsToGenerate)
+      );
 
-    const formData = new FormData(e.target as HTMLFormElement);
-    const numberOfAccountsToGenerate = formData.get(selectFormName);
+      if (postgresError) {
+        //should be toast
+        console.error(postgresError);
+      }
+    } catch (e: any) {
+      //should be toast
+      console.error(e);
+    } finally {
+      setIsSubmitting(false);
+      onClose();
+    }
   };
 
   return (
     <Modal
-      closeOnOverlayClick={true}
+      closeOnOverlayClick={!isSubmitting}
       isOpen={isOpen}
       onClose={onClose}
       isCentered
@@ -62,13 +82,13 @@ const FakeDataModal = ({ isOpen, onClose }: FakeDataModal) => {
         backdropFilter="blur(10px) hue-rotate(90deg)"
       />
       <ModalContent py={8} px={4}>
-        <ModalCloseButton />
+        <ModalCloseButton isDisabled={isSubmitting} />
         <ModalBody textAlign={"center"} mt={20} mb={4}>
           <chakra.form onSubmit={handleGenerateFakeAccounts}>
             <Heading fontSize={"2xl"} fontWeight={"extrabold"}>
               Generate fake accounts
             </Heading>
-            <FormControl mt={6}>
+            <FormControl mt={6} isDisabled={isSubmitting}>
               <FormLabel textAlign={"center"}>
                 Number of fake accounts to generate:
               </FormLabel>
@@ -97,6 +117,8 @@ const FakeDataModal = ({ isOpen, onClose }: FakeDataModal) => {
                 colorScheme={"blackAlpha"}
                 color={"blackAlpha.900"}
                 type={"submit"}
+                isLoading={isSubmitting}
+                loadingText="Generating..."
               >
                 Generate
               </Button>
@@ -106,6 +128,7 @@ const FakeDataModal = ({ isOpen, onClose }: FakeDataModal) => {
                 variant={"blackSolid"}
                 onClick={onClose}
                 type={"button"}
+                isDisabled={isSubmitting}
               >
                 Cancel
               </Button>

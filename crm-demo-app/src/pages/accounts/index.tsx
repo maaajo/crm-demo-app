@@ -114,6 +114,8 @@ export default function AccountsHome({
     onOpen: deleteWarningModalOnOpen,
     onClose: deleteWarningModalOnClose,
   } = useDisclosure();
+
+  //todo modify onClose so it refreshes the page and deselect checkboxes
   const {
     isOpen: fakeAccountsModalIsOpen,
     onOpen: fakeAccountsModalOnOpen,

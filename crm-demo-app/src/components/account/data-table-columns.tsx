@@ -96,7 +96,11 @@ export const accountsTableColumns = [
       const countryData = Countries.filter(
         (country) => country.code === cell.getValue()
       )[0];
-      return `${countryData.flag} ${countryData.name}`;
+      if (countryData) {
+        return `${countryData.flag} ${countryData.name}`;
+      }
+
+      return `Undefined`;
     },
     header: "Country",
     sortingFn: "alphanumeric",
@@ -126,17 +130,6 @@ export const accountsTableColumns = [
             <MenuItem
               py={2}
               as={Link}
-              href={`${routes.accounts.edit}/${
-                row.original.id
-              }?${urlParams.toString()}`}
-              icon={<Icon as={Pencil} boxSize={{ base: 5, "2xl": 6 }} />}
-              _hover={{ textDecoration: "none" }}
-            >
-              Edit
-            </MenuItem>
-            <MenuItem
-              py={2}
-              as={Link}
               href={`${routes.accounts.details}/${
                 row.original.id
               }?${urlParams.toString()}`}
@@ -144,6 +137,17 @@ export const accountsTableColumns = [
               _hover={{ textDecoration: "none" }}
             >
               View
+            </MenuItem>
+            <MenuItem
+              py={2}
+              as={Link}
+              href={`${routes.accounts.edit}/${
+                row.original.id
+              }?${urlParams.toString()}`}
+              icon={<Icon as={Pencil} boxSize={{ base: 5, "2xl": 6 }} />}
+              _hover={{ textDecoration: "none" }}
+            >
+              Edit
             </MenuItem>
           </MenuList>
         </Menu>

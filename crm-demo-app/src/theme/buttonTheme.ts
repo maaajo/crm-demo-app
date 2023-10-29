@@ -1,4 +1,9 @@
-import { defineStyle, defineStyleConfig } from "@chakra-ui/react";
+import {
+  StyleFunctionProps,
+  defineStyle,
+  defineStyleConfig,
+  theme,
+} from "@chakra-ui/react";
 
 const blackSolid = defineStyle({
   color: "white",
@@ -9,8 +14,20 @@ const blackSolid = defineStyle({
   },
 });
 
+const blackWhiteOutline = defineStyle({
+  color: "blackAlpha.900",
+  borderWidth: "1px",
+  borderColor: "blackAlpha.600",
+  _hover: {
+    backgroundColor: "blackAlpha.50",
+  },
+});
+
 const ButtonTheme = defineStyleConfig({
-  variants: { blackSolid },
+  variants: {
+    blackSolid,
+    blackWhiteOutline,
+  },
 });
 
 export default ButtonTheme;

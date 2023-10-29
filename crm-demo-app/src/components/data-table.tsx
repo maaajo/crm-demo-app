@@ -93,28 +93,28 @@ function Pagination<Data extends object>({ table }: PaginationProps<Data>) {
           <IconButton
             icon={<Icon as={ChevronsLeft} />}
             aria-label="Go to first page"
-            variant={"solid"}
+            variant={"blackWhiteOutline"}
             isDisabled={!table.getCanPreviousPage()}
             onClick={() => table.setPageIndex(0)}
           />
           <IconButton
             icon={<Icon as={ChevronLeft} />}
             aria-label="Go to previous page"
-            variant={"solid"}
+            variant={"blackWhiteOutline"}
             isDisabled={!table.getCanPreviousPage()}
             onClick={() => table.previousPage()}
           />
           <IconButton
             icon={<Icon as={ChevronRight} />}
             aria-label="Go to next page"
-            variant={"solid"}
+            variant={"blackWhiteOutline"}
             isDisabled={!table.getCanNextPage()}
             onClick={() => table.nextPage()}
           />
           <IconButton
             icon={<Icon as={ChevronsRight} />}
             aria-label="Go to last page"
-            variant={"solid"}
+            variant={"blackWhiteOutline"}
             isDisabled={!table.getCanNextPage()}
             onClick={() => table.setPageIndex(table.getPageCount() - 1)}
           />

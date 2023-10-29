@@ -130,9 +130,7 @@ const FakeDataModal = ({
               <Button
                 flex={1}
                 name="confirm"
-                variant={"outline"}
-                colorScheme={"blackAlpha"}
-                color={"blackAlpha.900"}
+                variant={"blackWhiteOutline"}
                 type={"submit"}
                 isLoading={isSubmitting}
                 loadingText="Generating..."

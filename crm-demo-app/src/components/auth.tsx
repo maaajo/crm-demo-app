@@ -209,9 +209,7 @@ const Auth = ({ type }: TAuthKeys) => {
           <Button
             leftIcon={<Google color={"brand"} />}
             width={"full"}
-            variant={"outline"}
-            colorScheme={"blackAlpha"}
-            color={"blackAlpha.900"}
+            variant={"blackWhiteOutline"}
             isLoading={isSubmitting}
             loadingText={config.signUp.loadingMessage}
             type={"button"}
@@ -222,9 +220,7 @@ const Auth = ({ type }: TAuthKeys) => {
           <Button
             leftIcon={<Github color={"brand"} />}
             width={"full"}
-            variant={"outline"}
-            colorScheme={"blackAlpha"}
-            color={"blackAlpha.900"}
+            variant={"blackWhiteOutline"}
             isLoading={isSubmitting}
             loadingText={config.signUp.loadingMessage}
             type={"button"}

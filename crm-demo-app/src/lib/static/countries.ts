@@ -690,13 +690,13 @@ export const Countries = [
     dial_code: "+686",
   },
   {
-    name: "Korea, Democratic People's Republic of Korea",
+    name: "Democratic People's Republic of Korea",
     flag: "🇰🇵",
     code: "KP",
     dial_code: "+850",
   },
   {
-    name: "Korea, Republic of South Korea",
+    name: "Republic of South Korea",
     flag: "🇰🇷",
     code: "KR",
     dial_code: "+82",
@@ -1474,5 +1474,11 @@ export const Countries = [
     flag: "🇿🇼",
     code: "ZW",
     dial_code: "+263",
+  },
+  {
+    name: "Curaçao",
+    flag: "🇨🇼",
+    code: "CW",
+    dial_code: "+599",
   },
 ] as const;

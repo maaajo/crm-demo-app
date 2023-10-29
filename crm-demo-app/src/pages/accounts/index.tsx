@@ -121,6 +121,8 @@ export default function AccountsHome({
     onClose: fakeAccountsModalOnClose,
   } = useDisclosure();
 
+  console.log(accounts);
+
   const handleDeleteSelected = async () => {
     const error = await deleteAccounts(
       getAccountsIDsToDeleteFromSelection(selectedAccountsIndexes, accounts),
@@ -138,12 +140,23 @@ export default function AccountsHome({
       return;
     }
 
+    toast({
+      title: "Accounts deleted",
+      description: "Selected account(s) deleted with success",
+      status: "success",
+    });
+
     refreshServerSideProps();
     setSelectedAccounts({});
     deleteWarningModalOnClose();
   };
 
   const handleFakeAccountsModalClose = () => {
+    toast({
+      title: "Accounts added",
+      description: "Fake accounts added with success",
+      status: "success",
+    });
     refreshServerSideProps();
     setSelectedAccounts({});
     fakeAccountsModalOnClose();
@@ -155,9 +168,6 @@ export default function AccountsHome({
         title: "Failed to read accounts",
         description: errorMessage,
         status: "error",
-        isClosable: true,
-        position: "top",
-        duration: 10000,
       });
     }
   }, [errorMessage, toast]);
@@ -187,14 +197,11 @@ export default function AccountsHome({
               </Button>
               <AddNewAccountButton />
               <Menu isLazy={true}>
-                {/* create new variant for that */}
                 <MenuButton
                   as={IconButton}
                   aria-label="Account options"
                   icon={<MoreVertical />}
-                  variant={"outline"}
-                  colorScheme={"blackAlpha"}
-                  color={"blackAlpha.900"}
+                  variant={"blackWhiteOutline"}
                 />
                 <MenuList fontSize={"sm"}>
                   <MenuItem

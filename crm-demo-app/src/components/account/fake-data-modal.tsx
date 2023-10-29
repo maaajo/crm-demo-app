@@ -13,16 +13,19 @@ import {
   chakra,
   FormControl,
   FormLabel,
+  useToast,
 } from "@chakra-ui/react";
 import {
   SupabaseClient,
   useSupabaseClient,
 } from "@supabase/auth-helpers-react";
 import { FormEvent, useState } from "react";
+import { toastDefaultOptions } from "@/theme/constants";
 
 type FakeDataModal = {
   isOpen: boolean;
-  onClose: () => void;
+  onSuccessfulClose: () => void;
+  onDefaultClose: () => void;
 };
 
 const selectFormName = "accounts_number";
@@ -40,9 +43,14 @@ const insertFakeAccounts = async (
   return error;
 };
 
-const FakeDataModal = ({ isOpen, onClose }: FakeDataModal) => {
+const FakeDataModal = ({
+  isOpen,
+  onDefaultClose,
+  onSuccessfulClose,
+}: FakeDataModal) => {
   const supabase = useSupabaseClient<Database>();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const toast = useToast(toastDefaultOptions);
 
   const handleGenerateFakeAccounts = async (e: FormEvent<HTMLFormElement>) => {
     try {
@@ -58,15 +66,25 @@ const FakeDataModal = ({ isOpen, onClose }: FakeDataModal) => {
       );
 
       if (postgresError) {
-        //should be toast
-        console.error(postgresError);
+        toast({
+          status: "error",
+          description: postgresError.message,
+          title: "Failure",
+        });
+        onDefaultClose();
+        return;
       }
+
+      onSuccessfulClose();
     } catch (e: any) {
-      //should be toast
-      console.error(e);
+      toast({
+        status: "error",
+        description: e.message,
+        title: "Failure",
+      });
+      onDefaultClose();
     } finally {
       setIsSubmitting(false);
-      onClose();
     }
   };
 
@@ -74,7 +92,7 @@ const FakeDataModal = ({ isOpen, onClose }: FakeDataModal) => {
     <Modal
       closeOnOverlayClick={!isSubmitting}
       isOpen={isOpen}
-      onClose={onClose}
+      onClose={onDefaultClose}
       isCentered
     >
       <ModalOverlay
@@ -126,7 +144,7 @@ const FakeDataModal = ({ isOpen, onClose }: FakeDataModal) => {
                 flex={1}
                 name="cancel"
                 variant={"blackSolid"}
-                onClick={onClose}
+                onClick={onDefaultClose}
                 type={"button"}
                 isDisabled={isSubmitting}
               >

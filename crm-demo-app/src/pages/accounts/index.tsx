@@ -36,10 +36,10 @@ import { Database } from "@/lib/types/supabase";
 import { useEffect, useState } from "react";
 import { Trash2 } from "lucide-react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import { useRouter } from "next/router";
 import WarningConfirmationModal from "@/components/confirmation-modal/warning";
 import { accountsTableColumns } from "@/components/account/data-table-columns";
 import FakeDataModal from "@/components/account/fake-data-modal";
+import useRouterRefresh from "@/lib/hooks/useRouterRefresh";
 
 function AddNewAccountButton() {
   return (
@@ -108,7 +108,7 @@ export default function AccountsHome({
   );
   const selectedAccountsIndexes = Object.keys(selectedAccounts);
   const supabase = useSupabaseClient<Database>();
-  const router = useRouter();
+  const { refreshServerSideProps } = useRouterRefresh();
   const {
     isOpen: deleteWarningModalIsOpen,
     onOpen: deleteWarningModalOnOpen,
@@ -142,9 +142,15 @@ export default function AccountsHome({
       return;
     }
 
-    router.replace(router.asPath);
+    refreshServerSideProps();
     setSelectedAccounts({});
     deleteWarningModalOnClose();
+  };
+
+  const handleFakeAccountsModalClose = () => {
+    refreshServerSideProps();
+    setSelectedAccounts({});
+    fakeAccountsModalOnClose();
   };
 
   useEffect(() => {
@@ -232,7 +238,8 @@ export default function AccountsHome({
       />
       <FakeDataModal
         isOpen={fakeAccountsModalIsOpen}
-        onClose={fakeAccountsModalOnClose}
+        onDefaultClose={fakeAccountsModalOnClose}
+        onSuccessfulClose={handleFakeAccountsModalClose}
       />
     </>
   );

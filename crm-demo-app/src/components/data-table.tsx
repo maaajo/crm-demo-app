@@ -21,6 +21,7 @@ import {
   flexRender,
   getCoreRowModel,
   getSortedRowModel,
+  getPaginationRowModel,
   useReactTable,
 } from "@tanstack/react-table";
 import {
@@ -47,9 +48,7 @@ type PaginationProps<Data extends object> = {
   table: ReactTable<Data>;
 };
 
-//todo still shows all data!
 function Pagination<Data extends object>({ table }: PaginationProps<Data>) {
-  console.log(table.getState().pagination.pageSize);
   return (
     <Flex
       alignItems={"center"}
@@ -141,12 +140,16 @@ export function DataTable<Data extends object>({
     getCoreRowModel: getCoreRowModel(),
     onSortingChange: setShouldSort,
     getSortedRowModel: getSortedRowModel(),
+    ...(showPagination
+      ? { getPaginationRowModel: getPaginationRowModel() }
+      : {}),
     ...(isSelectable
       ? {
           enableRowSelection: true,
           onRowSelectionChange: onSelectChangeHandler,
         }
       : {}),
+
     state: {
       sorting: shouldSort,
       ...(isSelectable

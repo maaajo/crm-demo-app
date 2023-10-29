@@ -9,6 +9,7 @@ import { useState } from "react";
 import { SupabaseClient } from "@/lib/supabase";
 import { AccountsProvider } from "@/lib/context/account";
 import customTheme from "@/theme";
+import { toastDefaultOptions } from "@/theme/constants";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -63,7 +64,10 @@ export default function App({
         supabaseClient={supabaseClient}
         initialSession={pageProps.initialSession}
       >
-        <ChakraProvider theme={customTheme}>
+        <ChakraProvider
+          theme={customTheme}
+          toastOptions={{ defaultOptions: toastDefaultOptions }}
+        >
           <AccountsProvider>
             {getLayout ? (
               getLayout(<Component {...pageProps} />)

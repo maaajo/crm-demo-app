@@ -115,7 +115,6 @@ export default function AccountsHome({
     onClose: deleteWarningModalOnClose,
   } = useDisclosure();
 
-  //todo modify onClose so it refreshes the page and deselect checkboxes
   const {
     isOpen: fakeAccountsModalIsOpen,
     onOpen: fakeAccountsModalOnOpen,
@@ -133,9 +132,6 @@ export default function AccountsHome({
         title: "Failed to delete accounts",
         description: error.message,
         status: "error",
-        isClosable: true,
-        position: "top",
-        duration: 10000,
       });
 
       deleteWarningModalOnClose();

@@ -4,4 +4,5 @@ export const toastDefaultOptions: UseToastOptions = {
   isClosable: true,
   position: "top",
   duration: 10000,
+  variant: "subtle",
 };

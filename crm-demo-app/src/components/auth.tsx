@@ -90,9 +90,6 @@ const Auth = ({ type }: TAuthKeys) => {
         title: "Failed to register",
         description: error.message,
         status: "error",
-        isClosable: true,
-        position: "top",
-        duration: 10000,
       });
     }
   };
@@ -110,9 +107,6 @@ const Auth = ({ type }: TAuthKeys) => {
         title: "Failed to sign in with Github",
         description: error.message,
         status: "error",
-        isClosable: true,
-        position: "top",
-        duration: 10000,
       });
     }
   };
@@ -130,9 +124,6 @@ const Auth = ({ type }: TAuthKeys) => {
         title: "Failed to sign in with Google",
         description: error.message,
         status: "error",
-        isClosable: true,
-        position: "top",
-        duration: 10000,
       });
     }
   };

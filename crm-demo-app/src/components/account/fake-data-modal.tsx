@@ -20,7 +20,6 @@ import {
   useSupabaseClient,
 } from "@supabase/auth-helpers-react";
 import { FormEvent, useState } from "react";
-import { toastDefaultOptions } from "@/theme/constants";
 
 type FakeDataModal = {
   isOpen: boolean;
@@ -50,7 +49,7 @@ const FakeDataModal = ({
 }: FakeDataModal) => {
   const supabase = useSupabaseClient<Database>();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const toast = useToast(toastDefaultOptions);
+  const toast = useToast();
 
   const handleGenerateFakeAccounts = async (e: FormEvent<HTMLFormElement>) => {
     try {

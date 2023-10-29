@@ -1,6 +1,7 @@
 import { SupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { routes } from "../routes";
 import { Database } from "../types/supabase";
+import Cookies from "cookies";
 
 export const RedirectCheckType = {
   Auth: "auth",
@@ -37,6 +38,8 @@ export const getServerSideAuthUserDetails = async (
   supabaseClient: SupabaseClient<Database>
 ) => {
   const { data, error } = await supabaseClient.auth.getUser();
+  //fix this
+  // const cookies = new Cookies(ctx.)
 
   if (error) {
     console.error(error.message);

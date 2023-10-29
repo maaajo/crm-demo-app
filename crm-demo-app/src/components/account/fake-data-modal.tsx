@@ -109,16 +109,7 @@ const FakeDataModal = ({
               <FormLabel textAlign={"center"}>
                 Number of fake accounts to generate:
               </FormLabel>
-              <Select
-                borderColor={"blackAlpha.500"}
-                backgroundColor={"white"}
-                _focusVisible={{
-                  borderColor: "blackAlpha.900",
-                }}
-                _hover={{ borderColor: "blackAlpha.500" }}
-                name={selectFormName}
-                mt={4}
-              >
+              <Select variant={"primary"} name={selectFormName} mt={4}>
                 {[10, 20, 30, 40, 50, 60, 70, 80, 90, 100].map((item) => (
                   <option value={item} key={item}>
                     {item}

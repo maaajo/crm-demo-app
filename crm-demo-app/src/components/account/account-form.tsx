@@ -318,12 +318,7 @@ export default function AccountForm(props: AccountFormProps) {
           <FormControl isRequired isInvalid={Boolean(errors.source)}>
             <FormLabel>Source</FormLabel>
             <Select
-              borderColor={"blackAlpha.500"}
-              backgroundColor={"white"}
-              _focusVisible={{
-                borderColor: "blackAlpha.900",
-              }}
-              _hover={{ borderColor: "blackAlpha.500" }}
+              variant={"primary"}
               isDisabled={isSubmitting || isView}
               {...register("source")}
             >
@@ -343,12 +338,7 @@ export default function AccountForm(props: AccountFormProps) {
           <FormControl isRequired isInvalid={Boolean(errors.currency)}>
             <FormLabel>Currency</FormLabel>
             <Select
-              borderColor={"blackAlpha.500"}
-              backgroundColor={"white"}
-              _focusVisible={{
-                borderColor: "blackAlpha.900",
-              }}
-              _hover={{ borderColor: "blackAlpha.500" }}
+              variant={"primary"}
               isDisabled={isSubmitting || isView}
               {...register("currency")}
             >
@@ -433,12 +423,7 @@ export default function AccountForm(props: AccountFormProps) {
           <FormControl isRequired isInvalid={Boolean(errors.country)}>
             <FormLabel>Country</FormLabel>
             <Select
-              borderColor={"blackAlpha.500"}
-              backgroundColor={"white"}
-              _focusVisible={{
-                borderColor: "blackAlpha.900",
-              }}
-              _hover={{ borderColor: "blackAlpha.500" }}
+              variant={"primary"}
               {...register("country")}
               isDisabled={isSubmitting || isView}
             >

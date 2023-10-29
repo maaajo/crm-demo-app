@@ -1,9 +1,4 @@
-import {
-  StyleFunctionProps,
-  defineStyle,
-  defineStyleConfig,
-  theme,
-} from "@chakra-ui/react";
+import { defineStyle, defineStyleConfig } from "@chakra-ui/react";
 
 const blackSolid = defineStyle({
   color: "white",

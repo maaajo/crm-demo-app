@@ -144,19 +144,10 @@ ForgotPassword.getLayout = (page: ReactElement) => (
 );
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const supabase = createServerSupabaseClient<Database>(ctx);
-  const redirectPage = await checkPossibleRedirect(
-    supabase,
-    RedirectCheckType.Auth
-  );
+  const redirect = await checkPossibleRedirect(ctx, RedirectCheckType.Auth);
 
-  if (redirectPage) {
-    return {
-      redirect: {
-        destination: redirectPage,
-        permanent: false,
-      },
-    };
+  if (redirect) {
+    return redirect;
   }
 
   return {

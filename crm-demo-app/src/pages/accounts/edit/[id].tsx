@@ -38,23 +38,13 @@ export const getServerSideProps: GetServerSideProps<
   PageProps & { userEmail: string }
 > = async (ctx) => {
   const query = ctx.query as QueryParams;
+  const redirect = await checkPossibleRedirect(ctx, RedirectCheckType.Main);
 
-  const supabase = createServerSupabaseClient<Database>(ctx);
-  const redirectPage = await checkPossibleRedirect(
-    supabase,
-    RedirectCheckType.Main
-  );
-
-  if (redirectPage) {
-    return {
-      redirect: {
-        destination: redirectPage,
-        permanent: false,
-      },
-    };
+  if (redirect) {
+    return redirect;
   }
 
-  const { userEmail, userId } = await getServerSideAuthUserDetails(supabase);
+  const { userEmail, userId } = await getServerSideAuthUserDetails(ctx);
 
   const account: TAccountSupabase = query;
 

@@ -24,22 +24,13 @@ const AddNewAcount = () => {
 export const getServerSideProps: GetServerSideProps<{
   userEmail: string;
 }> = async (ctx) => {
-  const supabase = createServerSupabaseClient<Database>(ctx);
-  const redirectPage = await checkPossibleRedirect(
-    supabase,
-    RedirectCheckType.Main
-  );
+  const redirect = await checkPossibleRedirect(ctx, RedirectCheckType.Main);
 
-  if (redirectPage) {
-    return {
-      redirect: {
-        destination: redirectPage,
-        permanent: false,
-      },
-    };
+  if (redirect) {
+    return redirect;
   }
 
-  const { userEmail } = await getServerSideAuthUserDetails(supabase);
+  const { userEmail } = await getServerSideAuthUserDetails(ctx);
 
   return {
     props: { userEmail },

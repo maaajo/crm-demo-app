@@ -17,50 +17,40 @@ export type RedirectCheckKeys =
   (typeof RedirectCheckType)[keyof typeof RedirectCheckType];
 
 export const checkPossibleRedirect = async (
-  supabaseClient: SupabaseClient<Database>,
+  ctx: GetServerSidePropsContext,
   type: RedirectCheckKeys
 ) => {
+  const supabaseClient = createServerSupabaseClient(ctx);
   const {
     data: { session },
   } = await supabaseClient.auth.getSession();
 
   if (type === RedirectCheckType.Auth) {
     if (session) {
-      return "/";
+      return {
+        redirect: {
+          destination: ctx.req.headers.referer ? ctx.req.headers.referer : "/",
+          permanent: false,
+        },
+      };
     }
   }
 
   if (type === RedirectCheckType.Main) {
     if (!session) {
-      return routes.auth.signIn;
+      const params = new URLSearchParams();
+      params.append("cb", ctx.resolvedUrl);
+      return {
+        redirect: {
+          destination: `${routes.auth.signIn}?${params.toString()}`,
+          permanent: false,
+        },
+      };
     }
   }
 
-  return "";
+  return null;
 };
-
-// export const getServerSideAuthUserDetails = async (
-//   supabaseClient: SupabaseClient<Database>
-// ) => {
-//   const { data, error } = await supabaseClient.auth.getUser();
-//   //fix this
-//   // const cookies = new Cookies(ctx.)
-
-//   if (error) {
-//     console.error(error.message);
-//     return {
-//       userEmail: "",
-//       userId: "",
-//       error: error.message,
-//     };
-//   }
-
-//   return {
-//     userEmail: data.user.email ?? "",
-//     userId: data.user.id ?? "",
-//     error: "",
-//   };
-// };
 
 export const getServerSideAuthUserDetails = async (
   ctx: GetServerSidePropsContext

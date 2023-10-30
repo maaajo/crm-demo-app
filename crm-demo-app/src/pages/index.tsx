@@ -24,20 +24,10 @@ export default function Home() {
 export const getServerSideProps: GetServerSideProps<{
   userEmail: string;
 }> = async (ctx) => {
-  const supabase = createServerSupabaseClient<Database>(ctx);
+  const redirect = await checkPossibleRedirect(ctx, RedirectCheckType.Main);
 
-  const redirectPage = await checkPossibleRedirect(
-    supabase,
-    RedirectCheckType.Main
-  );
-
-  if (redirectPage) {
-    return {
-      redirect: {
-        destination: redirectPage,
-        permanent: false,
-      },
-    };
+  if (redirect) {
+    return redirect;
   }
 
   const { userEmail } = await getServerSideAuthUserDetails(ctx);

@@ -28,12 +28,8 @@ import { TAuthKeys, AuthTypes } from "@/lib/types/auth";
 import AuthHeader from "./auth-header";
 import AuthLink from "./auth-link";
 import { routes } from "@/lib/routes";
-
-const config = {
-  signUp: {
-    loadingMessage: "Loading...",
-  },
-};
+import { AuthCallbackQueryParams } from "@/lib/auth/methods";
+import { config } from "@/lib/config/config";
 
 const zodAuthSchema = z.object({
   email: z
@@ -51,10 +47,18 @@ const zodAuthSchema = z.object({
 
 type AuthSchema = z.infer<typeof zodAuthSchema>;
 
-const Auth = ({ type }: TAuthKeys) => {
+type AuthParams = {
+  type: TAuthKeys;
+};
+
+const Auth = ({ type }: AuthParams) => {
   const toast = useToast();
   const supabase = useSupabaseClient();
   const router = useRouter();
+  const queryParams = router.query as AuthCallbackQueryParams;
+  const callbackQueryParam = `?${config.authCallbackQueryParam}=${
+    queryParams.cb ? queryParams.cb : routes.home
+  }`;
 
   const {
     register,
@@ -98,7 +102,7 @@ const Auth = ({ type }: TAuthKeys) => {
     const { data: _, error } = await supabase.auth.signInWithOAuth({
       provider: "github",
       options: {
-        redirectTo: `${process.env.NEXT_PUBLIC_URL}${routes.auth.provider}`,
+        redirectTo: `${process.env.NEXT_PUBLIC_URL}${routes.auth.provider}${callbackQueryParam}`,
       },
     });
 
@@ -115,7 +119,7 @@ const Auth = ({ type }: TAuthKeys) => {
     const { data: _, error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: `${process.env.NEXT_PUBLIC_URL}${routes.auth.provider}`,
+        redirectTo: `${process.env.NEXT_PUBLIC_URL}${routes.auth.provider}${callbackQueryParam}`,
       },
     });
 
@@ -229,7 +233,7 @@ const Auth = ({ type }: TAuthKeys) => {
             Sign in with Github
           </Button>
         </VStack>
-        <AuthLink type={type} />
+        <AuthLink type={type} cb={callbackQueryParam} />
       </>
     </Box>
   );

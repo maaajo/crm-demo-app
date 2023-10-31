@@ -3,23 +3,28 @@ import { TAuthKeys, AuthTypes } from "@/lib/types/auth";
 import { Link } from "@chakra-ui/next-js";
 import { Text } from "@chakra-ui/react";
 
+type AuthLinkProps = {
+  type: TAuthKeys;
+  cb: string;
+};
+
 const createReturnObject = (text: string, linkText: string, href: string) => {
   return { text, linkText, href };
 };
 
-const getText = (type: string) => {
+const getText = (type: string, cb: string) => {
   switch (type) {
     case AuthTypes.Register:
       return createReturnObject(
         "Already have an account? ",
         "Sign in here",
-        routes.auth.signIn
+        `${routes.auth.signIn}${cb}`
       );
     case AuthTypes.Login:
       return createReturnObject(
         "Don't have an account? ",
         "Create new account here",
-        routes.auth.signUp
+        `${routes.auth.signUp}${cb}`
       );
     case AuthTypes.Forgot:
       return createReturnObject(
@@ -32,8 +37,8 @@ const getText = (type: string) => {
   }
 };
 
-const AuthLink = ({ type }: TAuthKeys) => {
-  const { text, linkText, href } = getText(type);
+const AuthLink = ({ type, cb }: AuthLinkProps) => {
+  const { text, linkText, href } = getText(type, cb);
 
   return (
     <Text color={"blackAlpha.800"} mt={"6"}>

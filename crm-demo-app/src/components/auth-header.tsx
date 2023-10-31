@@ -34,7 +34,9 @@ const getText = (type: string) => {
   }
 };
 
-interface AuthHeaderProps extends StackProps, TAuthKeys {}
+type TAuthHeaderProps = { type: TAuthKeys };
+
+interface AuthHeaderProps extends StackProps, TAuthHeaderProps {}
 
 const AuthHeader = ({ type, ...rest }: AuthHeaderProps) => {
   const { headerText, supportingText } = getText(type);

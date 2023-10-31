@@ -8,9 +8,11 @@ import { Flex, Spinner, Text } from "@chakra-ui/react";
 import { useToast } from "@chakra-ui/react";
 import Head from "next/head";
 import { config } from "@/lib/config/config";
+import { AuthCallbackQueryParams } from "@/lib/auth/methods";
 
 const ProviderAuthRedirect: NextPageWithLayout = () => {
   const router = useRouter();
+  const query = router.query as AuthCallbackQueryParams;
   const toast = useToast();
   const { isLoading, session, error } = useSessionContext();
 
@@ -19,17 +21,14 @@ const ProviderAuthRedirect: NextPageWithLayout = () => {
       title: "Failed to authenticate",
       description: error.message,
       status: "error",
-      isClosable: true,
-      position: "top",
-      duration: 10000,
     });
   }
 
   useEffect(() => {
-    if (!isLoading && session) {
-      void router.push("/");
+    if (!isLoading && session && query.cb) {
+      void router.push(query.cb);
     }
-  }, [isLoading, session]);
+  }, [isLoading, session, query.cb]);
 
   return (
     <>

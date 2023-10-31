@@ -1,12 +1,13 @@
-import {
-  SupabaseClient,
-  createServerSupabaseClient,
-} from "@supabase/auth-helpers-nextjs";
+import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { routes } from "../routes";
 import { Database } from "../types/supabase";
 import Cookies from "cookies";
 import { GetServerSidePropsContext } from "next";
 import { Encrypter } from "./encrypter";
+import { config } from "../config/config";
+import { ParsedUrlQuery } from "querystring";
+
+export type AuthCallbackQueryParams = ParsedUrlQuery & { cb?: string };
 
 export const RedirectCheckType = {
   Auth: "auth",
@@ -15,6 +16,21 @@ export const RedirectCheckType = {
 
 export type RedirectCheckKeys =
   (typeof RedirectCheckType)[keyof typeof RedirectCheckType];
+
+const getRedirectUrlAfterSignIn = (
+  cb: string | undefined,
+  referer: string | undefined
+) => {
+  if (cb) {
+    return cb;
+  }
+
+  if (referer) {
+    return referer;
+  }
+
+  return routes.home;
+};
 
 export const checkPossibleRedirect = async (
   ctx: GetServerSidePropsContext,
@@ -27,9 +43,13 @@ export const checkPossibleRedirect = async (
 
   if (type === RedirectCheckType.Auth) {
     if (session) {
+      const queryParams = ctx.query as AuthCallbackQueryParams;
       return {
         redirect: {
-          destination: ctx.req.headers.referer ? ctx.req.headers.referer : "/",
+          destination: getRedirectUrlAfterSignIn(
+            queryParams.cb,
+            ctx.req.headers.referer
+          ),
           permanent: false,
         },
       };
@@ -39,7 +59,7 @@ export const checkPossibleRedirect = async (
   if (type === RedirectCheckType.Main) {
     if (!session) {
       const params = new URLSearchParams();
-      params.append("cb", ctx.resolvedUrl);
+      params.append(config.authCallbackQueryParam, ctx.resolvedUrl);
       return {
         redirect: {
           destination: `${routes.auth.signIn}?${params.toString()}`,
@@ -57,12 +77,11 @@ export const getServerSideAuthUserDetails = async (
 ) => {
   const supabaseClient = createServerSupabaseClient<Database>(ctx);
   const { req, res } = ctx;
-  const cookieName = "aud_Secure";
   const cookies = new Cookies(req, res);
   const returnObject = { userId: "", userEmail: "" };
   const encrypter = new Encrypter(process.env.HASH_KEY!);
 
-  const audCookie = cookies.get(cookieName);
+  const audCookie = cookies.get(config.userDetailsCookieName);
 
   if (audCookie) {
     const decryptedCookie = encrypter.decrypt(audCookie);
@@ -87,10 +106,14 @@ export const getServerSideAuthUserDetails = async (
   returnObject.userEmail = data.user.email ?? "";
   returnObject.userId = data.user.id ?? "";
 
-  cookies.set(cookieName, encrypter.encrypt(JSON.stringify(returnObject)), {
-    maxAge: 60 * 60 * 1000, // one hour,
-    sameSite: "strict",
-  });
+  cookies.set(
+    config.userDetailsCookieName,
+    encrypter.encrypt(JSON.stringify(returnObject)),
+    {
+      maxAge: 60 * 60 * 1000, // one hour,
+      sameSite: "strict",
+    }
+  );
 
   return {
     ...returnObject,

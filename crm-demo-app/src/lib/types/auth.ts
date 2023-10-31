@@ -6,6 +6,4 @@ export const AuthTypes = {
   Password_Reset_Error: "password_reset_error",
 } as const;
 
-export type TAuthKeys = {
-  type: (typeof AuthTypes)[keyof typeof AuthTypes];
-};
+export type TAuthKeys = (typeof AuthTypes)[keyof typeof AuthTypes];

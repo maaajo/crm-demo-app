@@ -6,8 +6,6 @@ import type { ReactElement } from "react";
 import AuthLayout from "../../components/auth-layout";
 import Head from "next/head";
 import { config } from "@/lib/config/config";
-import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
-import { Database } from "@/lib/types/supabase";
 
 const SignIn: NextPageWithLayout = () => {
   return (

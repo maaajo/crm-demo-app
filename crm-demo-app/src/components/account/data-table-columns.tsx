@@ -82,8 +82,16 @@ export const accountsTableColumns = [
     id: "checkbox",
   }),
   columnHelper.accessor("name", {
-    cell: ({ cell }) => {
-      return cell.getValue();
+    cell: ({ cell, row }) => {
+      return (
+        <Link
+          href={`${routes.accounts.record}/${
+            row.original.id
+          }?${getURLSearchParams(row).toString()}`}
+        >
+          {cell.getValue()}
+        </Link>
+      );
     },
     header: "Name",
     sortingFn: "alphanumeric",
@@ -146,7 +154,6 @@ export const accountsTableColumns = [
   }),
   {
     cell: ({ row }: CellContext<TAccountSupabase, unknown>) => {
-      const urlParams = getURLSearchParams(row);
       return (
         <Menu isLazy={true}>
           <MenuButton
@@ -159,9 +166,9 @@ export const accountsTableColumns = [
             <MenuItem
               py={2}
               as={Link}
-              href={`${routes.accounts.details}/${
+              href={`${routes.accounts.record}/${
                 row.original.id
-              }?${urlParams.toString()}`}
+              }?${getURLSearchParams(row).toString()}`}
               icon={<Icon as={Eye} boxSize={{ base: 5, "2xl": 6 }} />}
               _hover={{ textDecoration: "none" }}
             >
@@ -172,7 +179,7 @@ export const accountsTableColumns = [
               as={Link}
               href={`${routes.accounts.edit}/${
                 row.original.id
-              }?${urlParams.toString()}`}
+              }?${getURLSearchParams(row).toString()}`}
               icon={<Icon as={Pencil} boxSize={{ base: 5, "2xl": 6 }} />}
               _hover={{ textDecoration: "none" }}
             >

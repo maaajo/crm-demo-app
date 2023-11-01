@@ -10,7 +10,7 @@ export const routes = {
     index: `/${mainPages.accounts}`,
     new: `/${mainPages.accounts}/new`,
     edit: `/${mainPages.accounts}/edit`,
-    details: `/${mainPages.accounts}/details`,
+    record: `/${mainPages.accounts}/record`,
   },
   auth: {
     signIn: `/${mainPages.auth}/sign-in`,

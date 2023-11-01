@@ -121,6 +121,8 @@ export default function AccountsHome({
     onClose: fakeAccountsModalOnClose,
   } = useDisclosure();
 
+  console.log(accounts);
+
   const handleDeleteSelected = async () => {
     const error = await deleteAccounts(
       getAccountsIDsToDeleteFromSelection(selectedAccountsIndexes, accounts),

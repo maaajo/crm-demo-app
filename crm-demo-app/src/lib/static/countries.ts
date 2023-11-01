@@ -1481,4 +1481,10 @@ export const Countries = [
     code: "CW",
     dial_code: "+599",
   },
+  {
+    name: "Western Sahara",
+    flag: "🇪🇭",
+    code: "EH",
+    dial_code: "+212",
+  },
 ] as const;

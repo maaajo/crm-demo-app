@@ -380,7 +380,7 @@ export default function AccountForm(props: AccountFormProps) {
             )}
           </FormControl>
           <FormControl isInvalid={Boolean(errors.revenue)}>
-            <FormLabel>Revenue</FormLabel>
+            <FormLabel>Annual Revenue</FormLabel>
             <InputGroup>
               <InputLeftAddon
                 pointerEvents="none"

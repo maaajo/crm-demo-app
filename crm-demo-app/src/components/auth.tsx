@@ -56,8 +56,11 @@ const Auth = ({ type }: AuthParams) => {
   const supabase = useSupabaseClient();
   const router = useRouter();
   const queryParams = router.query as AuthCallbackQueryParams;
-  const callbackQueryParam = `?${config.authCallbackQueryParam}=${
-    queryParams.cb ? queryParams.cb : routes.home
+  const returnURL = queryParams[
+    config.authCallbackQueryParam as keyof AuthCallbackQueryParams
+  ] as string | undefined;
+  const returnURLQueryParam = `?${config.authCallbackQueryParam}=${
+    returnURL ? returnURL : routes.home
   }`;
 
   const {
@@ -102,7 +105,7 @@ const Auth = ({ type }: AuthParams) => {
     const { data: _, error } = await supabase.auth.signInWithOAuth({
       provider: "github",
       options: {
-        redirectTo: `${process.env.NEXT_PUBLIC_URL}${routes.auth.provider}${callbackQueryParam}`,
+        redirectTo: `${process.env.NEXT_PUBLIC_URL}${routes.auth.provider}${returnURLQueryParam}`,
       },
     });
 
@@ -119,7 +122,7 @@ const Auth = ({ type }: AuthParams) => {
     const { data: _, error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: `${process.env.NEXT_PUBLIC_URL}${routes.auth.provider}${callbackQueryParam}`,
+        redirectTo: `${process.env.NEXT_PUBLIC_URL}${routes.auth.provider}${returnURLQueryParam}`,
       },
     });
 
@@ -233,7 +236,7 @@ const Auth = ({ type }: AuthParams) => {
             Sign in with Github
           </Button>
         </VStack>
-        <AuthLink type={type} cb={callbackQueryParam} />
+        <AuthLink type={type} cb={returnURLQueryParam} />
       </>
     </Box>
   );

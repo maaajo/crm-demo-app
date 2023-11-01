@@ -1,5 +1,5 @@
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
-import { routes } from "../routes";
+import { mainPages, routes } from "../routes";
 import { Database } from "../types/supabase";
 import Cookies from "cookies";
 import { GetServerSidePropsContext } from "next";
@@ -7,7 +7,7 @@ import { Encrypter } from "./encrypter";
 import { config } from "../config/config";
 import { ParsedUrlQuery } from "querystring";
 
-export type AuthCallbackQueryParams = ParsedUrlQuery & { cb?: string };
+export type AuthCallbackQueryParams = ParsedUrlQuery & { returnURL?: string };
 
 export const RedirectCheckType = {
   Auth: "auth",
@@ -18,14 +18,14 @@ export type RedirectCheckKeys =
   (typeof RedirectCheckType)[keyof typeof RedirectCheckType];
 
 const getRedirectUrlAfterSignIn = (
-  cb: string | undefined,
+  returnURL: string | undefined,
   referer: string | undefined
 ) => {
-  if (cb) {
-    return cb;
+  if (returnURL) {
+    return returnURL;
   }
 
-  if (referer) {
+  if (referer && !referer.includes(mainPages.auth)) {
     return referer;
   }
 
@@ -44,10 +44,14 @@ export const checkPossibleRedirect = async (
   if (type === RedirectCheckType.Auth) {
     if (session) {
       const queryParams = ctx.query as AuthCallbackQueryParams;
+      const returnURL = queryParams[
+        config.authCallbackQueryParam as keyof AuthCallbackQueryParams
+      ] as string | undefined;
+
       return {
         redirect: {
           destination: getRedirectUrlAfterSignIn(
-            queryParams.cb,
+            returnURL,
             ctx.req.headers.referer
           ),
           permanent: false,

@@ -13,6 +13,9 @@ import { AuthCallbackQueryParams } from "@/lib/auth/methods";
 const ProviderAuthRedirect: NextPageWithLayout = () => {
   const router = useRouter();
   const query = router.query as AuthCallbackQueryParams;
+  const returnURL = query[
+    config.authCallbackQueryParam as keyof AuthCallbackQueryParams
+  ] as string | undefined;
   const toast = useToast();
   const { isLoading, session, error } = useSessionContext();
 
@@ -25,10 +28,10 @@ const ProviderAuthRedirect: NextPageWithLayout = () => {
   }
 
   useEffect(() => {
-    if (!isLoading && session && query.cb) {
-      void router.push(query.cb);
+    if (!isLoading && session && returnURL) {
+      void router.push(returnURL);
     }
-  }, [isLoading, session, query.cb]);
+  }, [isLoading, session, returnURL]);
 
   return (
     <>

@@ -1,6 +1,10 @@
 import { routes } from "@/lib/routes";
 import { Countries } from "@/lib/static/countries";
-import { TAccountSupabase } from "@/lib/types/account";
+import {
+  AccountStatus,
+  TAccountStatus,
+  TAccountSupabase,
+} from "@/lib/types/account";
 import { Link } from "@chakra-ui/next-js";
 import {
   Checkbox,
@@ -10,6 +14,8 @@ import {
   MenuButton,
   MenuList,
   MenuItem,
+  Badge,
+  Tag,
 } from "@chakra-ui/react";
 import { CellContext, Row, createColumnHelper } from "@tanstack/react-table";
 import dayjs from "dayjs";
@@ -35,6 +41,17 @@ const getURLSearchParams = (row: Row<TAccountSupabase>) => {
   }
 
   return editURLSearchParams;
+};
+
+const getStatusColorScheme = (status: TAccountStatus) => {
+  switch (status) {
+    case AccountStatus.CLOSED:
+      return "red";
+    case AccountStatus.NEW:
+      return "blue";
+    case AccountStatus.PENDING:
+      return "gray";
+  }
 };
 
 export const accountsTableColumns = [
@@ -72,12 +89,24 @@ export const accountsTableColumns = [
     sortingFn: "alphanumeric",
   }),
   columnHelper.accessor("is_active", {
-    cell: ({ cell }) => startCase(String(cell.getValue())),
+    cell: ({ cell }) => (
+      <Badge colorScheme={cell.getValue() ? "green" : "red"}>
+        {String(cell.getValue())}
+      </Badge>
+    ),
     header: "Active",
     sortingFn: "alphanumeric",
   }),
   columnHelper.accessor("status", {
-    cell: ({ cell }) => startCase(cell.getValue()),
+    cell: ({ cell }) => (
+      <Tag
+        size={"sm"}
+        variant={"solid"}
+        colorScheme={getStatusColorScheme(cell.getValue())}
+      >
+        {startCase(String(cell.getValue()))}
+      </Tag>
+    ),
     header: "Status",
     sortingFn: "alphanumeric",
   }),

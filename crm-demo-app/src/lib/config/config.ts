@@ -7,5 +7,5 @@ export const config = {
     loadingMessage: "Loading...",
   },
   userDetailsCookieName: "aud_Secure",
-  authCallbackQueryParam: "cb",
+  authCallbackQueryParam: "returnURL",
 };

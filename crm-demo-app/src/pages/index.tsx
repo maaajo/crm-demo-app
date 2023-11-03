@@ -7,10 +7,10 @@ import {
 import Head from "next/head";
 import { config } from "@/lib/config/config";
 import PageTitle from "@/components/page-title";
-import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
-import { Database } from "@/lib/types/supabase";
+import { getAvatar } from "@/lib/utils";
 
 export default function Home() {
+  console.log(getAvatar());
   return (
     <>
       <Head>

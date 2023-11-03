@@ -30,6 +30,7 @@ import AuthLink from "./auth-link";
 import { routes } from "@/lib/routes";
 import { AuthCallbackQueryParams } from "@/lib/auth/methods";
 import { config } from "@/lib/config/config";
+import { getAvatar } from "@/lib/utils";
 
 const zodAuthSchema = z.object({
   email: z

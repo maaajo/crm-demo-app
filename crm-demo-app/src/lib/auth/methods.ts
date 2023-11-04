@@ -100,7 +100,29 @@ const getAuthUserDetailsFromCookie = (
     return userDetails;
   }
 
-  return null;
+  return undefined;
+};
+
+const getAvatarUriFromCookie = (
+  req: IncomingMessage,
+  res: ServerResponse<IncomingMessage>
+) => {
+  const cookies = new Cookies(req, res);
+  const avatarCookie = cookies.get(config.server.cookies.userAvatarName);
+
+  if (avatarCookie) {
+    return decodeURIComponent(avatarCookie);
+  }
+
+  return undefined;
+};
+
+const setUserDetailsCookie = (
+  req: IncomingMessage,
+  res: ServerResponse<IncomingMessage>,
+  userDetails: UserDetails
+) => {
+  const cookies = new Cookies(req, res);
 };
 
 export const getServerSideAuthUserDetails = async (
@@ -111,23 +133,18 @@ export const getServerSideAuthUserDetails = async (
 
   const cookies = new Cookies(req, res);
   const encrypter = new Encrypter(process.env.HASH_KEY!);
-  let userDetails: UserDetails = { userId: "", userEmail: "" };
 
-  const audCookie = getAuthUserDetailsFromCookie(req, res);
+  const userDetailsFromCookie = getAuthUserDetailsFromCookie(req, res);
 
-  if (audCookie) {
-    const decryptedCookie = encrypter.decrypt(audCookie);
-    userDetails = JSON.parse(decryptedCookie);
-
-    const avatarCookie = cookies.get(config.server.cookies.userAvatarName);
-
+  if (userDetailsFromCookie) {
     return {
-      ...userDetails,
-      avatarUri: avatarCookie ? decodeURIComponent(avatarCookie) : "",
+      ...userDetailsFromCookie,
+      avatarUri: getAvatarUriFromCookie(req, res),
       fetchError: "",
     };
   }
 
+  let userDetails: UserDetails = { userId: "", userEmail: "" };
   const { data, error } = await supabaseClient.auth.getUser();
 
   if (error) {

@@ -84,7 +84,7 @@ const deleteAccounts = async (
   supabase: SupabaseClient<Database>
 ) => {
   const { error } = await supabase
-    .from("accounts")
+    .from(config.tables.account)
     .delete()
     .in("id", accountsToDelete);
 
@@ -120,8 +120,6 @@ export default function AccountsHome({
     onOpen: fakeAccountsModalOnOpen,
     onClose: fakeAccountsModalOnClose,
   } = useDisclosure();
-
-  console.log(accounts);
 
   const handleDeleteSelected = async () => {
     const error = await deleteAccounts(
@@ -264,7 +262,7 @@ export const getServerSideProps: GetServerSideProps<{
 
   // look what to do here in case fo error
   const { data, error } = await supabase
-    .from("accounts")
+    .from(config.tables.account)
     .select(
       "id, created_at, country, address_line, city, currency, edited_at, is_active, name, revenue, source, state, status, website, zip"
     )

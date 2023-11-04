@@ -90,6 +90,11 @@ const Auth = ({ type }: AuthParams) => {
         : await supabase.auth.signUp(supabaseCredentials);
 
     if (data.session) {
+      await supabase
+        .from("profile")
+        .update({ avatar_uri: getAvatar() })
+        .eq("id", data.session.user.id);
+
       router.reload();
     }
 

@@ -11,7 +11,7 @@ export type Json =
 export interface Database {
   public: {
     Tables: {
-      accounts: {
+      account: {
         Row: {
           address_line: string | undefined;
           city: string;

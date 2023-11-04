@@ -79,13 +79,17 @@ export const checkPossibleRedirect = async (
 export const getServerSideAuthUserDetails = async (
   ctx: GetServerSidePropsContext
 ) => {
+  // change to local storage
+
   const supabaseClient = createServerSupabaseClient<Database>(ctx);
   const { req, res } = ctx;
   const cookies = new Cookies(req, res);
-  const returnObject = { userId: "", userEmail: "" };
+  const returnObject = { userId: "", userEmail: "", avatarUri: "" };
   const encrypter = new Encrypter(process.env.HASH_KEY!);
 
   const audCookie = cookies.get(config.userDetailsCookieName);
+
+  console.log(audCookie);
 
   if (audCookie) {
     const decryptedCookie = encrypter.decrypt(audCookie);
@@ -101,14 +105,22 @@ export const getServerSideAuthUserDetails = async (
   if (error) {
     console.error(error.message);
     return {
-      userEmail: "",
-      userId: "",
+      ...returnObject,
       error: error.message,
     };
   }
 
+  const { data: avatarData } = await supabaseClient
+    .from("profile")
+    .select("avatar_uri")
+    .eq("id", data.user.id);
+
   returnObject.userEmail = data.user.email ?? "";
   returnObject.userId = data.user.id ?? "";
+
+  // if (avatarData) {
+  //   returnObject.avatarUri = avatarData[0].avatar_uri as string;
+  // }
 
   cookies.set(
     config.userDetailsCookieName,

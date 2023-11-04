@@ -8,4 +8,7 @@ export const config = {
   },
   userDetailsCookieName: "aud_Secure",
   authCallbackQueryParam: "returnURL",
+  tables: {
+    account: "account",
+  },
 };

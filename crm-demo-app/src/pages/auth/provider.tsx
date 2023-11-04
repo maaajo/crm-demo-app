@@ -1,5 +1,8 @@
 import { useEffect } from "react";
-import { useSessionContext } from "@supabase/auth-helpers-react";
+import {
+  useSessionContext,
+  useSupabaseClient,
+} from "@supabase/auth-helpers-react";
 import { useRouter } from "next/router";
 import { NextPageWithLayout } from "../_app";
 import { ReactElement } from "react";
@@ -9,6 +12,8 @@ import { useToast } from "@chakra-ui/react";
 import Head from "next/head";
 import { config } from "@/lib/config/config";
 import { AuthCallbackQueryParams } from "@/lib/auth/methods";
+import { Database } from "@/lib/types/supabase";
+import { getAvatar } from "@/lib/utils";
 
 const ProviderAuthRedirect: NextPageWithLayout = () => {
   const router = useRouter();
@@ -18,6 +23,7 @@ const ProviderAuthRedirect: NextPageWithLayout = () => {
   ] as string | undefined;
   const toast = useToast();
   const { isLoading, session, error } = useSessionContext();
+  const supabase = useSupabaseClient<Database>();
 
   if (error?.message) {
     toast({
@@ -27,9 +33,29 @@ const ProviderAuthRedirect: NextPageWithLayout = () => {
     });
   }
 
+  const addAvatarURI = async (userId: string) => {
+    const { error } = await supabase
+      .from("profile")
+      .update({ avatar_uri: getAvatar() })
+      .eq("id", userId)
+      .is("avatar_uri", null);
+
+    return error;
+  };
+
+  const completeUserRedirect = async (userId: string, returnURL: string) => {
+    const error = await addAvatarURI(userId);
+
+    if (error) {
+      console.error(error);
+    }
+
+    void router.push(returnURL);
+  };
+
   useEffect(() => {
     if (!isLoading && session && returnURL) {
-      void router.push(returnURL);
+      completeUserRedirect(session.user.id, returnURL);
     }
   }, [isLoading, session, returnURL]);
 

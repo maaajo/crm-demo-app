@@ -18,7 +18,7 @@ export const Sources = [
 
 export type TAccountZOD = z.infer<typeof newAccountSchema>;
 
-type TAccountSupabaseAll = Database["public"]["Tables"]["accounts"]["Row"];
+type TAccountSupabaseAll = Database["public"]["Tables"]["account"]["Row"];
 
 export type TAccountSupabase = Omit<
   TAccountSupabaseAll,
@@ -26,7 +26,7 @@ export type TAccountSupabase = Omit<
 >;
 
 export type TAccountSupabaseInsert = Omit<
-  Database["public"]["Tables"]["accounts"]["Insert"],
+  Database["public"]["Tables"]["account"]["Insert"],
   "created_by" | "edited_by"
 >;
 

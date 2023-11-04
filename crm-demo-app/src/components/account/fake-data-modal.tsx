@@ -1,3 +1,4 @@
+import { config } from "@/lib/config/config";
 import { Database } from "@/lib/types/supabase";
 import { generateFakeAccount } from "@/lib/utils";
 import {
@@ -37,7 +38,9 @@ const insertFakeAccounts = async (
     generateFakeAccount()
   );
 
-  const { error } = await supabase.from("accounts").insert(fakeAccounts);
+  const { error } = await supabase
+    .from(config.tables.account)
+    .insert(fakeAccounts);
 
   return error;
 };

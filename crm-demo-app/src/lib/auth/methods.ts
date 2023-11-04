@@ -6,6 +6,8 @@ import { GetServerSidePropsContext } from "next";
 import { Encrypter } from "./encrypter";
 import { config } from "../config/config";
 import { ParsedUrlQuery } from "querystring";
+import { NextRequest, NextResponse } from "next/server";
+import { IncomingMessage, ServerResponse } from "http";
 
 export type AuthCallbackQueryParams = ParsedUrlQuery & { returnURL?: string };
 
@@ -76,47 +78,71 @@ export const checkPossibleRedirect = async (
   return null;
 };
 
-export const getServerSideAuthUserDetails = async (
-  ctx: GetServerSidePropsContext
-) => {
-  const supabaseClient = createServerSupabaseClient<Database>(ctx);
-  const { req, res } = ctx;
-  const cookies = new Cookies(req, res);
-  const returnObject = { userId: "", userEmail: "" };
-  const encrypter = new Encrypter(process.env.HASH_KEY!);
+type UserDetails = {
+  fetchError?: string;
+  userId: string;
+  userEmail: string;
+  avatarUri?: string;
+};
 
+const getAuthUserDetailsFromCookie = (
+  req: IncomingMessage,
+  res: ServerResponse<IncomingMessage>
+) => {
+  const cookies = new Cookies(req, res);
   const audCookie = cookies.get(config.server.cookies.userDetailsName);
+  const encrypter = new Encrypter(process.env.HASH_KEY!);
 
   if (audCookie) {
     const decryptedCookie = encrypter.decrypt(audCookie);
-    const parsedAUDCookie = JSON.parse(decryptedCookie) as typeof returnObject;
+    const userDetails = JSON.parse(decryptedCookie) as UserDetails;
+
+    return userDetails;
+  }
+
+  return null;
+};
+
+export const getServerSideAuthUserDetails = async (
+  ctx: GetServerSidePropsContext
+): Promise<UserDetails> => {
+  const supabaseClient = createServerSupabaseClient<Database>(ctx);
+  const { req, res } = ctx;
+
+  const cookies = new Cookies(req, res);
+  const encrypter = new Encrypter(process.env.HASH_KEY!);
+  let userDetails: UserDetails = { userId: "", userEmail: "" };
+
+  const audCookie = getAuthUserDetailsFromCookie(req, res);
+
+  if (audCookie) {
+    const decryptedCookie = encrypter.decrypt(audCookie);
+    userDetails = JSON.parse(decryptedCookie);
 
     const avatarCookie = cookies.get(config.server.cookies.userAvatarName);
 
     return {
-      ...parsedAUDCookie,
+      ...userDetails,
       avatarUri: avatarCookie ? decodeURIComponent(avatarCookie) : "",
-      error: "",
+      fetchError: "",
     };
   }
 
   const { data, error } = await supabaseClient.auth.getUser();
 
   if (error) {
-    console.error(error.message);
     return {
-      ...returnObject,
-      avatarUri: "",
-      error: error.message,
+      ...userDetails,
+      fetchError: error.message,
     };
   }
 
-  returnObject.userEmail = data.user.email ?? "";
-  returnObject.userId = data.user.id ?? "";
+  userDetails.userEmail = data.user.email ?? "";
+  userDetails.userId = data.user.id ?? "";
 
   cookies.set(
     config.server.cookies.userDetailsName,
-    encrypter.encrypt(JSON.stringify(returnObject)),
+    encrypter.encrypt(JSON.stringify(userDetails)),
     {
       maxAge: 60 * 60 * 1000, // one hour,
       sameSite: "strict",
@@ -129,6 +155,7 @@ export const getServerSideAuthUserDetails = async (
     .eq("id", data.user.id);
 
   const avatarUri = avatarData ? (avatarData[0].avatar_uri as string) : "";
+  userDetails.avatarUri = avatarUri;
 
   cookies.set(
     config.server.cookies.userAvatarName,
@@ -140,8 +167,6 @@ export const getServerSideAuthUserDetails = async (
   );
 
   return {
-    ...returnObject,
-    avatarUri,
-    error: "",
+    ...userDetails,
   };
 };

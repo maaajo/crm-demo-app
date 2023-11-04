@@ -79,23 +79,23 @@ export const checkPossibleRedirect = async (
 export const getServerSideAuthUserDetails = async (
   ctx: GetServerSidePropsContext
 ) => {
-  // change to local storage
-
   const supabaseClient = createServerSupabaseClient<Database>(ctx);
   const { req, res } = ctx;
   const cookies = new Cookies(req, res);
-  const returnObject = { userId: "", userEmail: "", avatarUri: "" };
+  const returnObject = { userId: "", userEmail: "" };
   const encrypter = new Encrypter(process.env.HASH_KEY!);
 
-  const audCookie = cookies.get(config.userDetailsCookieName);
-
-  console.log(audCookie);
+  const audCookie = cookies.get(config.server.cookies.userDetailsName);
 
   if (audCookie) {
     const decryptedCookie = encrypter.decrypt(audCookie);
     const parsedAUDCookie = JSON.parse(decryptedCookie) as typeof returnObject;
+
+    const avatarCookie = cookies.get(config.server.cookies.userAvatarName);
+
     return {
       ...parsedAUDCookie,
+      avatarUri: avatarCookie ? decodeURIComponent(avatarCookie) : "",
       error: "",
     };
   }
@@ -106,25 +106,33 @@ export const getServerSideAuthUserDetails = async (
     console.error(error.message);
     return {
       ...returnObject,
+      avatarUri: "",
       error: error.message,
     };
   }
+
+  returnObject.userEmail = data.user.email ?? "";
+  returnObject.userId = data.user.id ?? "";
+
+  cookies.set(
+    config.server.cookies.userDetailsName,
+    encrypter.encrypt(JSON.stringify(returnObject)),
+    {
+      maxAge: 60 * 60 * 1000, // one hour,
+      sameSite: "strict",
+    }
+  );
 
   const { data: avatarData } = await supabaseClient
     .from("profile")
     .select("avatar_uri")
     .eq("id", data.user.id);
 
-  returnObject.userEmail = data.user.email ?? "";
-  returnObject.userId = data.user.id ?? "";
-
-  // if (avatarData) {
-  //   returnObject.avatarUri = avatarData[0].avatar_uri as string;
-  // }
+  const avatarUri = avatarData ? (avatarData[0].avatar_uri as string) : "";
 
   cookies.set(
-    config.userDetailsCookieName,
-    encrypter.encrypt(JSON.stringify(returnObject)),
+    config.server.cookies.userAvatarName,
+    encodeURIComponent(avatarUri),
     {
       maxAge: 60 * 60 * 1000, // one hour,
       sameSite: "strict",
@@ -133,6 +141,7 @@ export const getServerSideAuthUserDetails = async (
 
   return {
     ...returnObject,
+    avatarUri,
     error: "",
   };
 };

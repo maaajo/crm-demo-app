@@ -66,5 +66,5 @@ export const getDefaultAccount = () => ({
 export const getAvatar = () => {
   return createAvatar(botttsNeutral, {
     seed: faker.company.buzzVerb(),
-  }).toDataUriSync();
+  }).toJson();
 };

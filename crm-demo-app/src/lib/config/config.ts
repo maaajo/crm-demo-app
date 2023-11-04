@@ -6,9 +6,15 @@ export const config = {
   signUp: {
     loadingMessage: "Loading...",
   },
-  userDetailsCookieName: "aud_Secure",
+  server: {
+    cookies: {
+      userDetailsName: "bp-aud",
+      userAvatarName: "bp-avatar",
+    },
+  },
   authCallbackQueryParam: "returnURL",
   tables: {
     account: "account",
+    profile: "profile",
   },
 };

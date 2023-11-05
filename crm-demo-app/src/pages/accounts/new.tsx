@@ -1,13 +1,7 @@
-import {
-  RedirectCheckType,
-  checkPossibleRedirect,
-  getServerSideAuthUserDetails,
-} from "@/lib/auth/methods";
+import { RedirectCheckType, checkPossibleRedirect } from "@/lib/auth/methods";
 import { GetServerSideProps } from "next";
 import Head from "next/head";
 import { config } from "@/lib/config/config";
-import { Database } from "@/lib/types/supabase";
-import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import AccountForm from "@/components/account/account-form";
 
 const AddNewAcount = () => {
@@ -21,19 +15,15 @@ const AddNewAcount = () => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps<{
-  userEmail: string;
-}> = async (ctx) => {
+export const getServerSideProps: GetServerSideProps<{}> = async (ctx) => {
   const redirect = await checkPossibleRedirect(ctx, RedirectCheckType.Main);
 
   if (redirect) {
     return redirect;
   }
 
-  const { userEmail } = await getServerSideAuthUserDetails(ctx);
-
   return {
-    props: { userEmail },
+    props: {},
   };
 };
 

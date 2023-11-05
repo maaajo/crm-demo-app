@@ -10,24 +10,13 @@ const SignOut = () => {
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const supabase = createServerSupabaseClient(ctx);
-  const cookies = new Cookies(ctx.req, ctx.res);
 
   const { error } = await supabase.auth.signOut();
 
   if (!error) {
-    cookies.set(config.server.cookies.userDetailsName, "", {
-      maxAge: 0,
-      overwrite: true,
-    });
-
-    cookies.set(config.server.cookies.userAvatarName, "", {
-      maxAge: 0,
-      overwrite: true,
-    });
-
     return {
       redirect: {
-        destination: routes.auth.signOut,
+        destination: routes.auth.signIn,
         permanent: false,
       },
     };

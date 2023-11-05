@@ -11,12 +11,23 @@ import {
   MenuItem,
   Text,
   Menu,
+  Tag,
+  Avatar,
+  TagLabel,
+  Spinner,
 } from "@chakra-ui/react";
-import { User2, MoreHorizontal, LogOut, Home } from "lucide-react";
+import {
+  User2,
+  MoreHorizontal,
+  LogOut,
+  Home,
+  MoreVertical,
+} from "lucide-react";
 import { config } from "@/lib/config/config";
 import { Link } from "@chakra-ui/next-js";
 import { usePathname } from "next/navigation";
 import startCase from "lodash.startcase";
+import { useUserProfile } from "@/lib/context/userProfile";
 
 type NavItemProps = {
   icon: JSX.Element;
@@ -79,11 +90,13 @@ const NavItem = ({ icon, href, title }: NavItemProps) => {
   );
 };
 
-type SidebarProps = {
-  email: string;
-};
+// type SidebarProps = {
+//   email: string;
+// };
 
-const Sidebar = ({ email }: SidebarProps) => {
+const Sidebar = () => {
+  const { userProfile } = useUserProfile();
+  console.log(userProfile.avatarUri);
   return (
     <Box
       color={"whiteAlpha.700"}
@@ -123,39 +136,62 @@ const Sidebar = ({ email }: SidebarProps) => {
           align={"center"}
           justifyContent={"center"}
         >
-          <Text fontWeight={"semibold"} fontSize={"sm"}>
-            {email}
-          </Text>
-          <Menu placement={"right-end"}>
-            <MenuButton
-              as={IconButton}
-              aria-label="Open more actions for account"
-              icon={<MoreHorizontal />}
-              variant={"unstyled"}
-              color={"whiteAlpha.700"}
-            />
-            <MenuList
-              color={"whiteAlpha.700"}
-              backgroundColor={"blackAlpha.900"}
-              fontSize={"sm"}
-            >
-              <MenuItem
-                icon={<LogOut size={18} />}
-                fontWeight={"semibold"}
-                backgroundColor={"blackAlpha.900"}
-                _hover={{
-                  backgroundColor: "whiteAlpha.200",
-                  textDecoration: "none",
-                  color: "whiteAlpha.900",
-                }}
-                color={"whiteAlpha.700"}
-                as={Link}
-                href={routes.auth.signOut}
-              >
-                Log Out
-              </MenuItem>
-            </MenuList>
-          </Menu>
+          <Tag
+            colorScheme={"whiteAlpha"}
+            backgroundColor={"whiteAlpha.300"}
+            variant={"solid"}
+            boxShadow={"xl"}
+            borderRadius={"full"}
+            py={1}
+            px={2}
+          >
+            {userProfile.isLoading ? (
+              <Spinner
+                thickness="2px"
+                speed="0.65s"
+                emptyColor="gray.200"
+                color={"whiteAlpha.900"}
+                size="sm"
+              />
+            ) : (
+              <>
+                <Avatar
+                  src={userProfile.avatarUri}
+                  size={"xs"}
+                  name={userProfile.emailAddress}
+                  ml={1}
+                  mr={2}
+                />
+                <TagLabel fontSize={"xs"}>{userProfile.emailAddress}</TagLabel>
+                <Menu>
+                  <MenuButton
+                    as={IconButton}
+                    aria-label="Open more actions for account"
+                    icon={<MoreHorizontal />}
+                    variant={"unstyled"}
+                    color={"whiteAlpha.900"}
+                    size={"xs"}
+                    ml={2}
+                  />
+                  <MenuList fontSize={"sm"}>
+                    <MenuItem
+                      icon={<LogOut size={18} />}
+                      fontWeight={"semibold"}
+                      as={Link}
+                      href={routes.auth.signOut}
+                      color={"black"}
+                      _hover={{ textDecoration: "none" }}
+                    >
+                      Log Out
+                    </MenuItem>
+                  </MenuList>
+                </Menu>
+              </>
+            )}
+          </Tag>
+          {/* <Text fontWeight={"semibold"} fontSize={"sm"}>
+            {userProfile.emailAddress}
+          </Text> */}
         </HStack>
       </Flex>
     </Box>

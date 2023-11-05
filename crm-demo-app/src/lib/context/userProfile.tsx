@@ -56,7 +56,7 @@ function UserProfileProvider({ children }: UserProfileContextProviderProps) {
     if (!isLoading && session) {
       getProfileDetails(session.user.id, session.user.email);
     }
-  }, [isLoading]);
+  }, [isLoading, session, supabaseClient]);
 
   const value = { userProfile, setUserProfile };
 

@@ -7,9 +7,9 @@ import Layout from "../components/layout";
 import { SessionContextProvider, Session } from "@supabase/auth-helpers-react";
 import { useState } from "react";
 import { SupabaseClient } from "@/lib/supabase";
-import { AccountsProvider } from "@/lib/context/account";
 import customTheme from "@/theme";
 import { toastDefaultOptions } from "@/theme/constants";
+import { UserProfileProvider } from "@/lib/context/userProfile";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -68,15 +68,15 @@ export default function App({
           theme={customTheme}
           toastOptions={{ defaultOptions: toastDefaultOptions }}
         >
-          <AccountsProvider>
+          <UserProfileProvider>
             {getLayout ? (
               getLayout(<Component {...pageProps} />)
             ) : (
-              <Layout userEmail={pageProps.userEmail}>
+              <Layout>
                 <Component {...pageProps} />
               </Layout>
             )}
-          </AccountsProvider>
+          </UserProfileProvider>
         </ChakraProvider>
       </SessionContextProvider>
     </>

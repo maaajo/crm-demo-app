@@ -7,21 +7,18 @@ import { Button } from "@chakra-ui/react";
 import { ArrowLeftCircle } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { routes } from "@/lib/routes";
-import { useSessionContext } from "@supabase/auth-helpers-react";
 
 type LayoutProps = {
   children?: ReactNode;
-  userEmail: string;
 };
 
-const Layout = ({ children, userEmail }: LayoutProps) => {
+const Layout = ({ children }: LayoutProps) => {
   const router = useRouter();
   const path = usePathname();
-  const { isLoading, session } = useSessionContext();
 
   return (
     <Flex minH={"100vh"}>
-      <Sidebar email={userEmail} />
+      <Sidebar />
       <Flex
         flex={1}
         ml={config.style.sidebarWidth}

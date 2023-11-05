@@ -1,13 +1,7 @@
 import AccountForm from "@/components/account/account-form";
-import {
-  RedirectCheckType,
-  checkPossibleRedirect,
-  getServerSideAuthUserDetails,
-} from "@/lib/auth/methods";
+import { RedirectCheckType, checkPossibleRedirect } from "@/lib/auth/methods";
 import { config } from "@/lib/config/config";
 import { TAccountSupabase } from "@/lib/types/account";
-import { Database } from "@/lib/types/supabase";
-import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { GetServerSideProps } from "next";
 import Head from "next/head";
 import { ParsedUrlQuery } from "querystring";
@@ -33,9 +27,9 @@ export default function AccountView({ account }: PageProps) {
   );
 }
 
-export const getServerSideProps: GetServerSideProps<
-  PageProps & { userEmail: string }
-> = async (ctx) => {
+export const getServerSideProps: GetServerSideProps<PageProps> = async (
+  ctx
+) => {
   const query = ctx.query as QueryParams;
 
   const redirect = await checkPossibleRedirect(ctx, RedirectCheckType.Main);
@@ -44,11 +38,9 @@ export const getServerSideProps: GetServerSideProps<
     return redirect;
   }
 
-  const { userEmail } = await getServerSideAuthUserDetails(ctx);
-
   const account: TAccountSupabase = query;
 
   return {
-    props: { userEmail, account },
+    props: { account },
   };
 };

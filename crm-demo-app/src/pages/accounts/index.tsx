@@ -247,7 +247,6 @@ export default function AccountsHome({
 }
 
 export const getServerSideProps: GetServerSideProps<{
-  userEmail: string;
   accounts: TAccountSupabase[];
   errorMessage: string;
 }> = async (ctx) => {
@@ -257,8 +256,6 @@ export const getServerSideProps: GetServerSideProps<{
   if (redirect) {
     return redirect;
   }
-
-  const { userEmail } = await getServerSideAuthUserDetails(ctx);
 
   // look what to do here in case fo error
   const { data, error } = await supabase
@@ -272,6 +269,6 @@ export const getServerSideProps: GetServerSideProps<{
   let errorMessage = error ? error.message : "";
 
   return {
-    props: { userEmail, accounts, errorMessage },
+    props: { accounts, errorMessage },
   };
 };

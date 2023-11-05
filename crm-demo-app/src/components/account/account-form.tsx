@@ -35,6 +35,7 @@ import {
 } from "@supabase/auth-helpers-react";
 import { Database } from "@/lib/types/supabase";
 import { generateFakeAccount } from "@/lib/utils";
+import { useUserProfile } from "@/lib/context/userProfile";
 
 type AccountFormPropsAdd = {
   actionType: "add";
@@ -43,7 +44,6 @@ type AccountFormPropsAdd = {
 type AccountFormPropsEdit = {
   actionType: "edit";
   account: TAccountSupabase;
-  userId: string;
 };
 
 type AccountFormPropsView = {
@@ -71,8 +71,8 @@ const addNewAccount = async (
 const editAccount = async (
   supabase: SupabaseClient<Database>,
   newAccountData: TAccountZOD,
-  userId: string,
-  accountId: string
+  accountId: string,
+  userId?: string
 ) => {
   const { data, error } = await supabase
     .from("accounts")
@@ -119,6 +119,7 @@ export default function AccountForm(props: AccountFormProps) {
   const router = useRouter();
   const toast = useToast();
   const supabase = useSupabaseClient<Database>();
+  const { userProfile } = useUserProfile();
   const isView = actionType === "view";
 
   const onFakeDataClick = () => {
@@ -160,8 +161,8 @@ export default function AccountForm(props: AccountFormProps) {
       const { data, error } = await editAccount(
         supabase,
         newAccountData,
-        props.userId,
-        props.account.id
+        props.account.id,
+        userProfile.userId
       );
 
       if (error) {

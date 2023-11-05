@@ -1,7 +1,10 @@
 export const config = {
   appName: "CRM Playground",
   style: {
-    sidebarWidth: 64,
+    sidebar: {
+      width: 64,
+      backgroundColor: "blackAlpha.900",
+    },
   },
   signUp: {
     loadingMessage: "Loading...",

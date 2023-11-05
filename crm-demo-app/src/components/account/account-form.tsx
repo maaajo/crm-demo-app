@@ -35,7 +35,7 @@ import {
 } from "@supabase/auth-helpers-react";
 import { Database } from "@/lib/types/supabase";
 import { generateFakeAccount } from "@/lib/utils";
-import { useUserProfile } from "@/lib/context/userProfile";
+import { useUserProfile } from "@/lib/context/user-profile";
 
 type AccountFormPropsAdd = {
   actionType: "add";

@@ -21,7 +21,7 @@ const Layout = ({ children }: LayoutProps) => {
       <Sidebar />
       <Flex
         flex={1}
-        ml={config.style.sidebarWidth}
+        ml={config.style.sidebar.width}
         px={"10"}
         py={"8"}
         flexDirection={"column"}

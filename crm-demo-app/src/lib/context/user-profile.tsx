@@ -67,7 +67,7 @@ function UserProfileProvider({ children }: UserProfileContextProviderProps) {
   );
 }
 
-function useUserProfile() {
+function useUserProfileContext() {
   const context = useContext(UserProfileContext);
 
   if (context === undefined) {
@@ -77,4 +77,4 @@ function useUserProfile() {
   return context;
 }
 
-export { UserProfileProvider, useUserProfile };
+export { UserProfileProvider, useUserProfileContext };

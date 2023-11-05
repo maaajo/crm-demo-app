@@ -9,7 +9,7 @@ import { useState } from "react";
 import { SupabaseClient } from "@/lib/supabase";
 import customTheme from "@/theme";
 import { toastDefaultOptions } from "@/theme/constants";
-import { UserProfileProvider } from "@/lib/context/userProfile";
+import { UserProfileProvider } from "@/lib/context/user-profile";
 
 const inter = Inter({ subsets: ["latin"] });
 

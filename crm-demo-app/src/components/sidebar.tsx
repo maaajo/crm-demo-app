@@ -15,6 +15,7 @@ import {
   Avatar,
   TagLabel,
   Spinner,
+  StackDivider,
 } from "@chakra-ui/react";
 import {
   User2,
@@ -22,12 +23,13 @@ import {
   LogOut,
   Home,
   MoreVertical,
+  Contact,
 } from "lucide-react";
 import { config } from "@/lib/config/config";
 import { Link } from "@chakra-ui/next-js";
 import { usePathname } from "next/navigation";
 import startCase from "lodash.startcase";
-import { useUserProfile } from "@/lib/context/userProfile";
+import { useUserProfileContext } from "@/lib/context/user-profile";
 
 type NavItemProps = {
   icon: JSX.Element;
@@ -90,18 +92,13 @@ const NavItem = ({ icon, href, title }: NavItemProps) => {
   );
 };
 
-// type SidebarProps = {
-//   email: string;
-// };
-
 const Sidebar = () => {
-  const { userProfile } = useUserProfile();
-  console.log(userProfile.avatarUri);
+  const { userProfile } = useUserProfileContext();
   return (
     <Box
       color={"whiteAlpha.700"}
-      bg={"blackAlpha.900"}
-      w={config.style.sidebarWidth}
+      backgroundColor={config.style.sidebar.backgroundColor}
+      w={config.style.sidebar.width}
       pos="fixed"
       h="100vh"
       boxShadow={"xl"}
@@ -173,25 +170,51 @@ const Sidebar = () => {
                     size={"xs"}
                     ml={2}
                   />
-                  <MenuList fontSize={"sm"}>
-                    <MenuItem
-                      icon={<LogOut size={18} />}
-                      fontWeight={"semibold"}
-                      as={Link}
-                      href={routes.auth.signOut}
-                      color={"black"}
-                      _hover={{ textDecoration: "none" }}
+                  <MenuList
+                    fontSize={"sm"}
+                    backgroundColor={config.style.sidebar.backgroundColor}
+                    boxShadow={"lg"}
+                    borderColor={"whiteAlpha.700"}
+                    px={2}
+                  >
+                    <VStack
+                      spacing={1}
+                      divider={<StackDivider borderColor={"whiteAlpha.500"} />}
                     >
-                      Log Out
-                    </MenuItem>
+                      <MenuItem
+                        icon={<Contact size={18} />}
+                        fontWeight={"semibold"}
+                        backgroundColor={config.style.sidebar.backgroundColor}
+                        as={Link}
+                        href={routes.profile}
+                        color={"whiteAlpha.900"}
+                        _hover={{
+                          textDecoration: "none",
+                          backgroundColor: "whiteAlpha.300",
+                        }}
+                      >
+                        Profile
+                      </MenuItem>
+                      <MenuItem
+                        icon={<LogOut size={18} />}
+                        fontWeight={"semibold"}
+                        backgroundColor={config.style.sidebar.backgroundColor}
+                        as={Link}
+                        href={routes.auth.signOut}
+                        color={"whiteAlpha.900"}
+                        _hover={{
+                          textDecoration: "none",
+                          backgroundColor: "whiteAlpha.300",
+                        }}
+                      >
+                        Log Out
+                      </MenuItem>
+                    </VStack>
                   </MenuList>
                 </Menu>
               </>
             )}
           </Tag>
-          {/* <Text fontWeight={"semibold"} fontSize={"sm"}>
-            {userProfile.emailAddress}
-          </Text> */}
         </HStack>
       </Flex>
     </Box>

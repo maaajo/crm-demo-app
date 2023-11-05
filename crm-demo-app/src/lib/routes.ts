@@ -20,4 +20,5 @@ export const routes = {
     passwordRecovery: `/${mainPages.auth}/change-password`,
     provider: `/${mainPages.auth}/provider`,
   },
+  profile: "/profile",
 };

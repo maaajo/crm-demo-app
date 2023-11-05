@@ -4,7 +4,7 @@ export type Json =
   | string
   | number
   | boolean
-  | undefined
+  | null
   | { [key: string]: Json | undefined }
   | Json[];
 
@@ -70,6 +70,29 @@ export interface Database {
           zip?: string | undefined;
         };
         Relationships: [];
+      };
+      profile: {
+        Row: {
+          avatar_uri: string | null;
+          id: string;
+        };
+        Insert: {
+          avatar_uri?: string | null;
+          id: string;
+        };
+        Update: {
+          avatar_uri?: string | null;
+          id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "profile_id_fkey";
+            columns: ["id"];
+            isOneToOne: true;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          }
+        ];
       };
     };
     Views: {

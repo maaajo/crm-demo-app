@@ -7,6 +7,7 @@ import { Button } from "@chakra-ui/react";
 import { ArrowLeftCircle } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { routes } from "@/lib/routes";
+import { useSessionContext } from "@supabase/auth-helpers-react";
 
 type LayoutProps = {
   children?: ReactNode;
@@ -16,6 +17,7 @@ type LayoutProps = {
 const Layout = ({ children, userEmail }: LayoutProps) => {
   const router = useRouter();
   const path = usePathname();
+  const { isLoading, session } = useSessionContext();
 
   return (
     <Flex minH={"100vh"}>

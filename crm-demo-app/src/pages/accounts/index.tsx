@@ -1,8 +1,4 @@
-import {
-  RedirectCheckType,
-  checkPossibleRedirect,
-  getServerSideAuthUserDetails,
-} from "@/lib/auth/methods";
+import { RedirectCheckType, checkPossibleRedirect } from "@/lib/auth/methods";
 import {
   Text,
   VStack,

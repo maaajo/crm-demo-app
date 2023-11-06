@@ -94,6 +94,7 @@ const NavItem = ({ icon, href, title }: NavItemProps) => {
 
 const Sidebar = () => {
   const { userProfile } = useUserProfileContext();
+  // check on first provider register if not appearing
   return (
     <Box
       color={"whiteAlpha.700"}

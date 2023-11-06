@@ -75,14 +75,23 @@ export interface Database {
         Row: {
           avatar_uri: string | null;
           id: string;
+          created_at: string;
+          last_sign_in_at: string | null;
+          email: string;
         };
         Insert: {
           avatar_uri?: string | null;
           id: string;
+          created_at: string;
+          last_sign_in_at?: string | null;
+          email: string;
         };
         Update: {
           avatar_uri?: string | null;
           id?: string;
+          created_at?: string;
+          last_sign_in_at?: string | null;
+          email?: string;
         };
         Relationships: [
           {

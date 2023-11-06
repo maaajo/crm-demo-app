@@ -1,4 +1,4 @@
-import { useSessionContext } from "@supabase/auth-helpers-react";
+import { useSessionContext, useUser } from "@supabase/auth-helpers-react";
 import {
   Dispatch,
   ReactNode,
@@ -8,6 +8,7 @@ import {
   useEffect,
   useState,
 } from "react";
+import { getProfileAvatarUri } from "../db/utils/profile/methods";
 
 type UserProfile = {
   avatarUri?: string;
@@ -37,13 +38,9 @@ function UserProfileProvider({ children }: UserProfileContextProviderProps) {
 
   useEffect(() => {
     const getProfileDetails = async (userId: string, emailAddress?: string) => {
-      const { data } = await supabaseClient
-        .from("profile")
-        .select("avatar_uri")
-        .eq("id", userId);
+      const { avatarUri } = await getProfileAvatarUri(supabaseClient, userId);
 
-      if (data) {
-        const avatarUri = data[0].avatar_uri as string;
+      if (avatarUri) {
         setUserProfile(() => ({
           avatarUri,
           isLoading,

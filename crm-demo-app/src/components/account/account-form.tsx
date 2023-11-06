@@ -34,8 +34,11 @@ import {
   useSupabaseClient,
 } from "@supabase/auth-helpers-react";
 import { Database } from "@/lib/types/supabase";
-import { generateFakeAccount } from "@/lib/utils";
-import { useUserProfile } from "@/lib/context/user-profile";
+import {
+  generateFakeAccount,
+  getCurrentTimestampWithTimezone,
+} from "@/lib/utils";
+import { useUserProfileContext } from "@/lib/context/user-profile";
 
 type AccountFormPropsAdd = {
   actionType: "add";
@@ -78,7 +81,7 @@ const editAccount = async (
     .from("accounts")
     .update({
       ...newAccountData,
-      edited_at: new Date(Date.now()).toISOString(),
+      edited_at: getCurrentTimestampWithTimezone(),
       edited_by: userId,
     })
     .eq("id", accountId)
@@ -119,7 +122,7 @@ export default function AccountForm(props: AccountFormProps) {
   const router = useRouter();
   const toast = useToast();
   const supabase = useSupabaseClient<Database>();
-  const { userProfile } = useUserProfile();
+  const { userProfile } = useUserProfileContext();
   const isView = actionType === "view";
 
   const onFakeDataClick = () => {

@@ -68,3 +68,7 @@ export const getAvatar = () => {
     seed: faker.company.buzzVerb(),
   }).toDataUriSync();
 };
+
+export const getCurrentTimestampWithTimezone = () => {
+  return new Date(Date.now()).toISOString();
+};

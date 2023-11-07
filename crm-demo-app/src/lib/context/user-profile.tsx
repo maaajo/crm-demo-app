@@ -1,4 +1,4 @@
-import { useSessionContext, useUser } from "@supabase/auth-helpers-react";
+import { useSessionContext } from "@supabase/auth-helpers-react";
 import {
   Dispatch,
   ReactNode,
@@ -20,6 +20,7 @@ type UserProfile = {
 type UserProfileContextProps = {
   userProfile: UserProfile;
   setUserProfile: Dispatch<SetStateAction<UserProfile>>;
+  setIsUserProfileUpdated: Dispatch<SetStateAction<boolean>>;
 };
 
 type UserProfileContextProviderProps = {
@@ -35,27 +36,27 @@ function UserProfileProvider({ children }: UserProfileContextProviderProps) {
   const [userProfile, setUserProfile] = useState<UserProfile>(() => ({
     isLoading,
   }));
+  const [isUserProfileUpdated, setIsUserProfileUpdated] = useState(false);
 
   useEffect(() => {
     const getProfileDetails = async (userId: string, emailAddress?: string) => {
       const { avatarUri } = await getProfileAvatarUri(supabaseClient, userId);
 
-      if (avatarUri) {
-        setUserProfile(() => ({
-          avatarUri,
-          isLoading,
-          userId,
-          emailAddress,
-        }));
-      }
+      setUserProfile(() => ({
+        avatarUri: avatarUri ? avatarUri : undefined,
+        isLoading,
+        userId,
+        emailAddress,
+      }));
     };
 
     if (!isLoading && session) {
+      console.log("effect runs");
       getProfileDetails(session.user.id, session.user.email);
     }
-  }, [isLoading, session, supabaseClient]);
+  }, [isLoading, session, supabaseClient, isUserProfileUpdated]);
 
-  const value = { userProfile, setUserProfile };
+  const value = { userProfile, setUserProfile, setIsUserProfileUpdated };
 
   return (
     <UserProfileContext.Provider value={value}>

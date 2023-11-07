@@ -14,6 +14,8 @@ import { config } from "@/lib/config/config";
 import { AuthCallbackQueryParams } from "@/lib/auth/methods";
 import { Database } from "@/lib/types/supabase";
 import { getAvatar } from "@/lib/utils";
+import { useUserProfileContext } from "@/lib/context/user-profile";
+import { addAvatar } from "@/lib/db/utils/profile/methods";
 
 const ProviderAuthRedirect: NextPageWithLayout = () => {
   const router = useRouter();
@@ -24,6 +26,7 @@ const ProviderAuthRedirect: NextPageWithLayout = () => {
   const toast = useToast();
   const { isLoading, session, error } = useSessionContext();
   const supabase = useSupabaseClient<Database>();
+  const { setIsUserProfileUpdated } = useUserProfileContext();
 
   if (error?.message) {
     toast({
@@ -34,11 +37,9 @@ const ProviderAuthRedirect: NextPageWithLayout = () => {
   }
 
   const addAvatarURI = async (userId: string) => {
-    const { error } = await supabase
-      .from("profile")
-      .update({ avatar_uri: getAvatar() })
-      .eq("id", userId)
-      .is("avatar_uri", null);
+    await addAvatar(supabase, userId);
+
+    setIsUserProfileUpdated(true);
 
     return error;
   };

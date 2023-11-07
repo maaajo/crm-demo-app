@@ -31,6 +31,7 @@ import { routes } from "@/lib/routes";
 import { AuthCallbackQueryParams } from "@/lib/auth/methods";
 import { config } from "@/lib/config/config";
 import { getAvatar, getCurrentTimestampWithTimezone } from "@/lib/utils";
+import { addAvatar } from "@/lib/db/utils/profile/methods";
 
 const zodAuthSchema = z.object({
   email: z
@@ -90,13 +91,7 @@ const Auth = ({ type }: AuthParams) => {
         : await supabase.auth.signUp(supabaseCredentials);
 
     if (data.session) {
-      // this should be only updated if avatar is empty //TODO
-      await supabase
-        .from("profile")
-        .update({
-          avatar_uri: getAvatar(),
-        })
-        .eq("id", data.session.user.id);
+      await addAvatar(supabase, data.session.user.id);
 
       router.reload();
     }

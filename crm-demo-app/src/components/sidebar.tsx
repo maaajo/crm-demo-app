@@ -143,7 +143,7 @@ const Sidebar = () => {
             py={1}
             px={2}
           >
-            {userProfile.isLoading ? (
+            {userProfile.is_loading ? (
               <Spinner
                 thickness="2px"
                 speed="0.65s"
@@ -154,13 +154,13 @@ const Sidebar = () => {
             ) : (
               <>
                 <Avatar
-                  src={userProfile.avatarUri}
+                  src={userProfile.avatar_uri ?? ""}
                   size={"xs"}
-                  name={userProfile.emailAddress}
+                  name={userProfile.email}
                   ml={1}
                   mr={2}
                 />
-                <TagLabel fontSize={"xs"}>{userProfile.emailAddress}</TagLabel>
+                <TagLabel fontSize={"xs"}>{userProfile.email}</TagLabel>
                 <Menu>
                   <MenuButton
                     as={IconButton}

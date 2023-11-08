@@ -8,13 +8,12 @@ import {
   useEffect,
   useState,
 } from "react";
-import { getProfileAvatarUri } from "../db/utils/profile/methods";
+import { getUserProfile } from "../db/utils/profile/methods";
+import { UserProfileSupabase } from "../types/supabase";
 
-type UserProfile = {
-  avatarUri?: string;
-  isLoading: boolean;
-  emailAddress?: string;
-  userId?: string;
+type UserProfile = UserProfileSupabase & {
+  is_loading: boolean;
+  user_id: string | null;
 };
 
 type UserProfileContextProps = {
@@ -34,25 +33,30 @@ const UserProfileContext = createContext<UserProfileContextProps | undefined>(
 function UserProfileProvider({ children }: UserProfileContextProviderProps) {
   const { isLoading, session, supabaseClient } = useSessionContext();
   const [userProfile, setUserProfile] = useState<UserProfile>(() => ({
-    isLoading,
+    is_loading: isLoading,
+    user_id: null,
+    avatar_uri: null,
+    created_at: "",
+    email: "",
+    last_sign_in_at: null,
   }));
   const [isUserProfileUpdated, setIsUserProfileUpdated] = useState(false);
 
   useEffect(() => {
-    const getProfileDetails = async (userId: string, emailAddress?: string) => {
-      const { avatarUri } = await getProfileAvatarUri(supabaseClient, userId);
+    const getProfileDetails = async (userId: string) => {
+      const { returnData } = await getUserProfile(supabaseClient, userId);
 
-      setUserProfile(() => ({
-        avatarUri: avatarUri ? avatarUri : undefined,
-        isLoading,
-        userId,
-        emailAddress,
-      }));
+      if (returnData) {
+        setUserProfile(() => ({
+          is_loading: isLoading,
+          user_id: userId,
+          ...returnData,
+        }));
+      }
     };
 
     if (!isLoading && session) {
-      console.log("effect runs");
-      getProfileDetails(session.user.id, session.user.email);
+      getProfileDetails(session.user.id);
     }
   }, [isLoading, session, supabaseClient, isUserProfileUpdated]);
 

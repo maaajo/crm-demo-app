@@ -118,3 +118,8 @@ export interface Database {
     };
   };
 }
+
+export type UserProfile = Omit<
+  Database["public"]["Tables"]["profile"]["Row"],
+  "id"
+>;

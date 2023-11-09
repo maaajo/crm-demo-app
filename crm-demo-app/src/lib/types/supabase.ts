@@ -119,7 +119,7 @@ export interface Database {
   };
 }
 
-export type UserProfile = Omit<
+export type UserProfileSupabase = Omit<
   Database["public"]["Tables"]["profile"]["Row"],
   "id"
 >;

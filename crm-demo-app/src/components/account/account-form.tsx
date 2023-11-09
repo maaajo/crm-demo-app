@@ -39,6 +39,7 @@ import {
   getCurrentTimestampWithTimezone,
 } from "@/lib/utils";
 import { useUserProfileContext } from "@/lib/context/user-profile";
+import { config } from "@/lib/config/config";
 
 type AccountFormPropsAdd = {
   actionType: "add";
@@ -64,7 +65,7 @@ const addNewAccount = async (
   newAccountData: TAccountZOD
 ) => {
   const { data, error } = await supabase
-    .from("accounts")
+    .from(config.tables.account)
     .insert([newAccountData])
     .select();
 
@@ -78,7 +79,7 @@ const editAccount = async (
   userId?: string
 ) => {
   const { data, error } = await supabase
-    .from("accounts")
+    .from(config.tables.account)
     .update({
       ...newAccountData,
       edited_at: getCurrentTimestampWithTimezone(),
@@ -160,12 +161,12 @@ export default function AccountForm(props: AccountFormProps) {
       }
     }
 
-    if (actionType === "edit") {
+    if (actionType === "edit" && userProfile.user_id) {
       const { data, error } = await editAccount(
         supabase,
         newAccountData,
         props.account.id,
-        userProfile.userId
+        userProfile.user_id
       );
 
       if (error) {

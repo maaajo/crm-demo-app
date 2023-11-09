@@ -5,31 +5,17 @@ import {
   VStack,
   Button,
   HStack,
-  MenuButton,
-  IconButton,
-  MenuList,
-  MenuItem,
   Text,
-  Menu,
-  Tag,
   Avatar,
-  TagLabel,
-  Spinner,
-  StackDivider,
+  useDisclosure,
 } from "@chakra-ui/react";
-import {
-  User2,
-  MoreHorizontal,
-  LogOut,
-  Home,
-  MoreVertical,
-  Contact,
-} from "lucide-react";
+import { User2, Home } from "lucide-react";
 import { config } from "@/lib/config/config";
 import { Link } from "@chakra-ui/next-js";
 import { usePathname } from "next/navigation";
 import startCase from "lodash.startcase";
 import { useUserProfileContext } from "@/lib/context/user-profile";
+import ProfileModal from "./profile-modal";
 
 type NavItemProps = {
   icon: JSX.Element;
@@ -94,7 +80,7 @@ const NavItem = ({ icon, href, title }: NavItemProps) => {
 
 const Sidebar = () => {
   const { userProfile } = useUserProfileContext();
-  // check on first provider register if not appearing
+  const { isOpen, onClose, onOpen } = useDisclosure();
   return (
     <Box
       color={"whiteAlpha.700"}
@@ -134,90 +120,27 @@ const Sidebar = () => {
           align={"center"}
           justifyContent={"center"}
         >
-          <Tag
+          <Button
             colorScheme={"whiteAlpha"}
             backgroundColor={"whiteAlpha.300"}
+            _hover={{
+              backgroundColor: "whiteAlpha.400",
+            }}
             variant={"solid"}
             boxShadow={"xl"}
             borderRadius={"full"}
             py={1}
-            px={2}
+            px={4}
+            fontSize={"sm"}
+            isLoading={userProfile.is_loading}
+            leftIcon={<Avatar src={userProfile.avatar_uri ?? ""} size={"xs"} />}
+            onClick={onOpen}
           >
-            {userProfile.is_loading ? (
-              <Spinner
-                thickness="2px"
-                speed="0.65s"
-                emptyColor="gray.200"
-                color={"whiteAlpha.900"}
-                size="sm"
-              />
-            ) : (
-              <>
-                <Avatar
-                  src={userProfile.avatar_uri ?? ""}
-                  size={"xs"}
-                  name={userProfile.email}
-                  ml={1}
-                  mr={2}
-                />
-                <TagLabel fontSize={"xs"}>{userProfile.email}</TagLabel>
-                <Menu>
-                  <MenuButton
-                    as={IconButton}
-                    aria-label="Open more actions for account"
-                    icon={<MoreHorizontal />}
-                    variant={"unstyled"}
-                    color={"whiteAlpha.900"}
-                    size={"xs"}
-                    ml={2}
-                  />
-                  <MenuList
-                    fontSize={"sm"}
-                    backgroundColor={config.style.sidebar.backgroundColor}
-                    boxShadow={"lg"}
-                    borderColor={"whiteAlpha.700"}
-                    px={2}
-                  >
-                    <VStack
-                      spacing={1}
-                      divider={<StackDivider borderColor={"whiteAlpha.500"} />}
-                    >
-                      <MenuItem
-                        icon={<Contact size={18} />}
-                        fontWeight={"semibold"}
-                        backgroundColor={config.style.sidebar.backgroundColor}
-                        as={Link}
-                        href={routes.profile}
-                        color={"whiteAlpha.900"}
-                        _hover={{
-                          textDecoration: "none",
-                          backgroundColor: "whiteAlpha.300",
-                        }}
-                      >
-                        Profile
-                      </MenuItem>
-                      <MenuItem
-                        icon={<LogOut size={18} />}
-                        fontWeight={"semibold"}
-                        backgroundColor={config.style.sidebar.backgroundColor}
-                        as={Link}
-                        href={routes.auth.signOut}
-                        color={"whiteAlpha.900"}
-                        _hover={{
-                          textDecoration: "none",
-                          backgroundColor: "whiteAlpha.300",
-                        }}
-                      >
-                        Log Out
-                      </MenuItem>
-                    </VStack>
-                  </MenuList>
-                </Menu>
-              </>
-            )}
-          </Tag>
+            {userProfile.email}
+          </Button>
         </HStack>
       </Flex>
+      <ProfileModal isOpen={isOpen} onClose={onClose} />
     </Box>
   );
 };

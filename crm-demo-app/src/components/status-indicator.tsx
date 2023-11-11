@@ -1,4 +1,4 @@
-import { Box, Flex, Text, chakra } from "@chakra-ui/react";
+import { Flex, Text, chakra } from "@chakra-ui/react";
 
 type StatusIndicatorProps = {
   isActive: Boolean;

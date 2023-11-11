@@ -1,4 +1,4 @@
-import { Text } from "@chakra-ui/react";
+import { Box, Flex, Text, chakra } from "@chakra-ui/react";
 
 type StatusIndicatorProps = {
   isActive: Boolean;
@@ -11,22 +11,15 @@ export default function StatusIndicator({ isActive }: StatusIndicatorProps) {
   const indicatorInactiveText = "Inactive";
 
   return (
-    <Text
-      position={"relative"}
-      _before={{
-        content: "''",
-        position: "absolute",
-        display: "block",
-        width: "12px",
-        height: "12px",
-        boxSizing: "border-box",
-        borderRadius: "50%",
-        bgColor: `${isActive ? indicatorActiveColor : indicatorInactiveColor}`,
-        left: -5,
-        top: 0.5,
-      }}
-    >
-      {isActive ? indicatorActiveText : indicatorInactiveText}
-    </Text>
+    <Flex alignItems={"center"}>
+      <chakra.span
+        width={"10px"}
+        height={"10px"}
+        borderRadius={"50%"}
+        bgColor={isActive ? indicatorActiveColor : indicatorInactiveColor}
+        mr={"1.5"}
+      ></chakra.span>
+      <Text>{isActive ? indicatorActiveText : indicatorInactiveText}</Text>
+    </Flex>
   );
 }

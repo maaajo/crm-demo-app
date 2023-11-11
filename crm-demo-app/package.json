@@ -28,6 +28,7 @@
     "@types/react-dom": "18.2.6",
     "@types/uuid": "^9.0.4",
     "@types/validator": "^13.7.17",
+    "colorthief": "^2.4.0",
     "cookies": "^0.8.0",
     "dayjs": "^1.11.10",
     "eslint": "8.43.0",

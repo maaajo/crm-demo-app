@@ -16,6 +16,10 @@ import {
   Text,
 } from "@chakra-ui/react";
 import dayjs from "dayjs";
+//@ts-ignore
+import ColorThief from "colorthief";
+import { useRef, useState } from "react";
+import { getImageBackgroundColor } from "@/lib/utils";
 
 type ProfileModalProps = {
   isOpen: boolean;
@@ -24,6 +28,8 @@ type ProfileModalProps = {
 
 export default function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
   const { userProfile } = useUserProfileContext();
+  const avatarImageRef = useRef<HTMLImageElement>(null);
+  const [avatarBackgroundColor, setAvatarBackgroundColor] = useState("");
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} isCentered>
@@ -31,11 +37,17 @@ export default function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
         bg="blackAlpha.300"
         backdropFilter="blur(15px) hue-rotate(90deg)"
       />
-      <ModalContent py={6}>
+      <ModalContent>
+        <Box
+          height={"125px"}
+          w={"full"}
+          backgroundColor={`rgb(${avatarBackgroundColor})`}
+        ></Box>
         <ModalBody
           display={"flex"}
           alignItems={"center"}
           flexDirection={"column"}
+          mt={"-16"}
         >
           <Image
             alt="user avatar"
@@ -44,10 +56,16 @@ export default function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
             mt={-24}
             src={userProfile.avatar_uri ?? ""}
             borderRadius={"lg"}
-            boxShadow={"lg"}
+            boxShadow={"xl"}
             transition={"transform ease .3s"}
             _hover={{
               transform: "scale(1.04)",
+            }}
+            crossOrigin="anonymous"
+            ref={avatarImageRef}
+            onLoad={() => {
+              const color = getImageBackgroundColor(avatarImageRef.current!);
+              setAvatarBackgroundColor(color);
             }}
           />
           <VStack my={6}>
@@ -75,7 +93,12 @@ export default function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
           </VStack>
         </ModalBody>
 
-        <ModalFooter display={"flex"} justifyContent={"center"} width={"full"}>
+        <ModalFooter
+          display={"flex"}
+          justifyContent={"center"}
+          width={"full"}
+          pb={8}
+        >
           <Button
             as={Link}
             href={routes.auth.signOut}

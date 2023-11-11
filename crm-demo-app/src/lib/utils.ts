@@ -1,12 +1,9 @@
-import {
-  AccountStatus,
-  Currencies,
-  Sources,
-  TAccountZOD,
-} from "./types/account";
+import { AccountStatus, Currencies, Sources } from "./types/account";
 import { faker } from "@faker-js/faker";
 import { createAvatar } from "@dicebear/core";
 import { botttsNeutral } from "@dicebear/collection";
+//@ts-ignore
+import ColorThief from "colorthief";
 
 function getRandomValueFromSimpleObject<T extends object>(simpleObject: T) {
   const simpleObjectKeys = Object.keys(simpleObject);
@@ -67,6 +64,12 @@ export const getAvatar = () => {
   return createAvatar(botttsNeutral, {
     seed: faker.company.buzzVerb(),
   }).toDataUriSync();
+};
+
+export const getImageBackgroundColor = (image: HTMLImageElement) => {
+  const colorThief = new ColorThief();
+  const rgbColor = colorThief.getColor(image) as number[];
+  return rgbColor.join(",");
 };
 
 export const getCurrentTimestampWithTimezone = () => {

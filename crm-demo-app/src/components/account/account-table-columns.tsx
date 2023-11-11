@@ -21,6 +21,7 @@ import { CellContext, Row, createColumnHelper } from "@tanstack/react-table";
 import dayjs from "dayjs";
 import startCase from "lodash.startcase";
 import { Eye, MoreHorizontal, Pencil } from "lucide-react";
+import StatusIndicator from "../status-indicator";
 
 const columnHelper = createColumnHelper<TAccountSupabase>();
 
@@ -97,11 +98,7 @@ export const accountsTableColumns = [
     sortingFn: "alphanumeric",
   }),
   columnHelper.accessor("is_active", {
-    cell: ({ cell }) => (
-      <Badge colorScheme={cell.getValue() ? "green" : "red"}>
-        {String(cell.getValue())}
-      </Badge>
-    ),
+    cell: ({ cell }) => <StatusIndicator isActive={cell.getValue()} />,
     header: "Active",
     sortingFn: "alphanumeric",
   }),

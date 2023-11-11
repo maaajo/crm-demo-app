@@ -17,7 +17,6 @@ import {
 } from "@chakra-ui/react";
 import dayjs from "dayjs";
 //@ts-ignore
-import ColorThief from "colorthief";
 import { useRef, useState } from "react";
 import { getImageBackgroundColor } from "@/lib/utils";
 

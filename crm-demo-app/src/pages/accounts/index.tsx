@@ -33,7 +33,7 @@ import { useEffect, useState } from "react";
 import { Trash2 } from "lucide-react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import WarningConfirmationModal from "@/components/confirmation-modal/warning";
-import { accountsTableColumns } from "@/components/account/data-table-columns";
+import { accountsTableColumns } from "@/components/account/account-table-columns";
 import FakeDataModal from "@/components/account/fake-data-modal";
 import useRouterRefresh from "@/lib/hooks/useRouterRefresh";
 

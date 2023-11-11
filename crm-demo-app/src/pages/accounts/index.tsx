@@ -184,6 +184,7 @@ export default function AccountsHome({
                 leftIcon={<Trash2 />}
                 aria-label="button to delete accounts"
                 colorScheme={"red"}
+                variant={"outline"}
                 onClick={deleteWarningModalOnOpen}
                 isDisabled={selectedAccountsIndexes.length === 0}
               >

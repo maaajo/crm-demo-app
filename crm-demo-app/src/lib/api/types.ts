@@ -1,8 +1,10 @@
+import { StatusCodes } from "http-status-codes";
+
 export const ApiResult = {
-  success: "SUCCESS",
-  error: "ERROR",
+  SUCCESS: "SUCCESS",
+  ERROR: "ERROR",
 } as const;
 
-export type TypedResponse =
-  | { statusCode: number; result: "SUCCESS"; data: any }
-  | { statusCode: number; result: "ERROR"; errorMessage: string };
+export type TypedApiResponse<T = any> =
+  | { statusCode: StatusCodes; result: "SUCCESS"; data: T[] }
+  | { statusCode: StatusCodes; result: "ERROR"; errorMessage: string };

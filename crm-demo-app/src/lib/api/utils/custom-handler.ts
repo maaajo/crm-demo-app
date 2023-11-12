@@ -6,7 +6,7 @@ export type ApiMiddleware = (
   req: NextApiRequest,
   res: NextApiResponse,
   next: NextFunction
-) => Promise<void>;
+) => Promise<void> | void;
 
 const executeApiMiddleware = async (
   req: NextApiRequest,

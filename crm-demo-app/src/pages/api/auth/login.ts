@@ -2,30 +2,36 @@ import { TypedApiResponse } from "@/lib/api/types";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { handler } from "@/lib/api/utils/custom-handler";
 import { allowMethods } from "@/lib/api/utils/allow-methods";
-import {
-  Session,
-  User,
-  createServerSupabaseClient,
-} from "@supabase/auth-helpers-nextjs";
+import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { StatusCodes } from "http-status-codes";
 
 const helloApiHandler = async (
   req: NextApiRequest,
-  res: NextApiResponse<
-    TypedApiResponse<{ user: User | null; session: Session | null }>
-  >
+  res: NextApiResponse<TypedApiResponse<{ accessToken: string }>>
 ) => {
   const supabaseClient = createServerSupabaseClient({ req, res });
   const { data, error } = await supabaseClient.auth.signInWithPassword({
-    email: "test@test.com",
-    password: "#Test123",
+    email: req.body.email,
+    password: req.body.password,
   });
 
-  res.status(StatusCodes.OK).json({
-    result: "SUCCESS",
-    statusCode: StatusCodes.OK,
-    data: [{ user: data.user, session: data.session }],
-  });
+  console.log(req.body);
+
+  if (data.session) {
+    res.status(StatusCodes.OK).json({
+      result: "SUCCESS",
+      statusCode: StatusCodes.OK,
+      data: [{ accessToken: data.session.access_token }],
+    });
+  }
+
+  if (!data.session || error) {
+    res.status(StatusCodes.BAD_REQUEST).json({
+      errorMessage: error ? error.message : "Failed to authorize",
+      result: "ERROR",
+      statusCode: StatusCodes.BAD_REQUEST,
+    });
+  }
 };
 
-export default handler(allowMethods(["GET"]), helloApiHandler);
+export default handler(allowMethods(["POST"]), helloApiHandler);

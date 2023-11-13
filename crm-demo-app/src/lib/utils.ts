@@ -68,8 +68,12 @@ export const getAvatar = () => {
 
 export const getImageBackgroundColor = (image: HTMLImageElement) => {
   const colorThief = new ColorThief();
-  const rgbColor = colorThief.getColor(image) as number[];
-  return rgbColor.join(",");
+  try {
+    const rgbColor = colorThief.getColor(image) as number[];
+    return rgbColor.join(",");
+  } catch (error: any) {
+    return "255,255,255";
+  }
 };
 
 export const getCurrentTimestampWithTimezone = () => {

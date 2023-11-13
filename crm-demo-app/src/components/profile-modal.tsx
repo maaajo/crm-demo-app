@@ -6,7 +6,6 @@ import {
   ModalOverlay,
   ModalContent,
   ModalBody,
-  Icon,
   ModalFooter,
   Button,
   Box,
@@ -16,7 +15,6 @@ import {
   Text,
 } from "@chakra-ui/react";
 import dayjs from "dayjs";
-//@ts-ignore
 import { useRef, useState } from "react";
 import { getImageBackgroundColor } from "@/lib/utils";
 
@@ -50,7 +48,8 @@ export default function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
         >
           <Image
             alt="user avatar"
-            maxH={"180px"}
+            width={"180px"}
+            height={"180px"}
             objectFit={"cover"}
             mt={-24}
             src={userProfile.avatar_uri ?? ""}
@@ -63,6 +62,7 @@ export default function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
             crossOrigin="anonymous"
             ref={avatarImageRef}
             onLoad={() => {
+              console.log(avatarImageRef.current);
               const color = getImageBackgroundColor(avatarImageRef.current!);
               setAvatarBackgroundColor(color);
             }}

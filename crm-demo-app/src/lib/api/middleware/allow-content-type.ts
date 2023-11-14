@@ -1,4 +1,3 @@
-import { NextRequest, NextResponse } from "next/server";
 import { ApiMiddleware, NextFunction } from "../utils/custom-handler";
 import { TypedApiResponse } from "../types";
 import { StatusCodes } from "http-status-codes";

@@ -5,15 +5,30 @@ import { allowMethods } from "@/lib/api/middleware/allow-methods";
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { StatusCodes } from "http-status-codes";
 import { allowContentType } from "@/lib/api/middleware/allow-content-type";
+import * as z from "zod";
+import { validateRequestBody } from "@/lib/api/middleware/validate-request-body";
+
+const loginBodySchema = z.object({
+  email: z
+    .string({ required_error: "Email field is missing" })
+    .min(1, { message: "Email field has to be filled" })
+    .email({ message: "This is not a valid email" }),
+  password: z
+    .string({ required_error: "Password field is missing" })
+    .min(1, { message: "Password field has to be filled" }),
+});
+
+type LoginBody = z.infer<typeof loginBodySchema>;
 
 const loginApiHandler = async (
   req: NextApiRequest,
   res: NextApiResponse<TypedApiResponse<{ accessToken: string }>>
 ) => {
   const supabaseClient = createServerSupabaseClient({ req, res });
+  const requestBody = req.body as LoginBody;
   const { data, error } = await supabaseClient.auth.signInWithPassword({
-    email: req.body.email,
-    password: req.body.password,
+    email: requestBody.email,
+    password: requestBody.password,
   });
 
   if (data.session) {
@@ -36,5 +51,6 @@ const loginApiHandler = async (
 export default handler(
   allowMethods(["POST"]),
   allowContentType(["application/json"]),
+  validateRequestBody(loginBodySchema),
   loginApiHandler
 );

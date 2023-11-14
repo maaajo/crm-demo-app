@@ -2,15 +2,16 @@ import { createMiddlewareSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { TypedApiResponse } from "./lib/api/types";
-import { verify } from "jsonwebtoken";
+import { verifyTokenAuth } from "./lib/api/utils/auth";
+import { verifySupabaseAuth } from "./lib/api/utils/auth";
 
 export async function middleware(req: NextRequest) {
   const res = NextResponse.next();
-  const supabaseClient = createMiddlewareSupabaseClient({ req, res });
+  let isMissingAuth = false;
 
-  const { data, error } = await supabaseClient.auth.getSession();
+  const isSupabaseAuth = await verifySupabaseAuth(req, res);
 
-  if (data.session?.user) {
+  if (isSupabaseAuth) {
     return res;
   }
 
@@ -24,33 +25,27 @@ export async function middleware(req: NextRequest) {
       authHeaderSplit[1].trim().length > 0
     ) {
       try {
-        const token = authHeaderSplit[1];
-        const secret = process.env.JWT_SECRET!;
-
-        const decodedToken = verify(token, secret);
+        const token = authHeaderSplit[1].trim();
+        await verifyTokenAuth(token);
 
         return res;
       } catch (error: any) {
-        const status = 400;
-        const response: TypedApiResponse = {
-          statusCode: status,
-          errorMessage: "Invalid access token: " + error,
-          result: "ERROR",
-        };
-        return Response.json(response, { status });
+        isMissingAuth = true;
       }
     }
   }
 
-  const status = 401;
+  isMissingAuth = true;
 
-  const response: TypedApiResponse = {
-    statusCode: status,
-    errorMessage: "Unauthorized",
-    result: "ERROR",
-  };
-
-  return Response.json(response, { status });
+  if (isMissingAuth) {
+    const status = 401;
+    const response: TypedApiResponse = {
+      statusCode: status,
+      errorMessage: "Authentication required",
+      result: "ERROR",
+    };
+    return new NextResponse(JSON.stringify(response), { status });
+  }
 }
 
 export const config = {

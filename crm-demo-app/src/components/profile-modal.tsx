@@ -62,7 +62,6 @@ export default function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
             crossOrigin="anonymous"
             ref={avatarImageRef}
             onLoad={() => {
-              console.log(avatarImageRef.current);
               const color = getImageBackgroundColor(avatarImageRef.current!);
               setAvatarBackgroundColor(color);
             }}

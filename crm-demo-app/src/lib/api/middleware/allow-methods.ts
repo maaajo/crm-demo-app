@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { ApiMiddleware, NextFunction } from "./custom-handler";
+import { ApiMiddleware, NextFunction } from "../utils/custom-handler";
 import { TypedApiResponse } from "../types";
 import { ApiResult } from "../types";
 import { StatusCodes } from "http-status-codes";

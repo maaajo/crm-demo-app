@@ -1,11 +1,12 @@
 import { TypedApiResponse } from "@/lib/api/types";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { handler } from "@/lib/api/utils/custom-handler";
-import { allowMethods } from "@/lib/api/utils/allow-methods";
+import { allowMethods } from "@/lib/api/middleware/allow-methods";
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { StatusCodes } from "http-status-codes";
+import { allowContentType } from "@/lib/api/middleware/allow-content-type";
 
-const helloApiHandler = async (
+const loginApiHandler = async (
   req: NextApiRequest,
   res: NextApiResponse<TypedApiResponse<{ accessToken: string }>>
 ) => {
@@ -14,8 +15,6 @@ const helloApiHandler = async (
     email: req.body.email,
     password: req.body.password,
   });
-
-  console.log(req.body);
 
   if (data.session) {
     res.status(StatusCodes.OK).json({
@@ -34,4 +33,8 @@ const helloApiHandler = async (
   }
 };
 
-export default handler(allowMethods(["POST"]), helloApiHandler);
+export default handler(
+  allowMethods(["POST"]),
+  allowContentType(["application/json"]),
+  loginApiHandler
+);

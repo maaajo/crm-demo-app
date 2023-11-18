@@ -1,9 +1,9 @@
-import { createMiddlewareSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { TypedApiResponse } from "./lib/api/types";
 import { verifyTokenAuth } from "./lib/api/utils/auth";
 import { verifySupabaseAuth } from "./lib/api/utils/auth";
+import getBearerTokenFromHeader from "./lib/api/utils";
 
 export async function middleware(req: NextRequest) {
   const res = NextResponse.next();
@@ -18,15 +18,13 @@ export async function middleware(req: NextRequest) {
   const authHeader = req.headers.get("Authorization");
 
   if (authHeader) {
-    const authHeaderSplit = authHeader.split(" ");
-    if (
-      authHeaderSplit.length === 2 &&
-      authHeaderSplit[0].toLowerCase().trim() === "bearer" &&
-      authHeaderSplit[1].trim().length > 0
-    ) {
+    const bearerToken = getBearerTokenFromHeader(authHeader);
+
+    console.log(bearerToken);
+
+    if (bearerToken) {
       try {
-        const token = authHeaderSplit[1].trim();
-        await verifyTokenAuth(token);
+        await verifyTokenAuth(bearerToken);
 
         return res;
       } catch (error: any) {

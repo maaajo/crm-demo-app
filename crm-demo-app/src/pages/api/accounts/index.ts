@@ -13,7 +13,7 @@ const accountsApiHandler = async (
   const supabaseClient = createServerSupabaseClient<Database>({ req, res });
   const { data, error } = await supabaseClient.from("account").select("id");
 
-  console.log(data, error);
+  console.log("Headers: ", req.headers, "Cookies: ", req.cookies);
 
   return res.status(StatusCodes.OK).json({ data });
 };

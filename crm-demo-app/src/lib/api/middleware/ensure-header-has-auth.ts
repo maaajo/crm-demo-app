@@ -35,10 +35,7 @@ export const ensureHeaderHasAuth =
       return res.status(StatusCodes.BAD_REQUEST).json(failedResponse);
     }
 
-    // this should be changed to cookie supabase-auth-token
-
     req.headers["apikey"] = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-    req.headers["authorization"] = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
     return next();
   };

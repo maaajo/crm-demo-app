@@ -7,6 +7,7 @@ import { StatusCodes } from "http-status-codes";
 import { allowContentType } from "@/lib/api/middleware/allow-content-type";
 import * as z from "zod";
 import { validateRequestBody } from "@/lib/api/middleware/validate-request-body";
+import * as cookie from "cookie";
 
 const loginBodySchema = z.object({
   email: z
@@ -22,7 +23,7 @@ type LoginBody = z.infer<typeof loginBodySchema>;
 
 const loginApiHandler = async (
   req: NextApiRequest,
-  res: NextApiResponse<TypedApiResponse<{ accessToken: string }>>
+  res: NextApiResponse<TypedApiResponse<{ authCookie: string }>>
 ) => {
   const supabaseClient = createServerSupabaseClient({ req, res });
   const requestBody = req.body as LoginBody;
@@ -31,11 +32,17 @@ const loginApiHandler = async (
     password: requestBody.password,
   });
 
+  const setCookieHeader = res.getHeader("set-cookie") as string[];
+  console.log(setCookieHeader[0]);
+
+  // const supabaseAuthCookie = cookie.parse(res.getHeader("cookie") as string);
+  console.log(cookie.parse(setCookieHeader[0]));
+
   if (data.session) {
     res.status(StatusCodes.OK).json({
       result: "SUCCESS",
       statusCode: StatusCodes.OK,
-      data: [{ accessToken: data.session.access_token }],
+      data: [{ authCookie: "test" }],
     });
   }
 

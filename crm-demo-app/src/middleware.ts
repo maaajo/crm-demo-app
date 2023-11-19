@@ -20,8 +20,6 @@ export async function middleware(req: NextRequest) {
   if (authHeader) {
     const bearerToken = getBearerTokenFromHeader(authHeader);
 
-    console.log(bearerToken);
-
     if (bearerToken) {
       try {
         await verifyTokenAuth(bearerToken);

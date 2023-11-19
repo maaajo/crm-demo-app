@@ -1,4 +1,10 @@
-export default function getBearerTokenFromHeader(authHeader: string) {
+export default function getBearerTokenFromHeader(
+  authHeader: string | undefined
+) {
+  if (!authHeader) {
+    return "";
+  }
+
   const authHeaderCleaned = authHeader.trim();
 
   if (!authHeaderCleaned) {

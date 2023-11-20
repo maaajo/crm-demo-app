@@ -57,6 +57,12 @@ const accountsApiHandler = async (
       statusCode: StatusCodes.OK,
     });
   }
+
+  return res.status(StatusCodes.BAD_REQUEST).json({
+    result: "ERROR",
+    errorMessage,
+    statusCode: StatusCodes.BAD_REQUEST,
+  });
 };
 
 export default handler(allowMethods(["GET"]), accountsApiHandler);

@@ -4,6 +4,7 @@ import { createAvatar } from "@dicebear/core";
 import { botttsNeutral } from "@dicebear/collection";
 //@ts-ignore
 import ColorThief from "colorthief";
+import * as z from "zod";
 
 function getRandomValueFromSimpleObject<T extends object>(simpleObject: T) {
   const simpleObjectKeys = Object.keys(simpleObject);
@@ -78,4 +79,18 @@ export const getImageBackgroundColor = (image: HTMLImageElement) => {
 
 export const getCurrentTimestampWithTimezone = () => {
   return new Date(Date.now()).toISOString();
+};
+
+export const getDefaultFromSchema = <Schema extends z.AnyZodObject>(
+  schema: Schema
+) => {
+  return Object.fromEntries(
+    Object.entries(schema.shape).map(([key, value]) => {
+      if (value instanceof z.ZodDefault) {
+        return [key, value._def.defaultValue()];
+      }
+
+      return [key, undefined];
+    })
+  );
 };

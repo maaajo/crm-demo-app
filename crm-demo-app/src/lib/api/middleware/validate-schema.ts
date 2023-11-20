@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { AnyZodObject, ZodError } from "zod";
+import { AnyZodObject, SafeParseReturnType, ZodError } from "zod";
 import { ApiMiddleware, NextFunction } from "../utils/custom-handler";
 import { StatusCodes } from "http-status-codes";
 import { TypedApiResponse } from "../types";
@@ -12,8 +12,13 @@ const getZodError = (zodError: ZodError) => {
   return `Failed to validate request body. Error(s): ${zodErrorMessage}`;
 };
 
-export const validateRequestBody =
-  (schema: AnyZodObject): ApiMiddleware =>
+const VALIDATE_TYPES = ["BODY", "QUERY"] as const;
+
+export const validateSchema =
+  (
+    schema: AnyZodObject,
+    validateType: (typeof VALIDATE_TYPES)[number]
+  ): ApiMiddleware =>
   async (
     req: NextApiRequest,
     res: NextApiResponse<TypedApiResponse>,
@@ -23,7 +28,19 @@ export const validateRequestBody =
       throw new Error("Invalid schema");
     }
 
-    const schemaParseResult = await schema.safeParseAsync(req.body);
+    let schemaParseResult: SafeParseReturnType<
+      { [x: string]: any },
+      { [x: string]: any }
+    >;
+
+    switch (validateType) {
+      case "BODY":
+        schemaParseResult = await schema.safeParseAsync(req.body);
+        break;
+      case "QUERY":
+        schemaParseResult = await schema.safeParseAsync(req.query);
+        break;
+    }
 
     if (schemaParseResult.success) {
       return next();

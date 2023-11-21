@@ -12,12 +12,15 @@ const getZodError = (zodError: ZodError) => {
   return `Failed to validate request body. Error(s): ${zodErrorMessage}`;
 };
 
-const VALIDATE_TYPES = ["BODY", "QUERY"] as const;
+export const VALIDATE_TYPES = {
+  BODY: "body",
+  QUERY: "query",
+} as const;
 
 export const validateSchema =
   (
     schema: AnyZodObject,
-    validateType: (typeof VALIDATE_TYPES)[number]
+    validateType: (typeof VALIDATE_TYPES)[keyof typeof VALIDATE_TYPES]
   ): ApiMiddleware =>
   async (
     req: NextApiRequest,
@@ -34,10 +37,10 @@ export const validateSchema =
     >;
 
     switch (validateType) {
-      case "BODY":
+      case VALIDATE_TYPES.BODY:
         schemaParseResult = await schema.safeParseAsync(req.body);
         break;
-      case "QUERY":
+      case VALIDATE_TYPES.QUERY:
         schemaParseResult = await schema.safeParseAsync(req.query);
         break;
     }

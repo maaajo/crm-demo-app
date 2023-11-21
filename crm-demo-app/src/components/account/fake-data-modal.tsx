@@ -1,6 +1,6 @@
 import { config } from "@/lib/config/config";
 import { Database } from "@/lib/types/supabase";
-import { generateFakeAccount } from "@/lib/utils";
+import { generateFakeAccount, generateFakeAccounts } from "@/lib/utils";
 import {
   Button,
   Heading,
@@ -34,9 +34,7 @@ const insertFakeAccounts = async (
   supabase: SupabaseClient<Database>,
   numberOfAccounts: number
 ) => {
-  const fakeAccounts = [...Array(numberOfAccounts).keys()].map((item) =>
-    generateFakeAccount()
-  );
+  const fakeAccounts = generateFakeAccounts(numberOfAccounts);
 
   const { error } = await supabase
     .from(config.tables.account)

@@ -6,7 +6,10 @@ import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { StatusCodes } from "http-status-codes";
 import { allowContentType } from "@/lib/api/middleware/allow-content-type";
 import * as z from "zod";
-import { validateSchema } from "@/lib/api/middleware/validate-schema";
+import {
+  VALIDATE_TYPES,
+  validateSchema,
+} from "@/lib/api/middleware/validate-schema";
 
 const loginBodySchema = z.object({
   email: z
@@ -51,6 +54,6 @@ const loginApiHandler = async (
 export default handler(
   allowMethods(["POST"]),
   allowContentType(["application/json"]),
-  validateSchema(loginBodySchema, "BODY"),
+  validateSchema(loginBodySchema, VALIDATE_TYPES.BODY),
   loginApiHandler
 );

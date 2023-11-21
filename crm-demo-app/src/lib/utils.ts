@@ -46,6 +46,10 @@ export const generateFakeAccount = () => {
   };
 };
 
+export const generateFakeAccounts = (size: number) => {
+  return [...Array(size).keys()].map((_) => generateFakeAccount());
+};
+
 export const getDefaultAccount = () => ({
   city: "",
   country: "",

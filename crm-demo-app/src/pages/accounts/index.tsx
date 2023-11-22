@@ -14,7 +14,7 @@ import {
   MenuItem,
 } from "@chakra-ui/react";
 import { GetServerSideProps } from "next";
-import { Users2, Plus, MoreVertical, UserPlus } from "lucide-react";
+import { Users2, Plus, MoreVertical, UserPlus, FileDown } from "lucide-react";
 import { Icon } from "@chakra-ui/react";
 import { Link } from "@chakra-ui/next-js";
 import { routes } from "@/lib/routes";
@@ -36,6 +36,9 @@ import WarningConfirmationModal from "@/components/confirmation-modal/warning";
 import { accountsTableColumns } from "@/components/account/account-table-columns";
 import FakeDataModal from "@/components/account/fake-data-modal";
 import useRouterRefresh from "@/lib/hooks/useRouterRefresh";
+import { faker } from "@faker-js/faker";
+import { generateFakeAccounts } from "@/lib/utils";
+import axios from "redaxios";
 
 function AddNewAccountButton() {
   return (
@@ -166,6 +169,31 @@ export default function AccountsHome({
     }
   }, [errorMessage, toast]);
 
+  const downloadFakeData = async () => {
+    const randomNumber = faker.number.int({ min: 10, max: 200 });
+
+    const response = await axios.get(
+      `/api/fake-accounts?outputType=csv&size=${randomNumber}`,
+      {
+        responseType: "blob",
+      }
+    );
+
+    const contentType =
+      response.headers.get("content-type") || "application/csv";
+
+    const blob = new Blob([response.data], {
+      type: contentType,
+    });
+
+    const downloadLink = document.createElement("a");
+    downloadLink.href = window.URL.createObjectURL(blob);
+    downloadLink.download = "fake-accounts.csv";
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+    document.body.removeChild(downloadLink);
+  };
+
   return (
     <>
       <Head>
@@ -207,7 +235,17 @@ export default function AccountsHome({
                     _hover={{ textDecoration: "none" }}
                     onClick={fakeAccountsModalOnOpen}
                   >
-                    Generate fake data
+                    Add fake data
+                  </MenuItem>
+                  <MenuItem
+                    py={2}
+                    icon={
+                      <Icon as={FileDown} boxSize={{ base: 5, "2xl": 6 }} />
+                    }
+                    _hover={{ textDecoration: "none" }}
+                    onClick={downloadFakeData}
+                  >
+                    Download fake data
                   </MenuItem>
                 </MenuList>
               </Menu>

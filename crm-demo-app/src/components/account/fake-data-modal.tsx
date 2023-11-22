@@ -1,6 +1,6 @@
 import { config } from "@/lib/config/config";
 import { Database } from "@/lib/types/supabase";
-import { generateFakeAccount, generateFakeAccounts } from "@/lib/utils";
+import { generateFakeAccounts } from "@/lib/utils";
 import {
   Button,
   Heading,
@@ -101,14 +101,14 @@ const FakeDataModal = ({
       />
       <ModalContent py={8} px={4}>
         <ModalCloseButton isDisabled={isSubmitting} />
-        <ModalBody textAlign={"center"} mt={20} mb={4}>
+        <ModalBody textAlign={"center"} mt={10} mb={4}>
           <chakra.form onSubmit={handleGenerateFakeAccounts}>
             <Heading fontSize={"2xl"} fontWeight={"extrabold"}>
-              Generate fake accounts
+              Add fake accounts
             </Heading>
             <FormControl mt={6} isDisabled={isSubmitting}>
               <FormLabel textAlign={"center"}>
-                Number of fake accounts to generate:
+                Number of fake accounts to add:
               </FormLabel>
               <Select variant={"primary"} name={selectFormName} mt={4}>
                 {[10, 20, 30, 40, 50, 60, 70, 80, 90, 100].map((item) => (
@@ -127,7 +127,7 @@ const FakeDataModal = ({
                 isLoading={isSubmitting}
                 loadingText="Generating..."
               >
-                Generate
+                Add
               </Button>
               <Button
                 flex={1}

@@ -13,6 +13,9 @@ import { json2csv } from "json-2-csv";
 import { promisify } from "util";
 import stream, { Readable } from "stream";
 import { utils, write } from "xlsx";
+import { prepareFileDownloadResponse } from "@/lib/api/utils";
+
+const invalidOutputMessage = "Invalid output type";
 
 export const OUTPUT_TYPES = {
   JSON: "json",
@@ -22,9 +25,14 @@ export const OUTPUT_TYPES = {
 
 const querySchema = z.object({
   outputType: z.nativeEnum(OUTPUT_TYPES, {
-    errorMap: () => ({ message: "Invalid output type" }),
+    errorMap: () => ({ message: invalidOutputMessage }),
   }),
-  size: z.coerce.number().positive(),
+  size: z
+    .string()
+    .transform(Number)
+    .refine((value) => !isNaN(value) && value > 0, {
+      message: "Size must be a positive number",
+    }),
 });
 
 type QueryProps = z.infer<typeof querySchema>;
@@ -39,41 +47,42 @@ const fakeAccountsHandler = async (
     const size = parseInt(req.query.size as string) as QueryProps["size"];
     const fakeAccounts = generateFakeAccounts(size);
 
-    if (outputType === OUTPUT_TYPES.JSON) {
-      return res.status(StatusCodes.OK).json({
-        result: "SUCCESS",
-        statusCode: StatusCodes.OK,
-        data: fakeAccounts,
-      });
-    }
+    switch (outputType) {
+      case OUTPUT_TYPES.JSON:
+        return res.status(StatusCodes.OK).json({
+          result: "SUCCESS",
+          statusCode: StatusCodes.OK,
+          data: fakeAccounts,
+        });
+      case OUTPUT_TYPES.CSV:
+        const fakeAccountsCSVAsString = json2csv(fakeAccounts);
+        prepareFileDownloadResponse({
+          res,
+          contentType: "application/csv",
+          filename: "fake-accounts.csv",
+        });
 
-    if (outputType === OUTPUT_TYPES.CSV) {
-      const fakeAccountsCSVAsString = json2csv(fakeAccounts);
-      res.setHeader("Content-Type", "application/csv");
-      res.setHeader(
-        "Content-Disposition",
-        "attachment; filename=fake-accounts.csv"
-      );
+        await pipeline(Readable.from(fakeAccountsCSVAsString), res);
+        break;
+      case OUTPUT_TYPES.XLSX:
+        const name = "fake-accounts";
+        const workbook = utils.book_new();
+        const worksheet = utils.json_to_sheet(fakeAccounts);
+        utils.book_append_sheet(workbook, worksheet, name);
+        const binaryWorkbookString = write(workbook, { type: "binary" });
+        prepareFileDownloadResponse({
+          res,
+          contentType: "application/vnd.ms-excel",
+          filename: `${name}.xlsx`,
+        });
 
-      res.status(StatusCodes.OK);
-
-      await pipeline(Readable.from(Buffer.from(fakeAccountsCSVAsString)), res);
-    }
-
-    if (outputType === OUTPUT_TYPES.XLSX) {
-      const workbook = utils.book_new();
-      const worksheet = utils.json_to_sheet(fakeAccounts);
-      utils.book_append_sheet(workbook, worksheet, "fake-accounts");
-      const binaryWorkbookString = write(workbook, { type: "binary" });
-
-      res.setHeader("Content-Type", "application/vnd.ms-excel");
-      res.setHeader(
-        "Content-Disposition",
-        'attachment; filename="fake-accounts.xlsx"'
-      );
-      res
-        .status(StatusCodes.OK)
-        .send(Buffer.from(binaryWorkbookString, "binary"));
+        return res.send(Buffer.from(binaryWorkbookString, "binary"));
+      default:
+        return res.status(StatusCodes.BAD_REQUEST).json({
+          result: "ERROR",
+          statusCode: StatusCodes.BAD_REQUEST,
+          errorMessage: invalidOutputMessage,
+        });
     }
   } catch (error: any) {
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({

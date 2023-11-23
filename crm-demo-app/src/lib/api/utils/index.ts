@@ -1,3 +1,6 @@
+import { StatusCodes } from "http-status-codes";
+import { NextApiResponse } from "next";
+
 export default function getBearerTokenFromHeader(
   authHeader: string | undefined
 ) {
@@ -23,3 +26,19 @@ export default function getBearerTokenFromHeader(
 
   return authHeaderSplit[1].trim();
 }
+
+type PrepareFileDownloadResponseParams = {
+  res: NextApiResponse;
+  contentType: string;
+  filename: string;
+};
+
+export const prepareFileDownloadResponse = ({
+  res,
+  contentType,
+  filename,
+}: PrepareFileDownloadResponseParams) => {
+  res.setHeader("Content-Type", contentType);
+  res.setHeader("Content-Disposition", `attachment; file-name=${filename}`);
+  res.status(StatusCodes.OK);
+};

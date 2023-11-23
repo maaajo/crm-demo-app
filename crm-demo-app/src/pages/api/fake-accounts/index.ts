@@ -12,10 +12,12 @@ import * as z from "zod";
 import { json2csv } from "json-2-csv";
 import { promisify } from "util";
 import stream, { Readable } from "stream";
+import { utils, write } from "xlsx";
 
 export const OUTPUT_TYPES = {
   JSON: "json",
   CSV: "csv",
+  XLSX: "xlsx",
 } as const;
 
 const querySchema = z.object({
@@ -30,7 +32,7 @@ const pipeline = promisify(stream.pipeline);
 
 const fakeAccountsHandler = async (
   req: NextApiRequest,
-  res: NextApiResponse<TypedApiResponse>
+  res: NextApiResponse<TypedApiResponse | Buffer>
 ) => {
   try {
     const outputType = req.query.outputType as QueryProps["outputType"];
@@ -56,6 +58,22 @@ const fakeAccountsHandler = async (
       res.status(StatusCodes.OK);
 
       await pipeline(Readable.from(Buffer.from(fakeAccountsCSVAsString)), res);
+    }
+
+    if (outputType === OUTPUT_TYPES.XLSX) {
+      const workbook = utils.book_new();
+      const worksheet = utils.json_to_sheet(fakeAccounts);
+      utils.book_append_sheet(workbook, worksheet, "fake-accounts");
+      const binaryWorkbookString = write(workbook, { type: "binary" });
+
+      res.setHeader("Content-Type", "application/vnd.ms-excel");
+      res.setHeader(
+        "Content-Disposition",
+        'attachment; filename="fake-accounts.xlsx"'
+      );
+      res
+        .status(StatusCodes.OK)
+        .send(Buffer.from(binaryWorkbookString, "binary"));
     }
   } catch (error: any) {
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({

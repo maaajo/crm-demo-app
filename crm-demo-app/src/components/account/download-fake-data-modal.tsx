@@ -1,6 +1,3 @@
-import { config } from "@/lib/config/config";
-import { Database } from "@/lib/types/supabase";
-import { generateFakeAccounts } from "@/lib/utils";
 import {
   Button,
   Heading,
@@ -16,73 +13,81 @@ import {
   FormLabel,
   useToast,
 } from "@chakra-ui/react";
-import {
-  SupabaseClient,
-  useSupabaseClient,
-} from "@supabase/auth-helpers-react";
 import { FormEvent, useState } from "react";
+import { OUTPUT_TYPES } from "@/pages/api/fake-accounts";
+import { FakeAccountsQueryProps } from "@/pages/api/fake-accounts";
+import { faker } from "@faker-js/faker";
+import axios from "redaxios";
+import { saveAs } from "file-saver";
 
-type FakeDataModal = {
+type DownloadFakeDataModalProps = {
   isOpen: boolean;
-  onSuccessfulClose: () => void;
-  onDefaultClose: () => void;
+  onClose: () => void;
 };
 
-const selectFormName = "accounts_number";
+const selectFormName = "output_type";
 
-const insertFakeAccounts = async (
-  supabase: SupabaseClient<Database>,
-  numberOfAccounts: number
+const downloadFakeData = async (
+  outputType: FakeAccountsQueryProps["outputType"]
 ) => {
-  const fakeAccounts = generateFakeAccounts(numberOfAccounts);
+  const randomNumber = faker.number.int({ min: 10, max: 200 });
 
-  const { error } = await supabase
-    .from(config.tables.account)
-    .insert(fakeAccounts);
+  const response = await axios.get(
+    `/api/fake-accounts?outputType=${outputType}&size=${randomNumber}`,
+    {
+      responseType: "blob",
+    }
+  );
 
-  return error;
+  const contentType = response.headers.get("content-type") || "";
+  const contentDisposition = response.headers.get("content-disposition") || "";
+  const contentDispositionFileNameRegex = new RegExp(
+    `file-name[^;\\n]*=(UTF-\\d['"]*)?((['"]).*?[.]$\\2|[^;\\n]*)?`,
+    "g"
+  );
+  const fileNameArray =
+    contentDispositionFileNameRegex.exec(contentDisposition);
+  const fileName = fileNameArray ? fileNameArray[2] : "";
+
+  const blob = new Blob([response.data], {
+    type: contentType,
+  });
+
+  saveAs(blob, fileName);
 };
 
-const FakeDataModal = ({
+const DownloadFakeDataModal = ({
   isOpen,
-  onDefaultClose,
-  onSuccessfulClose,
-}: FakeDataModal) => {
-  const supabase = useSupabaseClient<Database>();
+  onClose,
+}: DownloadFakeDataModalProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const toast = useToast();
 
-  const handleGenerateFakeAccounts = async (e: FormEvent<HTMLFormElement>) => {
+  const handleDownloadFakeAccounts = async (e: FormEvent<HTMLFormElement>) => {
     try {
       e.preventDefault();
       setIsSubmitting(true);
       const formData = new FormData(e.target as HTMLFormElement);
-      const numberOfAccountsToGenerate = formData
+      const outputType = formData
         .get(selectFormName)!
-        .toString();
-      const postgresError = await insertFakeAccounts(
-        supabase,
-        parseInt(numberOfAccountsToGenerate)
-      );
+        .toString() as FakeAccountsQueryProps["outputType"];
 
-      if (postgresError) {
-        toast({
-          status: "error",
-          description: postgresError.message,
-          title: "Failure",
-        });
-        onDefaultClose();
-        return;
-      }
+      await downloadFakeData(outputType);
 
-      onSuccessfulClose();
+      toast({
+        status: "success",
+        description: "Fake accounts file download started successfully",
+        title: "Success",
+      });
+
+      onClose();
     } catch (e: any) {
       toast({
         status: "error",
         description: e.message,
         title: "Failure",
       });
-      onDefaultClose();
+      onClose();
     } finally {
       setIsSubmitting(false);
     }
@@ -92,7 +97,7 @@ const FakeDataModal = ({
     <Modal
       closeOnOverlayClick={!isSubmitting}
       isOpen={isOpen}
-      onClose={onDefaultClose}
+      onClose={onClose}
       isCentered
     >
       <ModalOverlay
@@ -102,16 +107,16 @@ const FakeDataModal = ({
       <ModalContent py={8} px={4}>
         <ModalCloseButton isDisabled={isSubmitting} />
         <ModalBody textAlign={"center"} mt={10} mb={4}>
-          <chakra.form onSubmit={handleGenerateFakeAccounts}>
+          <chakra.form onSubmit={handleDownloadFakeAccounts}>
             <Heading fontSize={"2xl"} fontWeight={"extrabold"}>
-              Add fake accounts
+              Download fake accounts
             </Heading>
             <FormControl mt={6} isDisabled={isSubmitting}>
               <FormLabel textAlign={"center"}>
-                Number of fake accounts to add:
+                Please select output type
               </FormLabel>
               <Select variant={"primary"} name={selectFormName} mt={4}>
-                {[10, 20, 30, 40, 50, 60, 70, 80, 90, 100].map((item) => (
+                {[OUTPUT_TYPES.CSV, OUTPUT_TYPES.XLSX].map((item) => (
                   <option value={item} key={item}>
                     {item}
                   </option>
@@ -125,15 +130,15 @@ const FakeDataModal = ({
                 variant={"blackWhiteOutline"}
                 type={"submit"}
                 isLoading={isSubmitting}
-                loadingText="Generating..."
+                loadingText="Downloading..."
               >
-                Add
+                Download
               </Button>
               <Button
                 flex={1}
                 name="cancel"
                 variant={"blackSolid"}
-                onClick={onDefaultClose}
+                onClick={onClose}
                 type={"button"}
                 isDisabled={isSubmitting}
               >
@@ -147,4 +152,4 @@ const FakeDataModal = ({
   );
 };
 
-export default FakeDataModal;
+export default DownloadFakeDataModal;

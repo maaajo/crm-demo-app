@@ -34,11 +34,9 @@ import { Trash2 } from "lucide-react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import WarningConfirmationModal from "@/components/confirmation-modal/warning";
 import { accountsTableColumns } from "@/components/account/account-table-columns";
-import FakeDataModal from "@/components/account/fake-data-modal";
+import AddFakeDataModal from "@/components/account/add-fake-data-modal";
 import useRouterRefresh from "@/lib/hooks/useRouterRefresh";
-import { faker } from "@faker-js/faker";
-import { generateFakeAccounts } from "@/lib/utils";
-import axios from "redaxios";
+import DownloadFakeDataModal from "@/components/account/download-fake-data-modal";
 
 function AddNewAccountButton() {
   return (
@@ -115,9 +113,15 @@ export default function AccountsHome({
   } = useDisclosure();
 
   const {
-    isOpen: fakeAccountsModalIsOpen,
-    onOpen: fakeAccountsModalOnOpen,
-    onClose: fakeAccountsModalOnClose,
+    isOpen: addFakeAccountsModalIsOpen,
+    onOpen: addFakeAccountsModalOnOpen,
+    onClose: addFakeAccountsModalOnClose,
+  } = useDisclosure();
+
+  const {
+    isOpen: downloadFakeAccountsModalIsOpen,
+    onOpen: downloadFakeAccountsModalOnOpen,
+    onClose: downloadFakeAccountsModalOnClose,
   } = useDisclosure();
 
   const handleDeleteSelected = async () => {
@@ -156,7 +160,7 @@ export default function AccountsHome({
     });
     refreshServerSideProps();
     setSelectedAccounts({});
-    fakeAccountsModalOnClose();
+    addFakeAccountsModalOnClose();
   };
 
   useEffect(() => {
@@ -168,31 +172,6 @@ export default function AccountsHome({
       });
     }
   }, [errorMessage, toast]);
-
-  const downloadFakeData = async () => {
-    const randomNumber = faker.number.int({ min: 10, max: 200 });
-
-    const response = await axios.get(
-      `/api/fake-accounts?outputType=csv&size=${randomNumber}`,
-      {
-        responseType: "blob",
-      }
-    );
-
-    const contentType =
-      response.headers.get("content-type") || "application/csv";
-
-    const blob = new Blob([response.data], {
-      type: contentType,
-    });
-
-    const downloadLink = document.createElement("a");
-    downloadLink.href = window.URL.createObjectURL(blob);
-    downloadLink.download = "fake-accounts.csv";
-    document.body.appendChild(downloadLink);
-    downloadLink.click();
-    document.body.removeChild(downloadLink);
-  };
 
   return (
     <>
@@ -233,7 +212,7 @@ export default function AccountsHome({
                       <Icon as={UserPlus} boxSize={{ base: 5, "2xl": 6 }} />
                     }
                     _hover={{ textDecoration: "none" }}
-                    onClick={fakeAccountsModalOnOpen}
+                    onClick={addFakeAccountsModalOnOpen}
                   >
                     Add fake data
                   </MenuItem>
@@ -243,7 +222,7 @@ export default function AccountsHome({
                       <Icon as={FileDown} boxSize={{ base: 5, "2xl": 6 }} />
                     }
                     _hover={{ textDecoration: "none" }}
-                    onClick={downloadFakeData}
+                    onClick={downloadFakeAccountsModalOnOpen}
                   >
                     Download fake data
                   </MenuItem>
@@ -272,10 +251,14 @@ export default function AccountsHome({
         confirmButtonText="Delete"
         confirmButtonHandler={handleDeleteSelected}
       />
-      <FakeDataModal
-        isOpen={fakeAccountsModalIsOpen}
-        onDefaultClose={fakeAccountsModalOnClose}
+      <AddFakeDataModal
+        isOpen={addFakeAccountsModalIsOpen}
+        onDefaultClose={addFakeAccountsModalOnClose}
         onSuccessfulClose={handleFakeAccountsModalClose}
+      />
+      <DownloadFakeDataModal
+        isOpen={downloadFakeAccountsModalIsOpen}
+        onClose={downloadFakeAccountsModalOnClose}
       />
     </>
   );

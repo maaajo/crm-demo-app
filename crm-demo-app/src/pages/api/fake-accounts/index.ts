@@ -35,7 +35,7 @@ const querySchema = z.object({
     }),
 });
 
-type QueryProps = z.infer<typeof querySchema>;
+export type FakeAccountsQueryProps = z.infer<typeof querySchema>;
 const pipeline = promisify(stream.pipeline);
 
 const fakeAccountsHandler = async (
@@ -43,8 +43,11 @@ const fakeAccountsHandler = async (
   res: NextApiResponse<TypedApiResponse | Buffer>
 ) => {
   try {
-    const outputType = req.query.outputType as QueryProps["outputType"];
-    const size = parseInt(req.query.size as string) as QueryProps["size"];
+    const outputType = req.query
+      .outputType as FakeAccountsQueryProps["outputType"];
+    const size = parseInt(
+      req.query.size as string
+    ) as FakeAccountsQueryProps["size"];
     const fakeAccounts = generateFakeAccounts(size);
 
     switch (outputType) {

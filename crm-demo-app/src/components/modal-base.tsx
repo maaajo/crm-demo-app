@@ -40,10 +40,16 @@ const ModalBase = ({
       />
       <ModalContent py={8} px={4}>
         <ModalCloseButton isDisabled={isSubmitting} />
-        <Heading fontSize={"2xl"} fontWeight={"extrabold"}>
+        <Heading
+          fontSize={"2xl"}
+          fontWeight={"extrabold"}
+          textAlign={"center"}
+          pt={8}
+          pb={4}
+        >
           {title}
         </Heading>
-        <ModalBody textAlign={"center"} mt={10} mb={4}>
+        <ModalBody textAlign={"center"} mb={4}>
           {children}
         </ModalBody>
       </ModalContent>

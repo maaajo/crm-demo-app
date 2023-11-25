@@ -1,26 +1,13 @@
 import { config } from "@/lib/config/config";
 import { Database } from "@/lib/types/supabase";
 import { generateFakeAccounts } from "@/lib/utils";
-import {
-  Button,
-  Heading,
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalOverlay,
-  HStack,
-  ModalCloseButton,
-  Select,
-  chakra,
-  FormControl,
-  FormLabel,
-  useToast,
-} from "@chakra-ui/react";
+import { useToast } from "@chakra-ui/react";
 import {
   SupabaseClient,
   useSupabaseClient,
 } from "@supabase/auth-helpers-react";
 import { FormEvent, useState } from "react";
+import ModalSimpleSelect from "../modal-simple-select";
 
 type AddFakeDataModalProps = {
   isOpen: boolean;
@@ -89,61 +76,16 @@ const AddFakeDataModal = ({
   };
 
   return (
-    <Modal
-      closeOnOverlayClick={!isSubmitting}
+    <ModalSimpleSelect
       isOpen={isOpen}
+      isSubmitting={isSubmitting}
       onClose={onDefaultClose}
-      isCentered
-    >
-      <ModalOverlay
-        bg="blackAlpha.300"
-        backdropFilter="blur(10px) hue-rotate(90deg)"
-      />
-      <ModalContent py={8} px={4}>
-        <ModalCloseButton isDisabled={isSubmitting} />
-        <ModalBody textAlign={"center"} mt={10} mb={4}>
-          <chakra.form onSubmit={handleGenerateFakeAccounts}>
-            <Heading fontSize={"2xl"} fontWeight={"extrabold"}>
-              Add fake accounts
-            </Heading>
-            <FormControl mt={6} isDisabled={isSubmitting}>
-              <FormLabel textAlign={"center"}>
-                Number of fake accounts to add:
-              </FormLabel>
-              <Select variant={"primary"} name={selectFormName} mt={4}>
-                {[10, 20, 30, 40, 50, 60, 70, 80, 90, 100].map((item) => (
-                  <option value={item} key={item}>
-                    {item}
-                  </option>
-                ))}
-              </Select>
-            </FormControl>
-            <HStack pt={8} width={"full"}>
-              <Button
-                flex={1}
-                name="confirm"
-                variant={"blackWhiteOutline"}
-                type={"submit"}
-                isLoading={isSubmitting}
-                loadingText="Adding..."
-              >
-                Add
-              </Button>
-              <Button
-                flex={1}
-                name="cancel"
-                variant={"blackSolid"}
-                onClick={onDefaultClose}
-                type={"button"}
-                isDisabled={isSubmitting}
-              >
-                Cancel
-              </Button>
-            </HStack>
-          </chakra.form>
-        </ModalBody>
-      </ModalContent>
-    </Modal>
+      title="Download fake accounts"
+      onSubmit={handleGenerateFakeAccounts}
+      selectFormLabelText="Select output type:"
+      selectName={selectFormName}
+      selectOptions={[10, 20, 30, 40, 50, 60, 70, 80, 90, 100]}
+    />
   );
 };
 

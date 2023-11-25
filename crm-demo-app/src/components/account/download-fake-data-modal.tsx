@@ -1,24 +1,11 @@
-import {
-  Button,
-  Heading,
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalOverlay,
-  HStack,
-  ModalCloseButton,
-  Select,
-  chakra,
-  FormControl,
-  FormLabel,
-  useToast,
-} from "@chakra-ui/react";
+import { useToast } from "@chakra-ui/react";
 import { FormEvent, useState } from "react";
 import { OUTPUT_TYPES } from "@/pages/api/fake-accounts";
 import { FakeAccountsQueryProps } from "@/pages/api/fake-accounts";
 import { faker } from "@faker-js/faker";
 import axios from "redaxios";
 import { saveAs } from "file-saver";
+import ModalSimpleSelect from "../modal-simple-select";
 
 type DownloadFakeDataModalProps = {
   isOpen: boolean;
@@ -94,61 +81,16 @@ const DownloadFakeDataModal = ({
   };
 
   return (
-    <Modal
-      closeOnOverlayClick={!isSubmitting}
+    <ModalSimpleSelect
       isOpen={isOpen}
+      isSubmitting={isSubmitting}
       onClose={onClose}
-      isCentered
-    >
-      <ModalOverlay
-        bg="blackAlpha.300"
-        backdropFilter="blur(10px) hue-rotate(90deg)"
-      />
-      <ModalContent py={8} px={4}>
-        <ModalCloseButton isDisabled={isSubmitting} />
-        <ModalBody textAlign={"center"} mt={10} mb={4}>
-          <chakra.form onSubmit={handleDownloadFakeAccounts}>
-            <Heading fontSize={"2xl"} fontWeight={"extrabold"}>
-              Download fake accounts
-            </Heading>
-            <FormControl mt={6} isDisabled={isSubmitting}>
-              <FormLabel textAlign={"center"}>
-                Please select output type
-              </FormLabel>
-              <Select variant={"primary"} name={selectFormName} mt={4}>
-                {[OUTPUT_TYPES.CSV, OUTPUT_TYPES.XLSX].map((item) => (
-                  <option value={item} key={item}>
-                    {item}
-                  </option>
-                ))}
-              </Select>
-            </FormControl>
-            <HStack pt={8} width={"full"}>
-              <Button
-                flex={1}
-                name="confirm"
-                variant={"blackWhiteOutline"}
-                type={"submit"}
-                isLoading={isSubmitting}
-                loadingText="Downloading..."
-              >
-                Download
-              </Button>
-              <Button
-                flex={1}
-                name="cancel"
-                variant={"blackSolid"}
-                onClick={onClose}
-                type={"button"}
-                isDisabled={isSubmitting}
-              >
-                Cancel
-              </Button>
-            </HStack>
-          </chakra.form>
-        </ModalBody>
-      </ModalContent>
-    </Modal>
+      title="Download fake accounts"
+      onSubmit={handleDownloadFakeAccounts}
+      selectFormLabelText="Select output type:"
+      selectName={selectFormName}
+      selectOptions={[OUTPUT_TYPES.CSV, OUTPUT_TYPES.XLSX]}
+    />
   );
 };
 

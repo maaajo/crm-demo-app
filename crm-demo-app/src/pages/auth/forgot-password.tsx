@@ -124,7 +124,7 @@ const ForgotPassword: NextPageWithLayout = () => {
             </Button>
           </VStack>
         </chakra.form>
-        <AuthLink type="forgot" />
+        <AuthLink type="forgot" cb="" />
         <AuthModal
           type={"info"}
           isOpen={isOpen}

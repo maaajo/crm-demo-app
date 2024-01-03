@@ -1,6 +1,5 @@
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { GetServerSideProps } from "next";
-import Cookies from "cookies";
 import { config } from "@/lib/config/config";
 import { routes } from "@/lib/routes";
 

@@ -30,7 +30,11 @@ import AuthLink from "./auth-link";
 import { routes } from "@/lib/routes";
 import { AuthCallbackQueryParams } from "@/lib/auth/methods";
 import { config } from "@/lib/config/config";
-import { getAvatar, getCurrentTimestampWithTimezone } from "@/lib/utils";
+import {
+  getAvatar,
+  getCurrentTimestampWithTimezone,
+  getPublicURL,
+} from "@/lib/utils";
 import { addAvatar } from "@/lib/db/utils/profile/methods";
 
 const zodAuthSchema = z.object({
@@ -111,7 +115,9 @@ const Auth = ({ type }: AuthParams) => {
     const { data: _, error } = await supabase.auth.signInWithOAuth({
       provider: "github",
       options: {
-        redirectTo: `${process.env.NEXT_PUBLIC_URL}${routes.auth.provider}${returnURLQueryParam}`,
+        redirectTo: `${getPublicURL()}${
+          routes.auth.provider
+        }${returnURLQueryParam}`,
       },
     });
 
@@ -128,7 +134,9 @@ const Auth = ({ type }: AuthParams) => {
     const { data: _, error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: `${process.env.NEXT_PUBLIC_URL}${routes.auth.provider}${returnURLQueryParam}`,
+        redirectTo: `${getPublicURL()}${
+          routes.auth.provider
+        }${returnURLQueryParam}`,
       },
     });
 

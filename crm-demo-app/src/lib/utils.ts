@@ -98,3 +98,15 @@ export const getDefaultFromSchema = <Schema extends z.AnyZodObject>(
     })
   );
 };
+
+export const getPublicURL = () => {
+  if (process.env.NODE_ENV === "development") {
+    return process.env.NEXT_PUBLIC_DEV_URL;
+  }
+
+  if (process.env.NODE_ENV === "production") {
+    return process.env.NEXT_PUBLIC_PROD_URL;
+  }
+
+  return process.env.NEXT_PUBLIC_DEV_URL;
+};

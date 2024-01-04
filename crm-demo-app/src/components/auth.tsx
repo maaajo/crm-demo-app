@@ -54,6 +54,7 @@ type AuthParams = {
 };
 
 const Auth = ({ type }: AuthParams) => {
+  console.log(process.env.NODE_ENV);
   const toast = useToast();
   const supabase = useSupabaseClient();
   const router = useRouter();

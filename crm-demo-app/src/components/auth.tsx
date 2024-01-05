@@ -30,11 +30,7 @@ import AuthLink from "./auth-link";
 import { routes } from "@/lib/routes";
 import { AuthCallbackQueryParams } from "@/lib/auth/methods";
 import { config } from "@/lib/config/config";
-import {
-  getAvatar,
-  getCurrentTimestampWithTimezone,
-  getPublicURL,
-} from "@/lib/utils";
+import { getPublicURL } from "@/lib/utils";
 import { addAvatar } from "@/lib/db/utils/profile/methods";
 
 const zodAuthSchema = z.object({
@@ -69,6 +65,8 @@ const Auth = ({ type }: AuthParams) => {
   const returnURLQueryParam = `?${config.authCallbackQueryParam}=${
     returnURL ? returnURL : routes.home
   }`;
+
+  console.log(`${getPublicURL()}${routes.auth.provider}${returnURLQueryParam}`);
 
   const {
     register,

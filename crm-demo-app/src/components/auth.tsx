@@ -54,7 +54,6 @@ type AuthParams = {
 };
 
 const Auth = ({ type }: AuthParams) => {
-  console.log(process.env.NODE_ENV);
   const toast = useToast();
   const supabase = useSupabaseClient();
   const router = useRouter();
@@ -65,8 +64,6 @@ const Auth = ({ type }: AuthParams) => {
   const returnURLQueryParam = `?${config.authCallbackQueryParam}=${
     returnURL ? returnURL : routes.home
   }`;
-
-  console.log(`${getPublicURL()}${routes.auth.provider}${returnURLQueryParam}`);
 
   const {
     register,

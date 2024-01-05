@@ -51,8 +51,6 @@ const ProviderAuthRedirect: NextPageWithLayout = () => {
       console.error(error);
     }
 
-    console.log(returnURL, "I'm in provider redirect");
-
     void router.push(returnURL);
   };
 

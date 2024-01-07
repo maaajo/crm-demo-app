@@ -53,7 +53,11 @@ function AddNewAccountButton() {
   );
 }
 
-function EmptyState() {
+function EmptyState({
+  addFakeAccountsModalOnOpen,
+}: {
+  addFakeAccountsModalOnOpen: () => void;
+}) {
   return (
     <>
       <PageTitle title="Accounts" />
@@ -66,6 +70,16 @@ function EmptyState() {
           Add new account to easily track your sales opportunities
         </Text>
         <AddNewAccountButton />
+        <Text>Or click below to add fake data</Text>
+        <Button
+          type={"submit"}
+          leftIcon={<UserPlus />}
+          px={"5"}
+          onClick={addFakeAccountsModalOnOpen}
+          variant={"blackSolid"}
+        >
+          Add fake data
+        </Button>
       </VStack>
     </>
   );
@@ -241,7 +255,7 @@ export default function AccountsHome({
           />
         </>
       ) : (
-        <EmptyState />
+        <EmptyState addFakeAccountsModalOnOpen={addFakeAccountsModalOnOpen} />
       )}
       <WarningConfirmationModal
         isOpen={deleteWarningModalIsOpen}

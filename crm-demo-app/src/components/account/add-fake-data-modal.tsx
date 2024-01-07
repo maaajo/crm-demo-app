@@ -80,9 +80,9 @@ const AddFakeDataModal = ({
       isOpen={isOpen}
       isSubmitting={isSubmitting}
       onClose={onDefaultClose}
-      title="Download fake accounts"
+      title="Add fake accounts"
       onSubmit={handleGenerateFakeAccounts}
-      selectFormLabelText="Select output type:"
+      selectFormLabelText="Select number of accounts to add:"
       selectName={selectFormName}
       selectOptions={[10, 20, 30, 40, 50, 60, 70, 80, 90, 100]}
     />

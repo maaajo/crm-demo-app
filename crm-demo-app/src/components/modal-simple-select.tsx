@@ -50,23 +50,23 @@ const ModalSimpleSelect = ({
         <HStack pt={8} width={"full"}>
           <Button
             flex={1}
-            name="confirm"
-            variant={"blackWhiteOutline"}
-            type={"submit"}
-            isLoading={isSubmitting}
-            loadingText="Processing..."
-          >
-            Confirm
-          </Button>
-          <Button
-            flex={1}
             name="cancel"
-            variant={"blackSolid"}
+            variant={"blackWhiteOutline"}
             onClick={onClose}
             type={"button"}
             isDisabled={isSubmitting}
           >
             Cancel
+          </Button>
+          <Button
+            flex={1}
+            name="confirm"
+            variant={"blackSolid"}
+            type={"submit"}
+            isLoading={isSubmitting}
+            loadingText="Processing..."
+          >
+            Confirm
           </Button>
         </HStack>
       </chakra.form>

@@ -56,19 +56,19 @@ const WarningConfirmationModal = ({
           <HStack width={"full"}>
             <Button
               flex={1}
-              name="confirm"
-              onClick={confirmButtonHandler}
-              colorScheme={"orange"}
-            >
-              {confirmButtonText}
-            </Button>
-            <Button
-              flex={1}
               name="cancel"
-              variant={"blackSolid"}
+              variant={"blackWhiteOutline"}
               onClick={onClose}
             >
               Cancel
+            </Button>
+            <Button
+              flex={1}
+              name="confirm"
+              onClick={confirmButtonHandler}
+              variant={"blackSolid"}
+            >
+              {confirmButtonText}
             </Button>
           </HStack>
         </ModalFooter>
